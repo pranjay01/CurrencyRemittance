@@ -1,1 +1,1 @@
-# CurrenyRemittance
+# CurrencyRemittance
