@@ -7,10 +7,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 import com.cmpe275.DirectExchange.Entity.Account;
+import com.cmpe275.DirectExchange.Entity.ExchangeRate;
 import com.cmpe275.DirectExchange.Entity.Offer;
 import com.cmpe275.DirectExchange.Entity.User;
 import com.cmpe275.DirectExchange.Service.AccountService;
+import com.cmpe275.DirectExchange.Service.ExchangeRateService;
 import com.cmpe275.DirectExchange.Service.OfferService;
 import com.cmpe275.DirectExchange.Service.UserService;
 
@@ -25,6 +29,9 @@ public class DirectExchangeController {
 	
 	@Autowired
 	OfferService offerService;
+
+	@Autowired
+	ExchangeRateService exchangeRateService;
 	
 	@GetMapping("/")
 	public String sayHello() {
@@ -87,5 +94,17 @@ public class DirectExchangeController {
 	}
 	
 	//modify offer - which parameters can be modified?
+
+	@GetMapping("/getConversionRate")
+	public List<ExchangeRate> gExchangeRate() {
+		return exchangeRateService.getExchangeRate();
+	}
+
+	@PostMapping("/insertExchangeRate")
+	public Long insertExchangeRate(@RequestParam(value="currencyType") String currencyType,
+	@RequestParam(value="country") String country,
+ 	@RequestParam(value="usdConversionRate") double usdConversionRate) {
+		return exchangeRateService.addexchangeRate(currencyType, country, usdConversionRate);
+	}
 
 }
