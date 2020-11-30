@@ -15,6 +15,13 @@ public class UserService {
 	UserRepository userRepository;
 	
 	@Transactional
+	public User getUser(Long id) {
+		User user = userRepository.findById(id).orElse(null);
+		//add code to handle null
+		return user;
+	}
+	
+	@Transactional
 	public User addUser(String userName, String nickname, String password, String status) {
 		User user = new User(userName, nickname, password, status);
 		return userRepository.save(user);
