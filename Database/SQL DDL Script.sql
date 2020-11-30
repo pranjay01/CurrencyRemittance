@@ -74,3 +74,13 @@ Status enum ('Pending', 'Done'),
 MoneyReceived enum ('SendingParty', 'ReceivingParty'),
 PRIMARY KEY (TransactionID)
 );
+
+CREATE TABLE TRANSACTION_USER_MAP
+(
+ID BIGINT AUTO_INCREMENT,
+TransactionID BIGINT NOT NULL,
+UserID BIGINT NOT NULL,
+PRIMARY KEY (ID),
+UNIQUE KEY `transaction_user` (`TransactionID`,`UserID`)
+);
+
