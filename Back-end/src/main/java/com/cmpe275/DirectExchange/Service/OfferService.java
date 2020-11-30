@@ -3,6 +3,8 @@ package com.cmpe275.DirectExchange.Service;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -36,6 +38,14 @@ public class OfferService {
 	    } catch (ParseException e) {
 	        throw new IllegalArgumentException(e);
 	    }
+	}
+	
+	public List<Offer> getMyOffers(Long userId) {
+		List<Offer> myOffers = new ArrayList<Offer>();
+		myOffers.addAll(offerRepository.findByUserIdAndOfferStatus(userId, "open"));
+		myOffers.addAll(offerRepository.findByUserIdAndOfferStatusNot(userId, "open"));
+		
+		return myOffers;
 	}
 
 }

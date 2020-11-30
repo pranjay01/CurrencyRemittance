@@ -54,20 +54,19 @@ public class UserService {
 		} catch (Exception exception) {
 			
 		}
-		
 
 		return user;
 
 	}
 
 	@Transactional
-	public User updateUser(Long id, String nickname, String status) {
+	public User updateUser(Long id, String nickname, String password) {
 		User user = userRepository.findById(id).orElse(null);
 		if(user != null) {
 			if(nickname != null)
 				user.setNickname(nickname);
-			if(status != null)
-				user.setStatus(status);
+			if(password != null)
+				user.setPassword(password);
 		}
 		return userRepository.save(user);
 	}

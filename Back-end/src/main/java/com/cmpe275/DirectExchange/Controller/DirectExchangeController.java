@@ -52,9 +52,9 @@ public class DirectExchangeController {
 	
 	@PostMapping("/user/{id}")
 	public User updateUser(@RequestParam(value="nickname", required = false) String nickname,
-			@RequestParam(value="status", required = false) String status,
+			@RequestParam(value="password", required = false) String password,
 			@PathVariable("id") Long id) {
-		return userService.updateUser(id, nickname, status);
+		return userService.updateUser(id, nickname, password);
 	}
 	
 	@GetMapping(value="/confirm-account")
@@ -94,6 +94,11 @@ public class DirectExchangeController {
 	}
 	
 	//modify offer - which parameters can be modified?
+	
+	@GetMapping("/user/{id}/offers")
+	public List<Offer> getMyOffers(@PathVariable("id") Long id){
+		return offerService.getMyOffers(id);
+	}
 
 	@GetMapping("/getConversionRate")
 	public List<ExchangeRate> gExchangeRate() {

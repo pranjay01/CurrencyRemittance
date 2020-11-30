@@ -64,6 +64,10 @@ public class Offer {
 	@Column(name="MaxAmount")
 	Double maxAmount;
 
+	public Offer() {
+		super();
+	}
+
 	public Offer(Long userId, String sourceCountry, String sourceCurrency, Double sourceAmount,
 			String destinationCountry, String destinationCurrency, Double exchangeRate, Date expirationDate,
 			Integer allowCounterOffers, Integer splitExchange, String offerStatus) {
