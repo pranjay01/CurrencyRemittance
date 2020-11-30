@@ -85,4 +85,24 @@ public class UserService {
 
 		return "User verified";
 	}
+
+
+	@Transactional
+	public String sendEmail(Long senderId, Long receiverId, String mailText) {
+		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		User sender = userRepository.findById(senderId).orElse(null);
+        User receiver = userRepository.findById(receiverId).orElse(null);
+		mailMessage.setTo(receiver.getUserName());
+		mailMessage.setSubject("Hello !!!");
+		// mailMessage.setFrom(sender.getUserName());
+		mailMessage.setFrom(email);
+		mailMessage.setText(mailText);
+
+		try {
+			emailVerificationService.sendEmail(mailMessage);
+			return "Message sent";
+		} catch (Exception exception) {
+			return "Message sending failed";
+		}
+	}
 }

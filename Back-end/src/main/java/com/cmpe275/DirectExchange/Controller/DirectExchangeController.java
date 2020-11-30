@@ -107,4 +107,11 @@ public class DirectExchangeController {
 		return exchangeRateService.addexchangeRate(currencyType, country, usdConversionRate);
 	}
 
+	@PostMapping("/sendOffer")
+	public String sendOffer(@RequestParam(value="senderId") Long senderId,
+	@RequestParam(value="receiverId") Long receiverId,
+ 	@RequestParam(value="mailText") String mailText) {
+		return userService.sendEmail(senderId, receiverId, mailText);
+	}
+
 }
