@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import axios from 'axios';
+import { connect } from 'react-redux';
+import Navbar from './Common/Navbar';
+import Profile from './Form/Profile';
+import AccountInformation from './Form/AccountInformation';
+import PostOffer from './Form/PostOffer';
+
+{
+  /*import axios from 'axios';
 import serverUrl from '../config';
 import CustomerLogin from './Login/CustomerLogin';
 import RestaurantLogin from './Login/RestaurantLogin';
@@ -18,16 +25,14 @@ import OrdersList from './Customer/OrdersTab/OrdersList';
 import CustomerStaticProfile from './Restaurant/CommonComponent/CustomerStaticProfile';
 import SnackBar from './CommonComponents/SnackBar';
 import Following from './Customer/Following/Following';
-import MessageList from './Customer/MessageTab/MessageList';
-import { connect } from 'react-redux';
-import { updateMasterData, updateFoodData } from '../constants/action-types';
-import { graphql, Query, withApollo } from 'react-apollo';
+import MessageList from './Customer/MessageTab/MessageList';*/
+}
+// import { updateMasterData, updateFoodData } from '../constants/action-types';
 // import compose from 'lodash.flowright';
-import { flowRight as compose } from 'lodash';
-import { getSignupMasterData } from '../queries/staticQueries';
 
 // Create a Main Component
 class Main extends Component {
+  /*
   componentDidMount() {
     this.props.client.query({ query: getSignupMasterData }).then((response) => {
       console.log('data', response.data);
@@ -90,14 +95,20 @@ class Main extends Component {
       // });
     });
 
-    */
+    
   }
+  */
   render() {
     return (
       <div>
-        {this.props.snackbarData != null && <SnackBar />}
+        {/*this.props.snackbarData != null && <SnackBar />*/}
         {/* Render Different Component based on Route */}
-        <Switch>
+        {/*<Switch>*/}
+        <Route path="/" component={Navbar} />
+        <Route path="/Profile" component={Profile} />
+        <Route path="/AccountInformation" component={AccountInformation} />
+        <Route path="/PostOffer" component={PostOffer} />
+        {/*
           <Route path="/customerLogin" component={CustomerLogin} />
           <Route path="/customerSignup" component={CustomerLogin} />
           <Route path="/restaurantSignup" component={RestaurantLogin} />
@@ -116,8 +127,9 @@ class Main extends Component {
           <Route path="/OrdersList" component={OrdersList} />
           <Route path="/Messages" component={MessageList} />
           <Route path="/CustomerStaticProfile" component={CustomerStaticProfile} />
-          <Route exact path="/" component={Home} />
-        </Switch>
+  */}
+
+        {/*</Switch>*/}
       </div>
     );
   }
@@ -127,32 +139,32 @@ class Main extends Component {
 // export default EventList;
 
 const mapStateToProps = (state) => {
-  const snackbarData = state.snackBarReducer.snackbarData;
+  // const snackbarData = state.snackBarReducer.snackbarData;
   return {
-    snackbarData: snackbarData,
+    // snackbarData: snackbarData,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    updateMasterData: (payload) => {
-      dispatch({
-        type: updateMasterData,
-        payload,
-      });
-    },
-    updateFoodData: (payload) => {
-      dispatch({
-        type: updateFoodData,
-        payload,
-      });
-    },
+    // updateMasterData: (payload) => {
+    //   dispatch({
+    //     type: updateMasterData,
+    //     payload,
+    //   });
+    // },
+    // updateFoodData: (payload) => {
+    //   dispatch({
+    //     type: updateFoodData,
+    //     payload,
+    //   });
+    // },
   };
 };
 
-// export default connect(mapStateToProps, mapDispatchToProps)(Main);
-export default compose(
-  withApollo,
-  graphql(getSignupMasterData, { name: 'getSignupMasterData' }),
-  connect(mapStateToProps, mapDispatchToProps)
-)(Main);
+export default connect(mapStateToProps, mapDispatchToProps)(Main);
+// export default compose(
+//   withApollo,
+//   graphql(getSignupMasterData, { name: 'getSignupMasterData' }),
+//   connect(mapStateToProps, mapDispatchToProps)
+// )(Main);
