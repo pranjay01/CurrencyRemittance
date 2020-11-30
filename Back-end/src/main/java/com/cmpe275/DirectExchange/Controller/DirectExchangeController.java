@@ -1,10 +1,7 @@
 package com.cmpe275.DirectExchange.Controller;
 
-import java.sql.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -52,6 +49,12 @@ public class DirectExchangeController {
 			@PathVariable("id") Long id) {
 		return userService.updateUser(id, nickname, status);
 	}
+	
+	@GetMapping(value="/confirm-account")
+    public String confirmUserAccount(@RequestParam("token")String confirmationToken)
+    {
+       return userService.verifyUser(confirmationToken);
+    }
 	
 	@PostMapping("/account")
 	public Account registerAccount(@RequestParam(value="userId") Long userId,

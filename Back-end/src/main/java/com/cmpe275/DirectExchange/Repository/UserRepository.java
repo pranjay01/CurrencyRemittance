@@ -5,5 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.cmpe275.DirectExchange.Entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
+	
+	User findByUserNameIgnoreCase(String userName);
 
 }

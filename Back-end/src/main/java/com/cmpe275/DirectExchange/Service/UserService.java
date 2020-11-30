@@ -3,28 +3,61 @@ package com.cmpe275.DirectExchange.Service;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
+import com.cmpe275.DirectExchange.Entity.ConfirmationToken;
 import com.cmpe275.DirectExchange.Entity.User;
+import com.cmpe275.DirectExchange.Repository.ConfirmationTokenRepository;
 import com.cmpe275.DirectExchange.Repository.UserRepository;
 
 @Service
 public class UserService {
-	
+
 	@Autowired
 	UserRepository userRepository;
+
+	@Autowired
+	ConfirmationTokenRepository confirmationTokenRepository;
+
+	@Autowired
+	EmailVerificationService emailVerificationService;
 	
+	@Value("${spring.mail.username}")
+	private String email;
+
 	@Transactional
 	public User getUser(Long id) {
 		User user = userRepository.findById(id).orElse(null);
 		//add code to handle null
 		return user;
 	}
-	
+
 	@Transactional
 	public User addUser(String userName, String nickname, String password, String status) {
 		User user = new User(userName, nickname, password, status);
-		return userRepository.save(user);
+		userRepository.save(user);
+
+		
+		ConfirmationToken confirmationToken = new ConfirmationToken(user);
+		confirmationTokenRepository.save(confirmationToken);
+		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		mailMessage.setTo(user.getUserName());
+		mailMessage.setSubject("Complete Registration!");
+		mailMessage.setFrom(email);
+		mailMessage.setText("To confirm your account, please click here : "
+				+"http://localhost:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
+
+		try {
+			emailVerificationService.sendEmail(mailMessage);
+		} catch (Exception exception) {
+			
+		}
+		
+
+		return user;
+
 	}
 
 	@Transactional
@@ -37,5 +70,19 @@ public class UserService {
 				user.setStatus(status);
 		}
 		return userRepository.save(user);
+	}
+
+	public String verifyUser(String confirmationToken) {
+		ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
+
+		if(token != null)
+		{
+			User user = userRepository.findByUserNameIgnoreCase(token.getUser().getUserName());
+			user.setStatus("Verified");
+			userRepository.save(user);
+			
+		}
+
+		return "User verified";
 	}
 }
