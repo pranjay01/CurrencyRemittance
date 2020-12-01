@@ -9,6 +9,7 @@ import OfferList from './OfferSearches/OfferList';
 import OfferDetailPage from './OfferSearches/OfferDetailPage';
 import TransactionHistory from './OfferSearches/TransactionHistory';
 import MyOffers from './MyOffers/MyOffers';
+import ExchangeRate from './ExchangeRate/ConversionRate';
 import axios from 'axios';
 import serverUrl from '../config';
 import { updateConversionRates, UpdateUserProfile } from '../constants/action-types';
@@ -138,6 +139,7 @@ class Main extends Component {
         <Route path="/OfferDetailPage" component={OfferDetailPage} />
         <Route path="/TransactionHistory" component={TransactionHistory} />
         <Route path="/MyOffers" component={MyOffers} />
+        <Route path="/ExchangeRate" component={ExchangeRate} />
         {/*
           <Route path="/customerLogin" component={CustomerLogin} />
           <Route path="/customerSignup" component={CustomerLogin} />
