@@ -4,9 +4,12 @@ import java.sql.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -22,8 +25,9 @@ public class Offer {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	Long offerId;
 	
-	@Column(name="UserID")
-	Long userId;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "UserID")
+	User user;
 	
 	@Column(name="SourceCountry")
 	String sourceCountry;
@@ -39,6 +43,9 @@ public class Offer {
 	
 	@Column(name="DestinationCurrency")
 	String destinationCurrency;
+	
+	@Column(name="DestinationAmount")
+	Double destinationAmount;
 	
 	@Column(name="ExchangeRate")
 	Double exchangeRate;
@@ -68,11 +75,11 @@ public class Offer {
 		super();
 	}
 
-	public Offer(Long userId, String sourceCountry, String sourceCurrency, Double sourceAmount,
+	public Offer(User user, String sourceCountry, String sourceCurrency, Double sourceAmount,
 			String destinationCountry, String destinationCurrency, Double exchangeRate, Date expirationDate,
 			Integer allowCounterOffers, Integer splitExchange, String offerStatus) {
 		super();
-		this.userId = userId;
+		this.user = user;
 		this.sourceCountry = sourceCountry;
 		this.sourceCurrency = sourceCurrency;
 		this.sourceAmount = sourceAmount;
@@ -84,6 +91,7 @@ public class Offer {
 		this.splitExchange = splitExchange;
 		this.offerStatus = offerStatus;
 		updateLimits(sourceAmount);
+		updateDestinationAmount(sourceAmount, exchangeRate);
 	}
 
 	public Long getOfferId() {
@@ -94,12 +102,12 @@ public class Offer {
 		this.offerId = offerId;
 	}
 
-	public Long getUserId() {
-		return userId;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
+	public void setUserId(User user) {
+		this.user = user;
 	}
 
 	public String getSourceCountry() {
@@ -125,6 +133,7 @@ public class Offer {
 	public void setSourceAmount(Double sourceAmount) {
 		this.sourceAmount = sourceAmount;
 		updateLimits(sourceAmount);
+		updateDestinationAmount(sourceAmount, exchangeRate);
 	}
 
 	public String getDestinationCountry() {
@@ -149,6 +158,7 @@ public class Offer {
 
 	public void setExchangeRate(Double exchangeRate) {
 		this.exchangeRate = exchangeRate;
+		updateDestinationAmount(sourceAmount, exchangeRate);
 	}
 
 	public Date getExpirationDate() {
@@ -207,10 +217,26 @@ public class Offer {
 		this.maxAmount = maxAmount;
 	}
 	
+	public Double getDestinationAmount() {
+		return destinationAmount;
+	}
+
+	public void setDestinationAmount(Double destinationAmount) {
+		this.destinationAmount = destinationAmount;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
 	private void updateLimits(Double amount) {
 		this.serviceFee = ((0.05/100)*amount);
 		this.minAmount = (amount - ((10.0/100.0)*amount));
 		this.maxAmount = (amount + ((10.0/100.0)*amount));
+	}
+	
+	private void updateDestinationAmount(Double amount, Double exchangeRate) {
+		this.destinationAmount = (amount*exchangeRate);
 	}
 
 }

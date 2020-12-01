@@ -63,6 +63,11 @@ public class DirectExchangeController {
        return userService.verifyUser(confirmationToken);
     }
 	
+	@GetMapping("/user/{id}/offers")
+	public List<Offer> getMyOffers(@PathVariable("id") Long id){
+		return offerService.getMyOffers(id);
+	}
+	
 	@PostMapping("/account")
 	public Account registerAccount(@RequestParam(value="userId") Long userId,
 			@RequestParam(value="bankName") String bankName,
@@ -93,12 +98,17 @@ public class DirectExchangeController {
 				destinationCountry, destinationCurrency, exchangeRate, expirationDate, allowCounterOffers, splitExchange);
 	}
 	
+	@GetMapping("/searchOffers")
+	public List<Offer> searchOffers(@RequestParam(value="sourceCurrency", required = false) String sourceCurrency,
+			@RequestParam(value="sourceAmount", required = false) Double sourceAmount,
+			@RequestParam(value="destinationCurrency", required = false) String destinationCurrency,
+			@RequestParam(value="destinationAmount", required = false) Double destinationAmount){
+		return offerService.searchOffers(sourceCurrency, sourceAmount, destinationCurrency, destinationAmount);
+	}
+	
 	//modify offer - which parameters can be modified?
 	
-	@GetMapping("/user/{id}/offers")
-	public List<Offer> getMyOffers(@PathVariable("id") Long id){
-		return offerService.getMyOffers(id);
-	}
+	
 
 	@GetMapping("/getConversionRate")
 	public List<ExchangeRate> gExchangeRate() {

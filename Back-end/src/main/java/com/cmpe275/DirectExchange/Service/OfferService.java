@@ -12,13 +12,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cmpe275.DirectExchange.Entity.Offer;
+import com.cmpe275.DirectExchange.Entity.User;
 import com.cmpe275.DirectExchange.Repository.OfferRepository;
+import com.cmpe275.DirectExchange.Repository.UserRepository;
 
 @Service
 public class OfferService {
 	
 	@Autowired
 	OfferRepository offerRepository;
+	
+	@Autowired
+	UserRepository userRepository;
 	
 	private final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -27,7 +32,8 @@ public class OfferService {
 			String destinationCountry, String destinationCurrency, Double exchangeRate, String expirationDate,
 			Integer allowCounterOffers, Integer splitExchange) {
 		
-		Offer offer = new Offer(userId, sourceCountry, sourceCurrency, sourceAmount, destinationCountry, 
+		User user = userRepository.findById(userId).orElse(null);
+		Offer offer = new Offer(user, sourceCountry, sourceCurrency, sourceAmount, destinationCountry, 
 				destinationCurrency, exchangeRate, parseDate(expirationDate), allowCounterOffers, splitExchange, "open");
 		return offerRepository.save(offer);
 	}
@@ -42,10 +48,21 @@ public class OfferService {
 	
 	public List<Offer> getMyOffers(Long userId) {
 		List<Offer> myOffers = new ArrayList<Offer>();
-		myOffers.addAll(offerRepository.findByUserIdAndOfferStatus(userId, "open"));
-		myOffers.addAll(offerRepository.findByUserIdAndOfferStatusNot(userId, "open"));
+		
+		User user = userRepository.findById(userId).orElse(null);
+		myOffers.addAll(offerRepository.findByUserAndOfferStatus(user, "open"));
+		myOffers.addAll(offerRepository.findByUserAndOfferStatusNot(user, "open"));
 		
 		return myOffers;
+	}
+	
+	public List<Offer> searchOffers(String sourceCurrency, Double sourceAmount, String destinationCurrency, Double destinationAmount) {
+		List<Offer> offers = new ArrayList<Offer>();
+		
+		offers.addAll(offerRepository.findBySourceCurrencyAndSourceAmountAndDestinationCurrencyAndDestinationAmountAndOfferStatus(
+				sourceCurrency, sourceAmount, destinationCurrency, destinationAmount, "open"));
+		
+		return offers;
 	}
 
 }
