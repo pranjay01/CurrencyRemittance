@@ -24,22 +24,22 @@ import com.cmpe275.DirectExchange.Service.UserService;
 @CrossOrigin(allowCredentials = "true",origins = "http://localhost:3000",allowedHeaders = "*",  methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT}) 
 @RestController
 public class DirectExchangeController {
-	
+
 	@Autowired
 	UserService userService;
-	
+
 	@Autowired
 	AccountService accountService;
-	
+
 	@Autowired
 	OfferService offerService;
 
 	@Autowired
 	ExchangeRateService exchangeRateService;
-	
+
 	@Autowired
 	TransactionService transactionService;
-	
+
 	@GetMapping("/")
 	public String sayHello() {
 		return "Hello from DirectExchange";
@@ -50,14 +50,14 @@ public class DirectExchangeController {
 	public User getUser(@PathVariable("id") Long id) {
 		return userService.getUser(id);
 	}
-	
+
 	@PostMapping("/user")
 	public User signUp(@RequestParam(value="userName") String userName,
 			@RequestParam(value="nickname") String nickname,
 			@RequestParam(value = "password", required = false) String password) {
 		return userService.addUser(userName, nickname, password, "Pending");
 	}
-	
+
 	// merged
 	@PostMapping("/user/{id}")
 	public User updateUser(@RequestParam(value="nickname", required = false) String nickname,
@@ -65,19 +65,19 @@ public class DirectExchangeController {
 			@PathVariable("id") Long id) {
 		return userService.updateUser(id, nickname, password);
 	}
-		
+
 	@GetMapping(value="/confirm-account")
-    public String confirmUserAccount(@RequestParam("token")String confirmationToken)
+	public String confirmUserAccount(@RequestParam("token")String confirmationToken)
 	{
 		return userService.verifyUser(confirmationToken);
 	}
-	
+
 	// merged
 	@GetMapping("/user/{id}/offers")
 	public List<Offer> getMyOffers(@PathVariable("id") Long id) {
 		return offerService.getMyOffers(id);
 	}
-	
+
 	// merged
 	@PostMapping("/account")
 	public Account registerAccount(@RequestParam(value="userId") Long userId,
@@ -92,7 +92,7 @@ public class DirectExchangeController {
 		return accountService.registerAccount(userId, bankName, country, accountNumber, owner, address, primaryCurrency,
 				accountType);
 	}
-	
+
 	// merged
 	@PostMapping("/offer")
 	public Offer postOffer(@RequestParam(value="userId") Long userId,
@@ -105,11 +105,11 @@ public class DirectExchangeController {
 			@RequestParam(value="expirationDate") String expirationDate, //2020-11-28
 			@RequestParam(value="allowCounterOffers") Integer allowCounterOffers,
 			@RequestParam(value="splitExchange") Integer splitExchange) {
-		
+
 		return offerService.createOffer(userId, sourceCountry, sourceCurrency, sourceAmount, 
 				destinationCountry, destinationCurrency, exchangeRate, expirationDate, allowCounterOffers, splitExchange);
 	}
-	
+
 	// merged
 	@GetMapping("/searchOffers")
 	public List<Offer> searchOffers(@RequestParam(value="sourceCurrency", required = false) String sourceCurrency,
@@ -118,24 +118,24 @@ public class DirectExchangeController {
 			@RequestParam(value="destinationAmount", required = false) Double destinationAmount){
 		return offerService.searchOffers(sourceCurrency, sourceAmount, destinationCurrency, destinationAmount);
 	}
-	
+
 	@GetMapping("/offer/{id}")
 	public Offer getOfferDetails(@PathVariable("id") Long offerId) {
 		return offerService.getOfferDetails(offerId);
 	}
-	
+
 	@PostMapping("/acceptOffer")
 	public String acceptOffer(@RequestParam(value="offerId1") Long offerId1,
 			@RequestParam(value="offerId2") Long offerId2,
 			@RequestParam(value="offerId3", required = false) Long offerId3) {
 		return transactionService.acceptOffer(offerId1, offerId2, offerId3);
 	}
-	
+
 	@PostMapping("/offer/{id}/sendMoney")
 	public String sendMoney(@PathVariable("id") Long offerId) {
 		return transactionService.sendMoney(offerId);
 	}
-	
+
 	//modify offer - which parameters can be modified?
 
 	// merged
@@ -146,15 +146,15 @@ public class DirectExchangeController {
 
 	@PostMapping("/insertExchangeRate")
 	public Long insertExchangeRate(@RequestParam(value="currencyType") String currencyType,
-	@RequestParam(value="country") String country,
- 	@RequestParam(value="usdConversionRate") double usdConversionRate) {
+			@RequestParam(value="country") String country,
+			@RequestParam(value="usdConversionRate") double usdConversionRate) {
 		return exchangeRateService.addexchangeRate(currencyType, country, usdConversionRate);
 	}
 
 	@PostMapping("/sendOffer")
 	public String sendOffer(@RequestParam(value="senderId") Long senderId,
-	@RequestParam(value="receiverId") Long receiverId,
- 	@RequestParam(value="mailText") String mailText) {
+			@RequestParam(value="receiverId") Long receiverId,
+			@RequestParam(value="mailText") String mailText) {
 		return userService.sendEmail(senderId, receiverId, mailText);
 	}
 
