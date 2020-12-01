@@ -1,18 +1,102 @@
 import React, { Component } from 'react';
 import ReactPaginate from 'react-paginate';
 import OfferCard from './OfferCard';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import './Offerist.css';
+import { connect } from 'react-redux';
+import { getOfferLists, updateFocusOffer } from '../../constants/action-types';
+import axios from 'axios';
+import serverUrl from '../../config';
 
 class OfferList extends Component {
   constructor(props) {
     super(props);
-    this.state = { Offers: [1, 1, 1, 1, 1, 1, 1, 1, 1], Countries: [] };
+    this.state = {
+      sourceCurrency: '',
+      sourceAmount: '',
+      destinationCurrency: '',
+      destinationAmount: '',
+      openDetailPage: false,
+    };
   }
+
+  componentDidMount() {
+    axios
+      .get(serverUrl + 'searchOffers', {
+        params: {
+          sourceCurrency: this.state.sourceCurrency ? this.state.sourceCurrency : null,
+          sourceAmount: this.state.sourceAmount ? parseFloat(this.state.sourceAmount) : null,
+          destinationCurrency: this.state.destinationCurrency
+            ? this.state.destinationCurrency
+            : null,
+          destinationAmount: this.state.destinationAmount
+            ? parseFloat(this.state.destinationAmount)
+            : null,
+        },
+        withCredentials: true,
+      })
+      .then((response) => {
+        console.log(response.data);
+        const offerLists = response.data;
+        const payload = {
+          offerLists,
+        };
+        this.props.getOfferLists(payload);
+      });
+  }
+
+  onCOmmonChangeHandler = (e) => {
+    this.setState({
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  getOffers = (event) => {
+    event.preventDefault();
+    axios
+      .get(serverUrl + 'searchOffers', {
+        params: {
+          sourceCurrency: this.state.sourceCurrency ? this.state.sourceCurrency : null,
+          sourceAmount: this.state.sourceAmount ? parseFloat(this.state.sourceAmount) : null,
+          destinationCurrency: this.state.destinationCurrency
+            ? this.state.destinationCurrency
+            : null,
+          destinationAmount: this.state.destinationAmount
+            ? parseFloat(this.state.destinationAmount)
+            : null,
+        },
+        withCredentials: true,
+      })
+      .then((response) => {
+        console.log(response.data);
+        const offerLists = response.data;
+        const payload = {
+          offerLists,
+        };
+        this.props.getOfferLists(payload);
+      });
+  };
+
+  openDetailsPage = (event, Offer) => {
+    event.preventDefault();
+    localStorage.setItem('OpenOffer', Offer.offerId);
+    const payload = {
+      Offer,
+    };
+    this.props.updateFocusOffer(payload);
+    this.setState({
+      openDetailPage: true,
+    });
+  };
+
   render() {
+    let redirectVar = null;
+    if (this.state.openDetailPage) {
+      redirectVar = <Redirect to="OfferDetailPage" />;
+    }
     return (
       <div className="lemon--div__06b83__1mboc responsive responsive-biz border-color--default__06b83__3-ifU">
-        {/*redirectVar*/}
+        {redirectVar}
         <div
           style={{ marginBottom: '40px' }}
           className="lemon--div__06b83__1mboc component__06b83__mFK-M border-color--default__06b83__3-ifU"
@@ -36,7 +120,7 @@ class OfferList extends Component {
 
                               justifyContent: 'center',
                             }}
-                            onSubmit={this.onSubmitUpdateProfile}
+                            onSubmit={this.getOffers}
                             className="yform signup-form  city-hidden"
                             id="signup-form"
                           >
@@ -47,102 +131,83 @@ class OfferList extends Component {
                             >
                               <ul style={{ display: 'flex' }}>
                                 <li style={{ width: '100%', flex: 'auto' }}>
-                                  <label className="placeholder-sub">Source Country</label>
+                                  <label className="placeholder-sub">Source Currency</label>
                                   <select
                                     placeholder="Gender"
                                     className="form-control"
-                                    name="sourceCountry"
+                                    name="sourceCurrency"
                                     onChange={this.onCOmmonChangeHandler}
-                                    value="{this.state.NewOffer.sourceCountry}"
-                                    required
+                                    value={this.state.sourceCurrency}
                                   >
                                     <option className="Dropdown-menu" key="" value="">
                                       Country
                                     </option>
-                                    {this.state.Countries.map((country) => (
-                                      <option
-                                        className="Dropdown-menu"
-                                        key={country.key}
-                                        value={country.value}
-                                      >
-                                        {country.value}
-                                      </option>
-                                    ))}
+                                    {this.props.ConversionRateStore.conversionRates.map(
+                                      (currency) => (
+                                        <option
+                                          className="Dropdown-menu"
+                                          key={currency.country}
+                                          value={currency.currencyType}
+                                        >
+                                          {currency.currencyType}
+                                        </option>
+                                      )
+                                    )}
                                   </select>
                                 </li>
 
                                 <li style={{ width: '100%', flex: 'auto', marginLeft: '2%' }}>
-                                  <label className="placeholder-sub">Source Country</label>
-                                  <select
-                                    placeholder="Gender"
-                                    className="form-control"
-                                    name="sourceCountry"
+                                  <label className="placeholder-sub">Source Amount</label>
+                                  <input
+                                    style={{ marginLeft: '0%', height: '35px', width: '225px' }}
+                                    id="first_name"
+                                    name="sourceAmount"
+                                    placeholder="Destination Currency"
+                                    type="number"
                                     onChange={this.onCOmmonChangeHandler}
-                                    value="{this.state.NewOffer.sourceCountry}"
-                                    required
-                                  >
-                                    <option className="Dropdown-menu" key="" value="">
-                                      Country
-                                    </option>
-                                    {this.state.Countries.map((country) => (
-                                      <option
-                                        className="Dropdown-menu"
-                                        key={country.key}
-                                        value={country.value}
-                                      >
-                                        {country.value}
-                                      </option>
-                                    ))}
-                                  </select>
+                                    value={this.state.sourceAmount}
+                                  />
                                 </li>
+
                                 <li style={{ width: '100%', flex: 'auto', marginLeft: '2%' }}>
-                                  <label className="placeholder-sub">Source Country</label>
+                                  <label className="placeholder-sub">Destinatoin Currency</label>
                                   <select
                                     placeholder="Gender"
                                     className="form-control"
-                                    name="sourceCountry"
+                                    name="destinationCurrency"
                                     onChange={this.onCOmmonChangeHandler}
-                                    value="{this.state.NewOffer.sourceCountry}"
-                                    required
+                                    value={this.state.destinationCurrency}
                                   >
                                     <option className="Dropdown-menu" key="" value="">
                                       Country
                                     </option>
-                                    {this.state.Countries.map((country) => (
-                                      <option
-                                        className="Dropdown-menu"
-                                        key={country.key}
-                                        value={country.value}
-                                      >
-                                        {country.value}
-                                      </option>
-                                    ))}
+                                    {this.props.ConversionRateStore.conversionRates.map(
+                                      (currency) => (
+                                        <option
+                                          className="Dropdown-menu"
+                                          key={currency.country}
+                                          value={currency.currencyType}
+                                        >
+                                          {currency.currencyType}
+                                        </option>
+                                      )
+                                    )}
                                   </select>
                                 </li>
+
                                 <li style={{ width: '100%', flex: 'auto', marginLeft: '2%' }}>
-                                  <label className="placeholder-sub">Source Country</label>
-                                  <select
-                                    placeholder="Gender"
-                                    className="form-control"
-                                    name="sourceCountry"
+                                  <label className="placeholder-sub">Destination Ammount</label>
+                                  <input
+                                    style={{ marginLeft: '0%', height: '35px', width: '225px' }}
+                                    id="first_name"
+                                    name="destinationAmount"
+                                    placeholder="Destination Currency"
+                                    type="number"
                                     onChange={this.onCOmmonChangeHandler}
-                                    value="{this.state.NewOffer.sourceCountry}"
-                                    required
-                                  >
-                                    <option className="Dropdown-menu" key="" value="">
-                                      Country
-                                    </option>
-                                    {this.state.Countries.map((country) => (
-                                      <option
-                                        className="Dropdown-menu"
-                                        key={country.key}
-                                        value={country.value}
-                                      >
-                                        {country.value}
-                                      </option>
-                                    ))}
-                                  </select>
+                                    value={this.state.destinationAmount}
+                                  />
                                 </li>
+
                                 <li style={{ width: '100%', flex: 'auto', marginLeft: '2%' }}>
                                   <button
                                     style={{
@@ -194,12 +259,10 @@ class OfferList extends Component {
               >
                 <div>
                   <ul className="lemon--ul__373c0__1_cxs undefined list__373c0__2G8oH">
-                    {this.state.Offers.map((offer) => (
+                    {this.props.OfferListStore.offerLists.map((offer) => (
                       <OfferCard
                         key={offer._id}
-                        // openStaticProfile={(event) =>
-                        //   this.openStaticProfile(event, review.CustomerID)
-                        // }
+                        openDetailsPage={(event) => this.openDetailsPage(event, offer)}
                         offer={offer}
 
                         //   }
@@ -231,4 +294,31 @@ class OfferList extends Component {
   }
 }
 
-export default OfferList;
+// export default OfferList;
+const mapStateToProps = (state) => {
+  const { ConversionRateStore } = state.ConversionRateReducer;
+  const { OfferListStore } = state.OfferListReducer;
+  return {
+    ConversionRateStore,
+    OfferListStore,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getOfferLists: (payload) => {
+      dispatch({
+        type: getOfferLists,
+        payload,
+      });
+    },
+    updateFocusOffer: (payload) => {
+      dispatch({
+        type: updateFocusOffer,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(OfferList);

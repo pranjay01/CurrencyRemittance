@@ -3,12 +3,40 @@ import ReactPaginate from 'react-paginate';
 import { Link } from 'react-router-dom';
 import '../OfferSearches/Offerist.css';
 import MyOfferCard from './MyOfferCard';
+import { connect } from 'react-redux';
+import { getOfferLists } from '../../constants/action-types';
+import axios from 'axios';
+import serverUrl from '../../config';
 
 class MyOffers extends Component {
   constructor(props) {
     super(props);
-    this.state = { Offers: [1, 1, 1, 1, 1, 1, 1, 1, 1], Countries: [] };
+    this.state = {};
   }
+
+  componentDidMount() {
+    axios
+      .get(serverUrl + 'user/' + localStorage.getItem('userId') + '/offers', {
+        params: {
+          sourceCurrency: this.state.sourceCurrency,
+          sourceAmount: this.state.sourceAmount ? parseFloat(this.state.sourceAmount) : '',
+          destinationCurrency: this.state.destinationCurrency,
+          destinationAmount: this.state.destinationAmount
+            ? parseFloat(this.state.destinationAmount)
+            : '',
+        },
+        withCredentials: true,
+      })
+      .then((response) => {
+        console.log(response.data);
+        const offerLists = response.data;
+        const payload = {
+          offerLists,
+        };
+        this.props.getOfferLists(payload);
+      });
+  }
+
   render() {
     return (
       <div className="lemon--div__06b83__1mboc responsive responsive-biz border-color--default__06b83__3-ifU">
@@ -23,7 +51,7 @@ class MyOffers extends Component {
               >
                 <div>
                   <ul className="lemon--ul__373c0__1_cxs undefined list__373c0__2G8oH">
-                    {this.state.Offers.map((offer) => (
+                    {this.props.OfferListStore.offerLists.map((offer) => (
                       <MyOfferCard
                         key={offer._id}
                         // openStaticProfile={(event) =>
@@ -60,4 +88,23 @@ class MyOffers extends Component {
   }
 }
 
-export default MyOffers;
+// export default MyOffers;
+const mapStateToProps = (state) => {
+  const { OfferListStore } = state.OfferListReducer;
+  return {
+    OfferListStore,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getOfferLists: (payload) => {
+      dispatch({
+        type: getOfferLists,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(MyOffers);

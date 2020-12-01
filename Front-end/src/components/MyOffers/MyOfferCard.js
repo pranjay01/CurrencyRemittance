@@ -43,18 +43,18 @@ class MyOfferCard extends Component {
                   className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU"
                 >
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    Offer Status{' '}
+                    <strong> Offer Status </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.Nickname}
+                    {offer.offerStatus}
                   </span>
                 </div>
                 <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    Transaction Amount :{' '}
+                    <strong> Transaction Amount </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    Amount
+                    {offer.sourceAmount}
                   </span>
                 </div>
               </div>
@@ -66,18 +66,18 @@ class MyOfferCard extends Component {
                   className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU"
                 >
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    Source Country :{' '}
+                    <strong> Source Country </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.sourceCountry}country
+                    {offer.sourceCountry}
                   </span>
                 </div>
                 <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    Source Currency :{' '}
+                    <strong> Source Currency </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.sourceCurrency}Currency
+                    {offer.sourceCurrency}
                   </span>
                 </div>
               </div>
@@ -89,7 +89,7 @@ class MyOfferCard extends Component {
                   className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU"
                 >
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    Destination Country{' '}
+                    <strong> Destination Country </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
                     {offer.destinationCountry}
@@ -97,7 +97,7 @@ class MyOfferCard extends Component {
                 </div>
                 <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    Destination Currency{' '}
+                    <strong> Destination Currency </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
                     {offer.destinationCurrency}
@@ -112,18 +112,18 @@ class MyOfferCard extends Component {
                   className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU"
                 >
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    Accepting CounterOffers :{' '}
+                    <strong>Accepting CounterOffers </strong> :{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.allowCounterOffers}counter offers
+                    {offer.allowCounterOffers === 1 ? 'Accepting' : 'Not Accepting'}
                   </span>
                 </div>
                 <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    Accepting Spilt Offers :{' '}
+                    <strong> Accepting Spilt Offers </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.splitExchange}spit offer
+                    {offer.splitExchange === 1 ? 'Accepting' : 'Not Accepting'}
                   </span>
                 </div>
               </div>
@@ -135,7 +135,7 @@ class MyOfferCard extends Component {
                   className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU"
                 >
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    Asked Exchange Rate :{' '}
+                    <strong> Asked Exchange Rate </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
                     {offer.exchangeRate}
@@ -143,7 +143,7 @@ class MyOfferCard extends Component {
                 </div>
                 <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    Offer Expiring on :{' '}
+                    <strong> Offer Expiring on </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
                     {offer.expirationDate}
