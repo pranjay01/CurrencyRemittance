@@ -1,11 +1,38 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 class OfferDetailPage extends Component {
   constructor(props) {
     super(props);
     this.state = { offerDetail: {} };
   }
+
+  componentDidMount() {
+    // axios
+    //   .get(serverUrl + 'searchOffers', {
+    //     params: {
+    //       sourceCurrency: this.state.sourceCurrency ? this.state.sourceCurrency : null,
+    //       sourceAmount: this.state.sourceAmount ? parseFloat(this.state.sourceAmount) : null,
+    //       destinationCurrency: this.state.destinationCurrency
+    //         ? this.state.destinationCurrency
+    //         : null,
+    //       destinationAmount: this.state.destinationAmount
+    //         ? parseFloat(this.state.destinationAmount)
+    //         : null,
+    //     },
+    //     withCredentials: true,
+    //   })
+    //   .then((response) => {
+    //     console.log(response.data);
+    //     const offerLists = response.data;
+    //     const payload = {
+    //       offerLists,
+    //     };
+    //     this.props.getOfferLists(payload);
+    //   });
+  }
+
   render() {
     let rating = { backgroundPosition: '0 -320px' };
     switch (2) {
@@ -51,7 +78,7 @@ class OfferDetailPage extends Component {
             <div className="column column-beta ">
               <div className="user-details-overview">
                 <div className="user-details-overview_sidebar">
-                  <h3>User Name{this.state.offerDetail.NickName}</h3>
+                  <h3>{this.props.onFocusOfferStore.Offer.user.userName}</h3>
 
                   <br />
 
@@ -77,42 +104,53 @@ class OfferDetailPage extends Component {
                         </Link>
                       </li>
                       <li>
+                        <h4>Name: {this.props.onFocusOfferStore.Offer.user.nickname}</h4>
+                      </li>
+                      <li>
                         <h4>Amount ot transfer</h4>
 
-                        <p>
-                          {this.state.offerDetail.City + ', ' + this.state.offerDetail.StateName}
-                        </p>
+                        <p>{this.props.onFocusOfferStore.Offer.sourceAmount}</p>
                       </li>
 
                       <li>
                         <h4>Source Country & Currency</h4>
 
                         <p>
-                          {this.state.offerDetail.City + ', ' + this.state.offerDetail.StateName}
+                          {this.props.onFocusOfferStore.Offer.sourceCountry +
+                            ', ' +
+                            this.props.onFocusOfferStore.Offer.sourceCurrency}
                         </p>
                       </li>
 
                       <li>
                         <h4>Destination Country & Currency</h4>
-                        <p>{this.state.offerDetail.DOB}</p>
+                        {this.props.onFocusOfferStore.Offer.destinationCountry +
+                          ', ' +
+                          this.props.onFocusOfferStore.Offer.destinationCurrency}
                       </li>
 
                       <li>
                         <h4>Accepting Counter Offers</h4>
-                        <p>{this.state.offerDetail.JoinDate}</p>
+                        <p>
+                          {this.props.onFocusOfferStore.Offer.allowCounterOffers === 1
+                            ? 'YES'
+                            : 'NO'}
+                        </p>
                       </li>
 
                       <li>
                         <h4>Accepting Split offers</h4>
-                        <p>{this.state.offerDetail.ILove}</p>
+                        <p>
+                          {this.props.onFocusOfferStore.Offer.splitExchange === 1 ? 'YES' : 'NO'}
+                        </p>
                       </li>
 
                       <li>
                         <h4>Offer Expiring Date</h4>
 
-                        <p>{this.state.offerDetail.FindMeIn}</p>
+                        <p>{this.props.onFocusOfferStore.Offer.expirationDate}</p>
                       </li>
-                      <li>
+                      {/*<li>
                         <button
                           style={{
                             color: 'white',
@@ -139,6 +177,7 @@ class OfferDetailPage extends Component {
                           </div>
                         </button>
                       </li>
+                    */}
                     </ul>
                   </div>
                 </div>
@@ -151,4 +190,29 @@ class OfferDetailPage extends Component {
   }
 }
 
-export default OfferDetailPage;
+// export default OfferDetailPage;
+const mapStateToProps = (state) => {
+  const { onFocusOfferStore } = state.OfferListReducer;
+  return {
+    onFocusOfferStore,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    // getOfferLists: (payload) => {
+    //   dispatch({
+    //     type: getOfferLists,
+    //     payload,
+    //   });
+    // },
+    // updateFocusOffer: (payload) => {
+    //   dispatch({
+    //     type: updateFocusOffer,
+    //     payload,
+    //   });
+    // },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(OfferDetailPage);

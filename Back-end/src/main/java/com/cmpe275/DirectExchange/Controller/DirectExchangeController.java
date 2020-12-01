@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,7 +21,7 @@ import com.cmpe275.DirectExchange.Service.OfferService;
 import com.cmpe275.DirectExchange.Service.TransactionService;
 import com.cmpe275.DirectExchange.Service.UserService;
 
-@CrossOrigin
+@CrossOrigin(allowCredentials = "true",origins = "http://localhost:3000",allowedHeaders = "*",  methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT}) 
 @RestController
 public class DirectExchangeController {
 	
@@ -67,10 +68,11 @@ public class DirectExchangeController {
 		
 	@GetMapping(value="/confirm-account")
     public String confirmUserAccount(@RequestParam("token")String confirmationToken)
-    {
-       return userService.verifyUser(confirmationToken);
-    }
+	{
+		return userService.verifyUser(confirmationToken);
+	}
 	
+	// merged
 	@GetMapping("/user/{id}/offers")
 	public List<Offer> getMyOffers(@PathVariable("id") Long id) {
 		return offerService.getMyOffers(id);
@@ -108,6 +110,7 @@ public class DirectExchangeController {
 				destinationCountry, destinationCurrency, exchangeRate, expirationDate, allowCounterOffers, splitExchange);
 	}
 	
+	// merged
 	@GetMapping("/searchOffers")
 	public List<Offer> searchOffers(@RequestParam(value="sourceCurrency", required = false) String sourceCurrency,
 			@RequestParam(value="sourceAmount", required = false) Double sourceAmount,
@@ -135,6 +138,7 @@ public class DirectExchangeController {
 	
 	//modify offer - which parameters can be modified?
 
+	// merged
 	@GetMapping("/getConversionRate")
 	public List<ExchangeRate> gExchangeRate() {
 		return exchangeRateService.getExchangeRate();
