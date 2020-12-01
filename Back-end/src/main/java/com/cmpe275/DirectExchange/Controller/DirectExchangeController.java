@@ -1,6 +1,7 @@
 package com.cmpe275.DirectExchange.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,9 +17,9 @@ import com.cmpe275.DirectExchange.Entity.User;
 import com.cmpe275.DirectExchange.Service.AccountService;
 import com.cmpe275.DirectExchange.Service.ExchangeRateService;
 import com.cmpe275.DirectExchange.Service.OfferService;
-import com.cmpe275.DirectExchange.Service.TransactionService;
 import com.cmpe275.DirectExchange.Service.UserService;
 
+@CrossOrigin
 @RestController
 public class DirectExchangeController {
 	
@@ -34,13 +35,12 @@ public class DirectExchangeController {
 	@Autowired
 	ExchangeRateService exchangeRateService;
 	
-	@Autowired
-	TransactionService transactionService;
 	
 	@GetMapping("/")
 	public String sayHello() {
 		return "Hello from DirectExchange";
 	}
+
 	
 	@GetMapping("/user/{id}")
 	public User getUser(@PathVariable("id") Long id) {
@@ -81,7 +81,7 @@ public class DirectExchangeController {
 			@RequestParam(value="address") String address,
 			@RequestParam(value="primaryCurrency") String primaryCurrency,
 			@RequestParam(value="accountType") String accountType) {
-		
+		System.out.println("sss"+userId);
 		return accountService.registerAccount(userId, bankName, country, accountNumber, 
 				owner, address, primaryCurrency, accountType);
 	}
@@ -112,17 +112,7 @@ public class DirectExchangeController {
 	
 	//modify offer - which parameters can be modified?
 	
-	@PostMapping("/acceptOffer")
-	public String acceptOffer(@RequestParam(value="offerId1") Long offerId1,
-			@RequestParam(value="offerId2") Long offerId2,
-			@RequestParam(value="offerId3", required = false) Long offerId3) {
-		return transactionService.acceptOffer(offerId1, offerId2, offerId3);
-	}
 	
-	@PostMapping("/offer/{id}/sendMoney")
-	public String sendMoney(@PathVariable("id") Long offerId) {
-		return transactionService.sendMoney(offerId);
-	}
 
 	@GetMapping("/getConversionRate")
 	public List<ExchangeRate> gExchangeRate() {

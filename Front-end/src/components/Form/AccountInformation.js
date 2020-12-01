@@ -39,6 +39,17 @@ class AccountInformation extends Component {
           Account: { ...this.state.Account, [e.target.name]: e.target.value },
         });
       }
+    } else if (e.target.value && e.target.name === 'country') {
+      const index = this.props.ConversionRateStore.conversionRates.findIndex(
+        (x) => x.country === e.target.value
+      );
+      this.setState({
+        Account: {
+          ...this.state.Account,
+          [e.target.name]: this.props.ConversionRateStore.conversionRates[index].country,
+          primaryCurrency: this.props.ConversionRateStore.conversionRates[index].currencyType,
+        },
+      });
     } else {
       this.setState({
         Account: { ...this.state.Account, [e.target.name]: e.target.value },
@@ -57,97 +68,61 @@ class AccountInformation extends Component {
         submitError: false,
       });
     } else {
-      let orignalData = this.state.tmpEditProfile;
-
-      let payload = {
-        ...orignalData,
-      };
-      this.props.updateHomeProfile(payload);
-
       this.setState({
         tmpEditProfile: null,
         isFormDisable: !this.state.isFormDisable,
-
+        Account: {
+          bankName: '',
+          country: '',
+          accountNumber: '',
+          owner: '',
+          address: '',
+          primaryCurrency: '',
+          accountType: '',
+        },
         submitError: false,
       });
     }
   };
 
-  /*
-  onSubmitUpdateProfile = (e) => {
-    e.preventDefault();
-    const validateCheck = this.ValidityUpdateProfile();
-    if (validateCheck === 'Correct') {
-      //prevent page from refresh
-
-      const data = {
-        ...this.state.Account,
-        RestaurantID: localStorage.getItem('userId'),
-      };
-      //set the with credentials to true
-      axios.defaults.withCredentials = true;
-      //make a post request with the user data
-      // axios.post(serverUrl + 'biz/updateRestaurantProfile', data)
-
-      //make a post request with the user data
-      this.props.client
-        .mutate({
-          mutation: updateRestaurant,
-          variables: {
-            RestaurantID: localStorage.getItem('userId'),
-            Name: this.state.Account.Name,
-            CountryName: this.state.Account.CountryName,
-            StateName: this.state.Account.StateName,
-            City: this.state.Account.City,
-            Zip: Number(this.state.Account.Zip),
-            Street: this.state.Account.Street,
-            PhoneNo: Number(this.state.Account.PhoneNo),
-            CountryCode: Number(this.state.Account.CountryCode),
-            OpeningTime: this.state.Account.OpeningTime,
-            ClosingTime: this.state.Account.ClosingTime,
-            ImageURL: this.state.Account.ImageURL,
-            CurbsidePickup: this.state.Account.CurbsidePickup,
-            DineIn: this.state.Account.DineIn,
-            YelpDelivery: this.state.Account.YelpDelivery,
-          },
-        })
-        .then(
-          (response) => {
-            console.log('Status Code : ', response.status);
-            if (response.data.updateRestaurant.Result === 'Profile Updated Successfully') {
-              console.log('Profile Updated');
-              const payload = {
-                success: true,
-                message: response.data.updateRestaurant.Result,
-              };
-              this.props.updateSnackbarData(payload);
-              this.setState({
-                isFormDisable: true,
-                submitError: false,
-                tmpEditProfile: null,
-              });
-            } else if (response.data.updateRestaurant.Result === 'Network Error') {
-              this.setState({
-                submitErrorBlock: response.data.updateRestaurant.Result,
-                submitError: false,
-              });
-            }
-          },
-          (error) => {
-            // console.log(error);
-            this.setState({
-              submitError: false,
-            });
-          }
-        );
-    } else {
-      this.setState({
-        submitErrorBlock: validateCheck,
-        submitError: true,
-      });
-    }
+  onSubmitUpdateProfile = (event) => {
+    event.preventDefault();
+    const data = {
+      userId: Number(localStorage.getItem('userId')),
+      ...this.state.Account,
+    };
+    console.log(data);
+    // axios.post(serverUrl + 'account', data).then(
+    //   (response) => {
+    //     // console.log('Status Code : ', response.status);
+    //     if (response.status === 200) {
+    //       console.log(response.data);
+    //       this.editProfile();
+    //     }
+    //   },
+    //   (error) => {
+    //     // console.log(error);
+    //   }
+    // );
+    axios
+      .post(serverUrl + 'account', null, {
+        params: {
+          userId: parseInt(localStorage.getItem('userId')),
+          // userId: 12345,
+          ...this.state.Account,
+          accountNumber: this.state.Account.accountNumber,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log(response.data);
+          this.editProfile();
+        },
+        (error) => {}
+      );
   };
-*/
+
   render(/**<fieldset disabled> */) {
     let errorClass = 'alert alert-error ';
     if (!this.state.submitError) {
@@ -224,22 +199,6 @@ class AccountInformation extends Component {
               </ul>
               <ul style={{ display: 'flex' }} className="inline-layout clearfix">
                 <li style={{ width: '100%', flex: 'auto' }}>
-                  <label className="placeholder-sub">Account Country :</label>
-                  <input
-                    style={{ marginLeft: '9%', height: '35px' }}
-                    id="email"
-                    name="country"
-                    placeholder="country"
-                    required="required"
-                    type="text"
-                    onChange={this.onCOmmonChangeHandler}
-                    value={this.state.Account.country}
-                    disabled="disabled"
-                  />
-                </li>
-              </ul>{' '}
-              <ul style={{ display: 'flex' }} className="inline-layout clearfix">
-                <li style={{ width: '100%', flex: 'auto' }}>
                   <label className="placeholder-sub">Address :</label>
                   <input
                     style={{ marginLeft: '26%', height: '35px' }}
@@ -250,30 +209,48 @@ class AccountInformation extends Component {
                     type="text"
                     onChange={this.onCOmmonChangeHandler}
                     value={this.state.Account.address}
-                    minLength="10"
-                    maxLength="10"
                   />
                 </li>
               </ul>
+              <ul style={{ display: 'flex' }} className="inline-layout clearfix">
+                <li style={{ width: '100%', flex: 'auto' }}>
+                  <label className="placeholder-sub">Primary Currency :</label>
+                  <input
+                    style={{ marginLeft: '8%', height: '35px' }}
+                    id="email"
+                    name="country"
+                    placeholder="Auto update "
+                    required="required"
+                    type="text"
+                    // onChange={this.onCOmmonChangeHandler}
+                    value={this.state.Account.primaryCurrency}
+                    disabled="diabled"
+                  />
+                </li>
+              </ul>{' '}
             </div>
             <div style={{ flexDirection: 'column' }} className="js-more-fields more-fields">
               <ul style={{ display: 'flex' }} className="inline-layout clearfix">
                 <li style={{ width: '30%', flex: 'auto' }}>
-                  <label className="placeholder-sub">Primary Currency</label>
+                  <label className="placeholder-sub">Account Country</label>
                   <select
                     placeholder="Gender"
                     className="form-control"
-                    name="primaryCurrency"
+                    name="country"
                     onChange={this.onCOmmonChangeHandler}
-                    value={this.state.Account.primaryCurrency}
+                    value={this.state.Account.country}
                     required
                   >
                     <option className="Dropdown-menu" key="" value="">
-                      Currency
+                      Country
                     </option>
-                    {this.state.Countries.map((currency) => (
-                      <option className="Dropdown-menu" key={currency.key} value={currency.value}>
-                        {currency.value}
+                    {this.props.ConversionRateStore.conversionRates.map((currency) => (
+                      <option
+                        className="Dropdown-menu"
+                        key={currency.country}
+                        value={currency.country}
+                      >
+                        {currency.country}
                       </option>
                     ))}
                   </select>
@@ -353,11 +330,10 @@ class AccountInformation extends Component {
 }
 
 const mapStateToProps = (state) => {
-  //   const { restaurantHome } = state.restaurantHomePageReducer;
+  const { ConversionRateStore } = state.ConversionRateReducer;
   //   const { masterData } = state.masterDataReducer;
   return {
-    // restaurantProfile: restaurantHome,
-    // masterData,
+    ConversionRateStore,
   };
 };
 

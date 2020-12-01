@@ -15,6 +15,7 @@ class Profile extends Component {
       submitError: false,
       submitErrorBlock: '',
       tmpEditProfile: null,
+      password: '',
     };
   }
 
@@ -23,7 +24,7 @@ class Profile extends Component {
   editProfile = () => {
     if (this.state.isFormDisable) {
       let tmpEditProfile = {
-        ...this.props.restaurantProfile,
+        ...this.props.UserInfoStore.UserProfile,
       };
       this.setState({
         isFormDisable: !this.state.isFormDisable,
@@ -47,6 +48,44 @@ class Profile extends Component {
     }
   };
 
+  onSubmitUpdateProfile = (event) => {
+    event.preventDefault();
+    const data = {
+      userId: Number(localStorage.getItem('userId')),
+      ...this.state.Account,
+    };
+    console.log(data);
+    // axios.post(serverUrl + 'account', data).then(
+    //   (response) => {
+    //     // console.log('Status Code : ', response.status);
+    //     if (response.status === 200) {
+    //       console.log(response.data);
+    //       this.editProfile();
+    //     }
+    //   },
+    //   (error) => {
+    //     // console.log(error);
+    //   }
+    // );
+    axios
+      .post(serverUrl + 'user' + '/' + localStorage.getItem('userId'), null, {
+        params: {
+          userId: parseInt(localStorage.getItem('userId')),
+          // userId: 12345,
+          ...this.state.Account,
+          accountNumber: this.state.Account.accountNumber,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log(response.data);
+          this.editProfile();
+        },
+        (error) => {}
+      );
+  };
+
   onChangeHandlerName = (e) => {
     let payload = {
       UserProfile: { Nickname: e.target.value },
@@ -56,86 +95,13 @@ class Profile extends Component {
       submitError: false,
     });
   };
-
-  /*
-  onSubmitUpdateProfile = (e) => {
-    e.preventDefault();
-    const validateCheck = this.ValidityUpdateProfile();
-    if (validateCheck === 'Correct') {
-      //prevent page from refresh
-
-      const data = {
-        ...this.props.restaurantProfile,
-        RestaurantID: localStorage.getItem('userId'),
-      };
-      //set the with credentials to true
-      axios.defaults.withCredentials = true;
-      //make a post request with the user data
-      // axios.post(serverUrl + 'biz/updateRestaurantProfile', data)
-
-      //make a post request with the user data
-      this.props.client
-        .mutate({
-          mutation: updateRestaurant,
-          variables: {
-            RestaurantID: localStorage.getItem('userId'),
-            Name: this.props.restaurantProfile.Name,
-            CountryName: this.props.restaurantProfile.CountryName,
-            StateName: this.props.restaurantProfile.StateName,
-            City: this.props.restaurantProfile.City,
-            Zip: Number(this.props.restaurantProfile.Zip),
-            Street: this.props.restaurantProfile.Street,
-            PhoneNo: Number(this.props.restaurantProfile.PhoneNo),
-            CountryCode: Number(this.props.restaurantProfile.CountryCode),
-            OpeningTime: this.props.restaurantProfile.OpeningTime,
-            ClosingTime: this.props.restaurantProfile.ClosingTime,
-            ImageURL: this.props.restaurantProfile.ImageURL,
-            CurbsidePickup: this.props.restaurantProfile.CurbsidePickup,
-            DineIn: this.props.restaurantProfile.DineIn,
-            YelpDelivery: this.props.restaurantProfile.YelpDelivery,
-          },
-        })
-        .then(
-          (response) => {
-            console.log('Status Code : ', response.status);
-            if (response.data.updateRestaurant.Result === 'Profile Updated Successfully') {
-              console.log('Profile Updated');
-              const payload = {
-                success: true,
-                message: response.data.updateRestaurant.Result,
-              };
-              this.props.updateSnackbarData(payload);
-              this.setState({
-                isFormDisable: true,
-                submitError: false,
-                tmpEditProfile: null,
-              });
-            } else if (response.data.updateRestaurant.Result === 'Network Error') {
-              this.setState({
-                submitErrorBlock: response.data.updateRestaurant.Result,
-                submitError: false,
-              });
-            }
-          },
-          (error) => {
-            // console.log(error);
-            this.setState({
-              submitError: false,
-            });
-          }
-        );
-    } else {
-      this.setState({
-        submitErrorBlock: validateCheck,
-        submitError: true,
-      });
-    }
+  onChangePasswordHandler = (e) => {
+    this.setState({
+      password: e.target.value,
+    });
   };
-*/
-  render(/**<fieldset disabled> */) {
-    const defaultImage =
-      'https://s3-media0.fl.yelpcdn.com/assets/srv0/yelp_styleguide/bf5ff8a79310/assets/img/default_avatars/user_medium_square.png';
 
+  render(/**<fieldset disabled> */) {
     let errorClass = 'alert alert-error ';
     if (!this.state.submitError) {
       errorClass += 'hidden';
@@ -171,6 +137,7 @@ class Profile extends Component {
                     placeholder="Name"
                     required="required"
                     type="text"
+                    disabled="disabled"
                     // onChange={this.onChangeHandlerName}
                     value={this.props.UserInfoStore.UserProfile.UserName}
                   />
@@ -188,6 +155,21 @@ class Profile extends Component {
                     type="text"
                     onChange={this.onChangeHandlerName}
                     value={this.props.UserInfoStore.UserProfile.Nickname}
+                  />
+                </li>
+              </ul>
+              <ul style={{ display: 'flex' }}>
+                <li style={{ width: '40%', flex: 'auto' }}>
+                  <label className="placeholder-sub">NickName: </label>
+                  <input
+                    style={{ height: '35px' }}
+                    id="first_name"
+                    name="password"
+                    placeholder="Password"
+                    required="required"
+                    type="text"
+                    onChange={this.onChangePasswordHandler}
+                    value={this.state.password}
                   />
                 </li>
               </ul>

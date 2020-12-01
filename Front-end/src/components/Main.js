@@ -9,6 +9,9 @@ import OfferList from './OfferSearches/OfferList';
 import OfferDetailPage from './OfferSearches/OfferDetailPage';
 import TransactionHistory from './OfferSearches/TransactionHistory';
 import MyOffers from './MyOffers/MyOffers';
+import axios from 'axios';
+import serverUrl from '../config';
+import { updateConversionRates, UpdateUserProfile } from '../constants/action-types';
 
 {
   /*import axios from 'axios';
@@ -36,6 +39,25 @@ import MessageList from './Customer/MessageTab/MessageList';*/
 
 // Create a Main Component
 class Main extends Component {
+  componentDidMount() {
+    axios.get(serverUrl + 'getConversionRate').then((response) => {
+      console.log(response.data);
+      const conversionRates = response.data;
+      const payload = {
+        conversionRates,
+      };
+      this.props.updateConversionRates(payload);
+    });
+
+    axios.get(serverUrl + 'user/' + localStorage.getItem('userId')).then((response) => {
+      console.log(response.data);
+      const UserProfile = response.data;
+      const payload = {
+        UserProfile,
+      };
+      this.props.UpdateUserProfile(payload);
+    });
+  }
   /*
   componentDidMount() {
     this.props.client.query({ query: getSignupMasterData }).then((response) => {
@@ -147,26 +169,26 @@ class Main extends Component {
 // export default EventList;
 
 const mapStateToProps = (state) => {
-  // const snackbarData = state.snackBarReducer.snackbarData;
+  const conversionRates = state.ConversionRateReducer;
   return {
-    // snackbarData: snackbarData,
+    conversionRates: conversionRates,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    // updateMasterData: (payload) => {
-    //   dispatch({
-    //     type: updateMasterData,
-    //     payload,
-    //   });
-    // },
-    // updateFoodData: (payload) => {
-    //   dispatch({
-    //     type: updateFoodData,
-    //     payload,
-    //   });
-    // },
+    updateConversionRates: (payload) => {
+      dispatch({
+        type: updateConversionRates,
+        payload,
+      });
+    },
+    UpdateUserProfile: (payload) => {
+      dispatch({
+        type: UpdateUserProfile,
+        payload,
+      });
+    },
   };
 };
 
