@@ -17,6 +17,7 @@ import com.cmpe275.DirectExchange.Entity.User;
 import com.cmpe275.DirectExchange.Service.AccountService;
 import com.cmpe275.DirectExchange.Service.ExchangeRateService;
 import com.cmpe275.DirectExchange.Service.OfferService;
+import com.cmpe275.DirectExchange.Service.TransactionService;
 import com.cmpe275.DirectExchange.Service.UserService;
 
 @CrossOrigin
@@ -35,6 +36,8 @@ public class DirectExchangeController {
 	@Autowired
 	ExchangeRateService exchangeRateService;
 	
+	@Autowired
+	TransactionService transactionService;
 	
 	@GetMapping("/")
 	public String sayHello() {
@@ -113,9 +116,19 @@ public class DirectExchangeController {
 		return offerService.searchOffers(sourceCurrency, sourceAmount, destinationCurrency, destinationAmount);
 	}
 	
+	@PostMapping("/acceptOffer")
+	public String acceptOffer(@RequestParam(value="offerId1") Long offerId1,
+			@RequestParam(value="offerId2") Long offerId2,
+			@RequestParam(value="offerId3", required = false) Long offerId3) {
+		return transactionService.acceptOffer(offerId1, offerId2, offerId3);
+	}
+	
+	@PostMapping("/offer/{id}/sendMoney")
+	public String sendMoney(@PathVariable("id") Long offerId) {
+		return transactionService.sendMoney(offerId);
+	}
+	
 	//modify offer - which parameters can be modified?
-	
-	
 
 	@GetMapping("/getConversionRate")
 	public List<ExchangeRate> gExchangeRate() {
