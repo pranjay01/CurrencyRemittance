@@ -50,45 +50,36 @@ class Profile extends Component {
 
   onSubmitUpdateProfile = (event) => {
     event.preventDefault();
-    const data = {
-      userId: Number(localStorage.getItem('userId')),
-      ...this.state.Account,
-    };
-    console.log(data);
-    // axios.post(serverUrl + 'account', data).then(
-    //   (response) => {
-    //     // console.log('Status Code : ', response.status);
-    //     if (response.status === 200) {
-    //       console.log(response.data);
-    //       this.editProfile();
-    //     }
-    //   },
-    //   (error) => {
-    //     // console.log(error);
-    //   }
-    // );
+
     axios
       .post(serverUrl + 'user' + '/' + localStorage.getItem('userId'), null, {
         params: {
           userId: parseInt(localStorage.getItem('userId')),
           // userId: 12345,
-          ...this.state.Account,
-          accountNumber: this.state.Account.accountNumber,
+          nickname: this.props.UserInfoStore.UserProfile.nickname,
+          password: this.state.password,
         },
         withCredentials: true,
       })
       .then(
         (response) => {
           console.log(response.data);
-          this.editProfile();
+          this.setState({
+            isFormDisable: true,
+          });
         },
-        (error) => {}
+        (error) => {
+          this.setState({
+            submitError: true,
+            submitErrorBlock: JSON.stringify(error),
+          });
+        }
       );
   };
 
   onChangeHandlerName = (e) => {
     let payload = {
-      UserProfile: { Nickname: e.target.value },
+      UserProfile: { nickname: e.target.value },
     };
     this.props.UpdateUserProfile(payload);
     this.setState({
@@ -108,7 +99,7 @@ class Profile extends Component {
     }
     return (
       <div style={{ marginTop: '3%' }}>
-        <div className={errorClass}>
+        <div style={{ color: 'red' }} className={errorClass}>
           <p className="alert-message">{this.state.submitErrorBlock}</p>
         </div>
         <form
@@ -139,7 +130,7 @@ class Profile extends Component {
                     type="text"
                     disabled="disabled"
                     // onChange={this.onChangeHandlerName}
-                    value={this.props.UserInfoStore.UserProfile.UserName}
+                    value={this.props.UserInfoStore.UserProfile.userName}
                   />
                 </li>
               </ul>
@@ -154,7 +145,7 @@ class Profile extends Component {
                     required="required"
                     type="text"
                     onChange={this.onChangeHandlerName}
-                    value={this.props.UserInfoStore.UserProfile.Nickname}
+                    value={this.props.UserInfoStore.UserProfile.nickname}
                   />
                 </li>
               </ul>
@@ -167,7 +158,7 @@ class Profile extends Component {
                     name="password"
                     placeholder="Password"
                     required="required"
-                    type="text"
+                    type="password"
                     onChange={this.onChangePasswordHandler}
                     value={this.state.password}
                   />

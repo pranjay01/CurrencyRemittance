@@ -28,26 +28,77 @@ class PostOffer extends Component {
         expirationDate: '',
         allowCounterOffers: true,
         splitExchange: true,
+        sourceExchangeRate: 0,
+        destinationExchangeRate: 0,
       },
     };
   }
 
   componentDidMount() {}
 
+  updateConversionRate = () => {
+    if (this.state.NewOffer.sourceCurrency && this.state.NewOffer.destinationCurrency) {
+      console.log('this.state.sourceCurrency', this.state.NewOffer.sourceCurrency);
+      console.log('this.state.destinationCurrency', this.state.NewOffer.destinationCurrency);
+
+      const currentExchangeRate = (
+        Number(this.state.NewOffer.sourceExchangeRate) /
+        Number(this.state.NewOffer.destinationExchangeRate)
+      ).toFixed(3);
+
+      this.setState({
+        submitErrorBlock: '',
+        submitError: false,
+        NewOffer: {
+          ...this.state.NewOffer,
+          currentExchangeRate,
+        },
+      });
+    }
+  };
+
   onCOmmonChangeHandler = (e) => {
     // const data = { [e.target.name]: e.target.value };
-    if (e.target.name === 'sourceCountry') {
-      this.setState({
-        submitErrorBlock: '',
-        submitError: false,
-        NewOffer: { ...this.state.NewOffer, [e.target.name]: e.target.value },
-      });
-    } else if (e.target.name === 'destinationCurrency') {
-      this.setState({
-        submitErrorBlock: '',
-        submitError: false,
-        NewOffer: { ...this.state.NewOffer, [e.target.name]: e.target.value },
-      });
+    if (e.target.value && e.target.name === 'sourceCountry') {
+      const index = this.props.ConversionRateStore.conversionRates.findIndex(
+        (x) => x.country === e.target.value
+      );
+      this.setState(
+        {
+          submitErrorBlock: '',
+          submitError: false,
+          NewOffer: {
+            ...this.state.NewOffer,
+            [e.target.name]: this.props.ConversionRateStore.conversionRates[index].country,
+            sourceCurrency: this.props.ConversionRateStore.conversionRates[index].currencyType,
+            sourceExchangeRate: this.props.ConversionRateStore.conversionRates[index]
+              .usdConversionRate,
+          },
+        },
+        function () {
+          this.updateConversionRate();
+        }
+      );
+    } else if (e.target.value && e.target.name === 'destinationCountry') {
+      const index = this.props.ConversionRateStore.conversionRates.findIndex(
+        (x) => x.country === e.target.value
+      );
+      this.setState(
+        {
+          submitErrorBlock: '',
+          submitError: false,
+          NewOffer: {
+            ...this.state.NewOffer,
+            [e.target.name]: this.props.ConversionRateStore.conversionRates[index].country,
+            destinationCurrency: this.props.ConversionRateStore.conversionRates[index].currencyType,
+            destinationExchangeRate: this.props.ConversionRateStore.conversionRates[index]
+              .usdConversionRate,
+          },
+        },
+        function () {
+          this.updateConversionRate();
+        }
+      );
     } else {
       this.setState({
         submitErrorBlock: '',
@@ -95,109 +146,54 @@ class PostOffer extends Component {
     });
   };
 
-  /*
-  editProfile = () => {
-    if (this.state.isFormDisable) {
-      let tmpEditProfile = {
-        ...this.state.NewOffer,
-      };
-      this.setState({
-        isFormDisable: !this.state.isFormDisable,
-        tmpEditProfile,
-        submitError: false,
-      });
-    } else {
-      let orignalData = this.state.tmpEditProfile;
-
-      let payload = {
-        ...orignalData,
-      };
-      this.props.updateHomeProfile(payload);
-
-      this.setState({
-        tmpEditProfile: null,
-        isFormDisable: !this.state.isFormDisable,
-
-        submitError: false,
-      });
-    }
+  onSubmitPostOffer = (event) => {
+    event.preventDefault();
+    axios
+      .post(serverUrl + 'offer', null, {
+        params: {
+          userId: parseInt(localStorage.getItem('userId')),
+          // userId: 12345,
+          ...this.state.NewOffer,
+          exchangeRate:
+            this.state.NewOffer.customExchangeRate !== ''
+              ? Number(this.state.NewOffer.customExchangeRate)
+              : Number(this.state.NewOffer.currentExchangeRate),
+          allowCounterOffers: this.state.allowCounterOffers ? 1 : 0,
+          splitExchange: this.state.splitExchange ? 1 : 0,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log(response.data);
+          this.setState({
+            submitErrorBlock: '',
+            submitError: false,
+            NewOffer: {
+              sourceCountry: '',
+              sourceCurrency: '',
+              sourceAmount: '',
+              destinationCountry: '',
+              destinationCurrency: '',
+              currentExchangeRate: '',
+              customExchangeRate: '',
+              expirationDate: '',
+              allowCounterOffers: true,
+              splitExchange: true,
+              sourceExchangeRate: 0,
+              destinationExchangeRate: 0,
+            },
+          });
+        },
+        (error) => {
+          this.setState({
+            submitErrorBlock: JSON.stringify(error),
+            submitError: true,
+          });
+        }
+      );
   };
-*/
-  /*
-  onSubmitUpdateProfile = (e) => {
-    e.preventDefault();
-    const validateCheck = this.ValidityUpdateProfile();
-    if (validateCheck === 'Correct') {
-      //prevent page from refresh
 
-      const data = {
-        ...this.state.NewOffer,
-        RestaurantID: localStorage.getItem('userId'),
-      };
-      //set the with credentials to true
-      axios.defaults.withCredentials = true;
-      //make a post request with the user data
-      // axios.post(serverUrl + 'biz/updateRestaurantProfile', data)
-
-      //make a post request with the user data
-      this.props.client
-        .mutate({
-          mutation: updateRestaurant,
-          variables: {
-            RestaurantID: localStorage.getItem('userId'),
-            Name: this.state.NewOffer.Name,
-            CountryName: this.state.NewOffer.CountryName,
-            StateName: this.state.NewOffer.StateName,
-            City: this.state.NewOffer.City,
-            Zip: Number(this.state.NewOffer.Zip),
-            Street: this.state.NewOffer.Street,
-            PhoneNo: Number(this.state.NewOffer.PhoneNo),
-            CountryCode: Number(this.state.NewOffer.CountryCode),
-            OpeningTime: this.state.NewOffer.OpeningTime,
-            ClosingTime: this.state.NewOffer.ClosingTime,
-            ImageURL: this.state.NewOffer.ImageURL,
-            CurbsidePickup: this.state.NewOffer.CurbsidePickup,
-            DineIn: this.state.NewOffer.DineIn,
-            YelpDelivery: this.state.NewOffer.YelpDelivery,
-          },
-        })
-        .then(
-          (response) => {
-            console.log('Status Code : ', response.status);
-            if (response.data.updateRestaurant.Result === 'Profile Updated Successfully') {
-              console.log('Profile Updated');
-              const payload = {
-                success: true,
-                message: response.data.updateRestaurant.Result,
-              };
-              this.props.updateSnackbarData(payload);
-              this.setState({
-                isFormDisable: true,
-                submitError: false,
-                tmpEditProfile: null,
-              });
-            } else if (response.data.updateRestaurant.Result === 'Network Error') {
-              this.setState({
-                submitErrorBlock: response.data.updateRestaurant.Result,
-                submitError: false,
-              });
-            }
-          },
-          (error) => {
-            // console.log(error);
-            this.setState({
-              submitError: false,
-            });
-          }
-        );
-    } else {
-      this.setState({
-        submitErrorBlock: validateCheck,
-        submitError: true,
-      });
-    }
-  };
-*/
   render(/**<fieldset disabled> */) {
     let errorClass = 'alert alert-error ';
     if (!this.state.submitError) {
@@ -218,7 +214,7 @@ class PostOffer extends Component {
 
             justifyContent: 'center',
           }}
-          onSubmit={this.onSubmitUpdateProfile}
+          onSubmit={this.onSubmitPostOffer}
           className="yform signup-form  city-hidden"
           id="signup-form"
         >
@@ -257,9 +253,13 @@ class PostOffer extends Component {
                     <option className="Dropdown-menu" key="" value="">
                       Country
                     </option>
-                    {this.state.Countries.map((country) => (
-                      <option className="Dropdown-menu" key={country.key} value={country.value}>
-                        {country.value}
+                    {this.props.ConversionRateStore.conversionRates.map((currency) => (
+                      <option
+                        className="Dropdown-menu"
+                        key={currency.country}
+                        value={currency.country}
+                      >
+                        {currency.country}
                       </option>
                     ))}
                   </select>
@@ -295,9 +295,13 @@ class PostOffer extends Component {
                     <option className="Dropdown-menu" key="" value="">
                       Country
                     </option>
-                    {this.state.Countries.map((country) => (
-                      <option className="Dropdown-menu" key={country.key} value={country.value}>
-                        {country.value}
+                    {this.props.ConversionRateStore.conversionRates.map((currency) => (
+                      <option
+                        className="Dropdown-menu"
+                        key={currency.country}
+                        value={currency.country}
+                      >
+                        {currency.country}
                       </option>
                     ))}
                   </select>
@@ -346,7 +350,6 @@ class PostOffer extends Component {
                     id="first_name"
                     name="customExchangeRate"
                     placeholder=""
-                    required="required"
                     type="number"
                     onChange={this.onCOmmonChangeHandler}
                     value={this.state.NewOffer.customExchangeRate}
@@ -440,11 +443,10 @@ class PostOffer extends Component {
 }
 
 const mapStateToProps = (state) => {
-  //   const { restaurantHome } = state.restaurantHomePageReducer;
+  const { ConversionRateStore } = state.ConversionRateReducer;
   //   const { masterData } = state.masterDataReducer;
   return {
-    // restaurantProfile: restaurantHome,
-    // masterData,
+    ConversionRateStore, // masterData,
   };
 };
 

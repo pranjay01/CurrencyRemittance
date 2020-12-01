@@ -39,16 +39,16 @@ public class TransactionService {
 		Long requestID = currentRequestId+1;
 		
 		Offer offer1 = offerRepository.findById(offerId1).orElse(null);
-//		offer1.setOfferStatus("inTransaction");
-//		offerRepository.save(offer1);
+		offer1.setOfferStatus("inTransaction");
+		offerRepository.save(offer1);
 		
 		Transaction transaction1 = new Transaction(requestID, offer1.getOfferId(), "Pending");
 		transactionRepository.save(transaction1);
 		sendTransactionInitiationEmail(offer1.getUser().getUserName(), offerId1);
 		
 		Offer offer2 = offerRepository.findById(offerId2).orElse(null);
-//		offer2.setOfferStatus("inTransaction");
-//		offerRepository.save(offer2);
+		offer2.setOfferStatus("inTransaction");
+		offerRepository.save(offer2);
 		
 		Transaction transaction2 = new Transaction(requestID, offer2.getOfferId(), "Pending");
 		transactionRepository.save(transaction2);
@@ -57,8 +57,8 @@ public class TransactionService {
 		Offer offer3;
 		if(offerId3 != null) {
 			offer3 = offerRepository.findById(offerId3).orElse(null);
-//			offer3.setOfferStatus("inTransaction");
-//			offerRepository.save(offer3);
+			offer3.setOfferStatus("inTransaction");
+			offerRepository.save(offer3);
 			
 			Transaction transaction3 = new Transaction(requestID, offer3.getOfferId(), "Pending");
 			transactionRepository.save(transaction3);
