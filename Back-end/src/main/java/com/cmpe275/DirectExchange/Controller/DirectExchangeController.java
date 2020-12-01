@@ -64,7 +64,7 @@ public class DirectExchangeController {
 			@PathVariable("id") Long id) {
 		return userService.updateUser(id, nickname, password);
 	}
-	
+		
 	@GetMapping(value="/confirm-account")
     public String confirmUserAccount(@RequestParam("token")String confirmationToken)
     {
@@ -114,6 +114,11 @@ public class DirectExchangeController {
 			@RequestParam(value="destinationCurrency", required = false) String destinationCurrency,
 			@RequestParam(value="destinationAmount", required = false) Double destinationAmount){
 		return offerService.searchOffers(sourceCurrency, sourceAmount, destinationCurrency, destinationAmount);
+	}
+	
+	@GetMapping("/offer/{id}")
+	public Offer getOfferDetails(@PathVariable("id") Long offerId) {
+		return offerService.getOfferDetails(offerId);
 	}
 	
 	@PostMapping("/acceptOffer")

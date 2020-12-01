@@ -151,7 +151,7 @@ public class TransactionService {
 	}
 	
 	private Double calculateTransferredAmount(Offer offer) {
-		return (offer.getDestinationAmount()*99.95/100);
+		return (offer.getDestinationAmount()-offer.getServiceFee());
 	}
 
 }

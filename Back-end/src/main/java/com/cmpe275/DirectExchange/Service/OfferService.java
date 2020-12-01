@@ -27,6 +27,10 @@ public class OfferService {
 	
 	private final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 	
+	public Offer getOfferDetails(Long offerId) {
+		return offerRepository.findById(offerId).orElse(null);
+	}
+	
 	@Transactional
 	public Offer createOffer(Long userId, String sourceCountry, String sourceCurrency, Double sourceAmount, 
 			String destinationCountry, String destinationCurrency, Double exchangeRate, String expirationDate,

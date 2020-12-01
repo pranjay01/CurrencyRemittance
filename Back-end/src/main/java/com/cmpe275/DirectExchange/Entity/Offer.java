@@ -230,13 +230,13 @@ public class Offer {
 	}
 
 	private void updateLimits(Double amount) {
-		this.serviceFee = ((0.05/100)*amount);
 		this.minAmount = (amount - ((10.0/100.0)*amount));
 		this.maxAmount = (amount + ((10.0/100.0)*amount));
 	}
 	
 	private void updateDestinationAmount(Double amount, Double exchangeRate) {
 		this.destinationAmount = (amount*exchangeRate);
+		this.serviceFee = (this.destinationAmount*0.05/100);
 	}
 
 }
