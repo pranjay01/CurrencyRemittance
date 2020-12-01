@@ -194,8 +194,8 @@ class Navbar extends Component {
     if (localStorage.getItem('token')) {
       options = (
         <ul class="nav navbar-nav">
-          <li class={this.props.location.pathname === '/search' && 'active'}>
-            <Link to="/search">Search</Link>
+          <li class={this.props.location.pathname === '/OfferList' && 'active'}>
+            <Link to="/OfferList">Search</Link>
           </li>
           <li class={this.props.location.pathname === '/Profile' && 'active'}>
             <Link to="/Profile">Profile</Link>
@@ -213,8 +213,8 @@ class Navbar extends Component {
             <Link to="/ConversionRate">Current Conversion Rate</Link>
           </li>
 
-          <li class={this.props.location.pathname === '/restaurantReview' && 'active'}>
-            <Link to="/restaurantReview">My Offers</Link>
+          <li class={this.props.location.pathname === '/MyOffers' && 'active'}>
+            <Link to="/MyOffers">My Offers</Link>
           </li>
 
           <li class={this.props.location.pathname === '/restaurantEvents' && 'active'}>

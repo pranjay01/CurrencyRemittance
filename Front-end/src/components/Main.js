@@ -5,6 +5,10 @@ import Navbar from './Common/Navbar';
 import Profile from './Form/Profile';
 import AccountInformation from './Form/AccountInformation';
 import PostOffer from './Form/PostOffer';
+import OfferList from './OfferSearches/OfferList';
+import OfferDetailPage from './OfferSearches/OfferDetailPage';
+import TransactionHistory from './OfferSearches/TransactionHistory';
+import MyOffers from './MyOffers/MyOffers';
 
 {
   /*import axios from 'axios';
@@ -108,6 +112,10 @@ class Main extends Component {
         <Route path="/Profile" component={Profile} />
         <Route path="/AccountInformation" component={AccountInformation} />
         <Route path="/PostOffer" component={PostOffer} />
+        <Route path="/OfferList" component={OfferList} />
+        <Route path="/OfferDetailPage" component={OfferDetailPage} />
+        <Route path="/TransactionHistory" component={TransactionHistory} />
+        <Route path="/MyOffers" component={MyOffers} />
         {/*
           <Route path="/customerLogin" component={CustomerLogin} />
           <Route path="/customerSignup" component={CustomerLogin} />
