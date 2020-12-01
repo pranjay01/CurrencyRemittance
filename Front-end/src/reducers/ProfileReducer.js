@@ -2,7 +2,7 @@ import { UpdateUserProfile } from '../constants/action-types';
 
 const defaultState = {
   UserInfoStore: {
-    UserProfile: { UserName: 'ps@gmail.com', Nickname: 'pran' },
+    UserProfile: { userName: '', nickname: '' },
   },
 };
 

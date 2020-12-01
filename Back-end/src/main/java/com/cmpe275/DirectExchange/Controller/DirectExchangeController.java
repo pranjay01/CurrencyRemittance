@@ -41,7 +41,7 @@ public class DirectExchangeController {
 		return "Hello from DirectExchange";
 	}
 
-	
+	// merged
 	@GetMapping("/user/{id}")
 	public User getUser(@PathVariable("id") Long id) {
 		return userService.getUser(id);
@@ -50,10 +50,11 @@ public class DirectExchangeController {
 	@PostMapping("/user")
 	public User signUp(@RequestParam(value="userName") String userName,
 			@RequestParam(value="nickname") String nickname,
-			@RequestParam(value="password", required = false) String password) {
+			@RequestParam(value = "password", required = false) String password) {
 		return userService.addUser(userName, nickname, password, "Pending");
 	}
 	
+	// merged
 	@PostMapping("/user/{id}")
 	public User updateUser(@RequestParam(value="nickname", required = false) String nickname,
 			@RequestParam(value="password", required = false) String password,
@@ -68,10 +69,11 @@ public class DirectExchangeController {
     }
 	
 	@GetMapping("/user/{id}/offers")
-	public List<Offer> getMyOffers(@PathVariable("id") Long id){
+	public List<Offer> getMyOffers(@PathVariable("id") Long id) {
 		return offerService.getMyOffers(id);
 	}
 	
+	// merged
 	@PostMapping("/account")
 	public Account registerAccount(@RequestParam(value="userId") Long userId,
 			@RequestParam(value="bankName") String bankName,
@@ -80,12 +82,13 @@ public class DirectExchangeController {
 			@RequestParam(value="owner") String owner,
 			@RequestParam(value="address") String address,
 			@RequestParam(value="primaryCurrency") String primaryCurrency,
-			@RequestParam(value="accountType") String accountType) {
-		System.out.println("sss"+userId);
-		return accountService.registerAccount(userId, bankName, country, accountNumber, 
-				owner, address, primaryCurrency, accountType);
+			@RequestParam(value = "accountType") String accountType) {
+		System.out.println("sss" + userId);
+		return accountService.registerAccount(userId, bankName, country, accountNumber, owner, address, primaryCurrency,
+				accountType);
 	}
 	
+	// merged
 	@PostMapping("/offer")
 	public Offer postOffer(@RequestParam(value="userId") Long userId,
 			@RequestParam(value="sourceCountry") String sourceCountry,

@@ -36,6 +36,8 @@ class AccountInformation extends Component {
     if (e.target.name === 'accountNumber') {
       if (/^(\s*|\d+)$/.test(e.target.value)) {
         this.setState({
+          submitErrorBlock: '',
+          submitError: false,
           Account: { ...this.state.Account, [e.target.name]: e.target.value },
         });
       }
@@ -44,6 +46,8 @@ class AccountInformation extends Component {
         (x) => x.country === e.target.value
       );
       this.setState({
+        submitErrorBlock: '',
+        submitError: false,
         Account: {
           ...this.state.Account,
           [e.target.name]: this.props.ConversionRateStore.conversionRates[index].country,
@@ -52,6 +56,8 @@ class AccountInformation extends Component {
       });
     } else {
       this.setState({
+        submitErrorBlock: '',
+        submitError: false,
         Account: { ...this.state.Account, [e.target.name]: e.target.value },
       });
     }
