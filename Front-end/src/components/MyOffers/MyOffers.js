@@ -37,6 +37,18 @@ class MyOffers extends Component {
       });
   }
 
+  showMatchingOffers = (event, Offer) => {
+    event.preventDefault();
+    localStorage.setItem('OpenOffer', Offer.offerId);
+    const payload = {
+      Offer,
+    };
+    this.props.updateFocusOffer(payload);
+    this.setState({
+      openDetailPage: true,
+    });
+  };
+
   render() {
     return (
       <div className="lemon--div__06b83__1mboc responsive responsive-biz border-color--default__06b83__3-ifU">
