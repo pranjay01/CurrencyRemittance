@@ -1,30 +1,35 @@
 package com.cmpe275.DirectExchange.Entity;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
-@JsonInclude (Include.NON_NULL)
 @Entity
 @Table(name = "TRANSACTION")
 public class Transaction {
 
 	@Id
-	@Column(name="TransactionID")
+	@Column(name="ID")
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	Long transactionID;
+	Long id;
 	
 	@Column(name="RequestID")
 	Long requestID;
 	
 	@Column(name="OfferID")
 	Long offerID;
+	
+	@Column(name="UserID")
+	Long userID;
 	
 	@Column(name="TransactionStatus")
 	String transactionStatus;
@@ -40,24 +45,29 @@ public class Transaction {
 	
 	@Column(name="DestinationCurrency")
 	String destinationCurrency;
-
+	
+	@OneToMany(mappedBy = "transaction")
+	@LazyCollection(LazyCollectionOption.TRUE)
+	List<TransactionUserMap> receivingParties;
+	
 	public Transaction() {
 		super();
 	}
 
-	public Transaction(Long requestID, Long offerID, String transactionStatus) {
+	public Transaction(Long requestID, Long offerID, Long userID, String transactionStatus) {
 		super();
 		this.requestID = requestID;
 		this.offerID = offerID;
+		this.userID = userID;
 		this.transactionStatus = transactionStatus;
 	}
 
-	public Long getTransactionID() {
-		return transactionID;
+	public Long getId() {
+		return id;
 	}
 
-	public void setTransactionID(Long transactionID) {
-		this.transactionID = transactionID;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public Long getOfferID() {
@@ -100,6 +110,14 @@ public class Transaction {
 		this.requestID = requestID;
 	}
 
+	public Long getUserID() {
+		return userID;
+	}
+
+	public void setUserID(Long userID) {
+		this.userID = userID;
+	}
+
 	public String getSourceCurrency() {
 		return sourceCurrency;
 	}
@@ -114,6 +132,14 @@ public class Transaction {
 
 	public void setDestinationCurrency(String destinationCurrency) {
 		this.destinationCurrency = destinationCurrency;
+	}
+
+	public List<TransactionUserMap> getReceivingParties() {
+		return receivingParties;
+	}
+
+	public void setReceivingParties(List<TransactionUserMap> receivingParties) {
+		this.receivingParties = receivingParties;
 	}
 	
 }

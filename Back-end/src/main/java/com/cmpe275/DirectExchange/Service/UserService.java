@@ -1,5 +1,8 @@
 package com.cmpe275.DirectExchange.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +11,10 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import com.cmpe275.DirectExchange.Entity.ConfirmationToken;
+import com.cmpe275.DirectExchange.Entity.Transaction;
 import com.cmpe275.DirectExchange.Entity.User;
 import com.cmpe275.DirectExchange.Repository.ConfirmationTokenRepository;
+import com.cmpe275.DirectExchange.Repository.TransactionRepository;
 import com.cmpe275.DirectExchange.Repository.UserRepository;
 
 @Service
@@ -23,6 +28,9 @@ public class UserService {
 
 	@Autowired
 	EmailVerificationService emailVerificationService;
+	
+	@Autowired
+	TransactionRepository transactionRepository;
 	
 	@Value("${spring.mail.username}")
 	private String email;
@@ -104,4 +112,5 @@ public class UserService {
 			return "Message sending failed";
 		}
 	}
+	
 }

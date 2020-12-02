@@ -14,11 +14,15 @@ import java.util.List;
 import com.cmpe275.DirectExchange.Entity.Account;
 import com.cmpe275.DirectExchange.Entity.ExchangeRate;
 import com.cmpe275.DirectExchange.Entity.Offer;
+import com.cmpe275.DirectExchange.Entity.Transaction;
+import com.cmpe275.DirectExchange.Entity.TransactionUserMap;
 import com.cmpe275.DirectExchange.Entity.User;
+import com.cmpe275.DirectExchange.Helper.TransactionDTODeep;
 import com.cmpe275.DirectExchange.Service.AccountService;
 import com.cmpe275.DirectExchange.Service.ExchangeRateService;
 import com.cmpe275.DirectExchange.Service.OfferService;
 import com.cmpe275.DirectExchange.Service.TransactionService;
+import com.cmpe275.DirectExchange.Service.TransactionUserMapService;
 import com.cmpe275.DirectExchange.Service.UserService;
 
 @CrossOrigin(allowCredentials = "true",origins = "http://localhost:3000",allowedHeaders = "*",  methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT}) 
@@ -39,6 +43,9 @@ public class DirectExchangeController {
 
 	@Autowired
 	TransactionService transactionService;
+	
+	@Autowired
+	TransactionUserMapService transactionUserMapService;
 
 	@GetMapping("/")
 	public String sayHello() {
@@ -157,5 +164,10 @@ public class DirectExchangeController {
 			@RequestParam(value="mailText") String mailText) {
 		return userService.sendEmail(senderId, receiverId, mailText);
 	}
-
+	
+	@GetMapping("/user/{id}/transactionHistory")
+	public List<TransactionDTODeep> getMyTransactions(@PathVariable("id") Long userId){
+		return transactionService.getMyTransactions(userId);
+	}
+	
 }

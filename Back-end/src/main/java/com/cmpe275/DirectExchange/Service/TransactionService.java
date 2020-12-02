@@ -1,9 +1,11 @@
 package com.cmpe275.DirectExchange.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.cmpe275.DirectExchange.Entity.Offer;
 import com.cmpe275.DirectExchange.Entity.Transaction;
+import com.cmpe275.DirectExchange.Helper.TransactionDTODeep;
 import com.cmpe275.DirectExchange.Repository.OfferRepository;
 import com.cmpe275.DirectExchange.Repository.TransactionRepository;
 
@@ -25,6 +28,12 @@ public class TransactionService {
 	
 	@Autowired
 	EmailVerificationService emailVerificationService;
+	
+	@Autowired
+	TransactionUserMapService transactionUserMapService;
+	
+	@Autowired
+    ModelMapper modelMapper;
 	
 	@Value("${spring.mail.username}")
 	private String email;
@@ -42,7 +51,7 @@ public class TransactionService {
 		offer1.setOfferStatus("inTransaction");
 		offerRepository.save(offer1);
 		
-		Transaction transaction1 = new Transaction(requestID, offer1.getOfferId(), "Pending");
+		Transaction transaction1 = new Transaction(requestID, offer1.getOfferId(), offer1.getUser().getId(), "Pending");
 		transactionRepository.save(transaction1);
 		sendTransactionInitiationEmail(offer1.getUser().getUserName(), offerId1);
 		
@@ -50,9 +59,12 @@ public class TransactionService {
 		offer2.setOfferStatus("inTransaction");
 		offerRepository.save(offer2);
 		
-		Transaction transaction2 = new Transaction(requestID, offer2.getOfferId(), "Pending");
+		Transaction transaction2 = new Transaction(requestID, offer2.getOfferId(), offer2.getUser().getId(), "Pending");
 		transactionRepository.save(transaction2);
 		sendTransactionInitiationEmail(offer2.getUser().getUserName(), offerId2);
+		
+		transactionUserMapService.addMapping(transaction1, offer2.getUser());
+		transactionUserMapService.addMapping(transaction2, offer1.getUser());
 		
 		Offer offer3;
 		if(offerId3 != null) {
@@ -60,9 +72,12 @@ public class TransactionService {
 			offer3.setOfferStatus("inTransaction");
 			offerRepository.save(offer3);
 			
-			Transaction transaction3 = new Transaction(requestID, offer3.getOfferId(), "Pending");
+			Transaction transaction3 = new Transaction(requestID, offer3.getOfferId(), offer3.getUser().getId(), "Pending");
 			transactionRepository.save(transaction3);
 			sendTransactionInitiationEmail(offer3.getUser().getUserName(), offerId3);
+			
+			transactionUserMapService.addMapping(transaction1, offer3.getUser());
+			transactionUserMapService.addMapping(transaction3, offer3.getUser());
 		}
 			
 		return "Transaction initiated";
@@ -92,7 +107,7 @@ public class TransactionService {
 				Offer o = offerRepository.findById(t.getOfferID()).orElse(null);
 				
 				t.setTransferredAmount(calculateTransferredAmount(o));
-				t.setDestinationCurrency(offer.getDestinationCurrency());
+				t.setDestinationCurrency(o.getDestinationCurrency());
 				t.setTransactionStatus("Completed");
 				transactionRepository.save(t);
 				sendTransactionCompletionEmail(o.getUser().getUserName(), t);
@@ -153,5 +168,20 @@ public class TransactionService {
 	private Double calculateTransferredAmount(Offer offer) {
 		return (offer.getDestinationAmount()-offer.getServiceFee());
 	}
+	
+	public List<TransactionDTODeep> getMyTransactions(Long userId){
+		List<Transaction> transactions = transactionRepository.findByUserID(userId);
+		List<TransactionDTODeep> myTransactionHistory = new ArrayList<TransactionDTODeep>();
+		for(Transaction transaction : transactions) {
+			myTransactionHistory.add(convertToSTransactionDTODeep(transaction));
+		}
+		return myTransactionHistory;
+	}
+	
+	private TransactionDTODeep convertToSTransactionDTODeep(Transaction transaction) {
+    	this.modelMapper.typeMap(Transaction.class, TransactionDTODeep.class).addMapping(Transaction::getReceivingParties, TransactionDTODeep::setReceivingParties);
+    	TransactionDTODeep transactionDTODeep = modelMapper.map(transaction, TransactionDTODeep.class);
+    	return transactionDTODeep;
+    }
 
 }
