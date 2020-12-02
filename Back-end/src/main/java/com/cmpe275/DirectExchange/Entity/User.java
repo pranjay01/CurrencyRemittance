@@ -86,7 +86,7 @@ public class User {
 		this.status = status;
 	}
 
-	private String generateEncryptedPassword(String password){
+	public String generateEncryptedPassword(String password){
 		String encryptedPassword ="";
 		try {
 			byte[] bytesOfMessage = password.getBytes();

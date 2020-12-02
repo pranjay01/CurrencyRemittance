@@ -3,6 +3,7 @@ package com.cmpe275.DirectExchange.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,26 @@ public class UserService {
 		User user = userRepository.findById(id).orElse(null);
 		//add code to handle null
 		return user;
+	}
+
+	@Transactional
+	public User getUserWithEmail(String email) {
+		User user = userRepository.findByUserNameIgnoreCase(email);
+		if(user == null){
+			throw new EntityNotFoundException("Player Not Exists!");
+		}
+		return user;
+	}
+
+	@Transactional
+	public User getLoginUser(String email, String password) {{
+		User user = getUserWithEmail(email);
+		if(!user.generateEncryptedPassword(password).equals(user.getPassword())){
+			throw new EntityNotFoundException("UserId Or Password Not Matching!");
+		}
+		return user;
+	}
+		
 	}
 
 	@Transactional

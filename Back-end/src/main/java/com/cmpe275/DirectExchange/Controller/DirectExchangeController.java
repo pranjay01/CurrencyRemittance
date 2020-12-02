@@ -5,11 +5,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.*;
 
 import com.cmpe275.DirectExchange.Entity.Account;
 import com.cmpe275.DirectExchange.Entity.ExchangeRate;
@@ -58,11 +59,22 @@ public class DirectExchangeController {
 		return userService.getUser(id);
 	}
 
+	@GetMapping("/userEmail/{email}")
+	public User getUserWithEmail(@PathVariable("email") String email) {
+		return userService.getUserWithEmail(email);
+	}
+
 	@PostMapping("/user")
 	public User signUp(@RequestParam(value="userName") String userName,
 			@RequestParam(value="nickname") String nickname,
 			@RequestParam(value = "password", required = false) String password) {
 		return userService.addUser(userName, nickname, password, "Pending");
+	}
+
+	@PostMapping("/login")
+	public User login(@RequestBody Map<String, Object> body) {
+		return userService.getLoginUser(body.get("username").toString()
+								 , body.get("password").toString());
 	}
 
 	// merged
