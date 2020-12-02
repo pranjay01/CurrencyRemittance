@@ -3,6 +3,8 @@ import { getOfferLists, logOut, updateFocusOffer } from '../constants/action-typ
 const defaultState = {
   OfferListStore: {
     offerLists: [],
+    PageNo: 0,
+    TotalCount: 0,
   },
   onFocusOfferStore: {
     Offer: {},

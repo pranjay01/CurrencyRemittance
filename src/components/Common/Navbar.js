@@ -6,6 +6,7 @@ import axios from 'axios';
 import serverUrl from '../../config';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import { GetAllTransactions } from '../../constants/action-types';
 
 // create the Navbar Component
 class Navbar extends Component {
@@ -18,85 +19,18 @@ class Navbar extends Component {
     };
     // this.handleLogout = this.handleLogout.bind(this);
   }
-  /*
   componentDidMount() {
-    axios.get(serverUrl + 'staticData/fetchStaticData').then((response) => {
-      console.log(response.data);
-      //update the state with the response data
-      let stateDetails = response.data[0].map((state) => {
-        return { key: state._id, value: state.StateName };
+    axios
+      .get(serverUrl + 'user/' + localStorage.getItem('userId') + '/transactionHistory')
+      .then((response) => {
+        console.log(response.data);
+        const TransactionList = response.data;
+        const payload = {
+          TransactionList,
+        };
+        this.props.GetAllTransactions(payload);
       });
-      this.setState({
-        stateNames: this.state.stateNames.concat(stateDetails),
-      });
-      let countryDetails = response.data[1].map((country) => {
-        return { key: country._id, value: country.CountryName };
-      });
-      this.setState({
-        countryNames: this.state.countryNames.concat(countryDetails),
-      });
-      let genderDetails = response.data[2].map((gender) => {
-        return { key: gender._id, value: gender.GenderName };
-      });
-      this.setState({
-        genderNames: this.state.genderNames.concat(genderDetails),
-      });
-      let payload = {
-        stateNames: this.state.stateNames,
-        countryNames: this.state.countryNames,
-        genderNames: this.state.genderNames,
-      };
-      this.props.updateStaticDataInfo(payload);
-
-      // Loading customer Profile
-      if(localStorage.getItem('token') && localStorage.getItem('role') === 'Customer') {
-        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
-        axios
-        .get(
-          serverUrl + 'customer/getCustomerCompleteProfile',
-
-          { params: { CustomerID: localStorage.getItem('user_id') }, withCredentials: true }
-        )
-        .then((response) => {
-          console.log(response.data);
-          let DOB = moment.utc(response.data.DOB);
-          DOB= DOB.format('YYYY-MM-DD');
-          localStorage.setItem('Name', response.data.name);
-          let payload = {
-            Name: response.data.name,
-            NickName: response.data.NickName,
-            DOB: DOB,
-            City: response.data.City,
-            State: response.data.state, 
-            Address: (response.data.City.concat(', ')).concat(response.data.state), 
-            Gender: response.data.gender,         
-            streetAddress: response.data.streetAddress,
-            Country: response.data.country,
-            zip: response.data.zip,
-            Headline: response.data.Headline,
-            Contact: response.data.contact,
-            ILove: response.data.Things_Customer_Love,
-            Find_Me_In: response.data.Find_Me_In,
-            YelpingSince: response.data.YelpingSince,
-            Website: response.data.Website,
-            ImageURL: response.data.ImageURL,
-            Events: response.data.Events,
-            FollowingIDs: response.data.FollowingCustomerIDs,
-          };
-          this.props.updateCustomerProfile(payload);
-          payload = {
-            Contact: response.data.contact,
-            EmailID: localStorage.getItem('username'),
-            NewEmailID: localStorage.getItem('username'),
-            NewContact: response.data.contact,
-          };
-          this.props.updateCustomerContactInfo(payload);
-        });
-      }
-    });
   }
-*/
-  // handle logout to destroy the cookie
   /*
   handleLogout = () => {
     const data = {
@@ -309,39 +243,9 @@ class Navbar extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    updateLoginInfo: (payload) => {
+    GetAllTransactions: (payload) => {
       dispatch({
-        type: 'update-login-field',
-        payload,
-      });
-    },
-    updateSignUpInfo: (payload) => {
-      dispatch({
-        type: 'signup-field-update',
-        payload,
-      });
-    },
-    updateNameInfo: (payload) => {
-      dispatch({
-        type: 'update-name-field',
-        payload,
-      });
-    },
-    updateStaticDataInfo: (payload) => {
-      dispatch({
-        type: 'update-static-field',
-        payload,
-      });
-    },
-    updateCustomerProfile: (payload) => {
-      dispatch({
-        type: 'update-customer-profile',
-        payload,
-      });
-    },
-    updateCustomerContactInfo: (payload) => {
-      dispatch({
-        type: 'customer-contact-info',
+        type: GetAllTransactions,
         payload,
       });
     },
