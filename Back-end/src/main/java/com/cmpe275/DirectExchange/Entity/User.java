@@ -7,29 +7,31 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import java.security.*;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-@JsonInclude (Include.NON_NULL)
+@JsonInclude(Include.NON_NULL)
 @Entity
-@Table(name="SIGNUP")
+@Table(name = "SIGNUP")
 public class User {
 
 	@Id
-	@Column(name="ID")
+	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	Long Id;
-	
-	@Column(name="UserName")
+
+	@Column(name = "UserName")
 	String userName;
-	
-	@Column(name="Nickname")
+
+	@Column(name = "Nickname")
 	String nickname;
-	
-	@Column(name="Password")
+
+	@Column(name = "Password")
 	String password;
-	
-	@Column(name="Status")
+
+	@Column(name = "Status")
 	String status;
 
 	public User() {
@@ -40,7 +42,7 @@ public class User {
 		super();
 		this.userName = userName;
 		this.nickname = nickname;
-		this.password = password;
+		this.password = generateEncryptedPassword(password);;
 		this.status = status;
 	}
 
@@ -73,7 +75,7 @@ public class User {
 	}
 
 	public void setPassword(String password) {
-		this.password = password;
+		this.password = generateEncryptedPassword(password);
 	}
 
 	public String getStatus() {
@@ -82,6 +84,25 @@ public class User {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	private String generateEncryptedPassword(String password){
+		String encryptedPassword ="";
+		try {
+			byte[] bytesOfMessage = password.getBytes();
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			byte[] bytes = md.digest(bytesOfMessage);
+			StringBuilder sb = new StringBuilder();
+			for(int i = 0; i< bytes.length; i++){
+				sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+			}
+
+			encryptedPassword = sb.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return encryptedPassword;
 	}
 
 }
