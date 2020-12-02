@@ -140,7 +140,7 @@ class OfferList extends Component {
                                     value={this.state.sourceCurrency}
                                   >
                                     <option className="Dropdown-menu" key="" value="">
-                                      Country
+                                      currency
                                     </option>
                                     {this.props.ConversionRateStore.conversionRates.map(
                                       (currency) => (
@@ -179,7 +179,7 @@ class OfferList extends Component {
                                     value={this.state.destinationCurrency}
                                   >
                                     <option className="Dropdown-menu" key="" value="">
-                                      Country
+                                      currency
                                     </option>
                                     {this.props.ConversionRateStore.conversionRates.map(
                                       (currency) => (

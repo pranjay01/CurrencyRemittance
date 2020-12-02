@@ -65,7 +65,7 @@ class OfferCard extends Component {
                 </div>
                 <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    <strong> Transaction Amount </strong>:{' '}
+                    <strong> Amount to Remit </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
                     {offer.sourceAmount}

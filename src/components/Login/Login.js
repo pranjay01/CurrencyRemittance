@@ -11,7 +11,8 @@ import { connect } from 'react-redux';
 import { updateSnackbarData } from '../../constants/action-types';
 import FacebookLogin from 'react-facebook-login';
 import GoogleLogin from 'react-google-login';
-
+import { notification } from 'antd';
+import 'antd/dist/antd.css';
 
 //Define a Login Component
 class Login extends Component {
@@ -24,7 +25,7 @@ class Login extends Component {
       username: null,
       password: null,
       authFlag: false,
-      errorBlock: null,
+      errorBlock: 'error',
       inputBlockHighlight: null,
       errorFlag: 1,
       fName: '',
@@ -35,7 +36,7 @@ class Login extends Component {
       genders: [],
       gender: null,
       authProviders: '',
-      googleAuth: false
+      googleAuth: false,
     };
     //Bind the handlers to this className
     // this.usernameChangeHandler = this.usernameChangeHandler.bind(this);
@@ -44,44 +45,44 @@ class Login extends Component {
     this.responseFacebook = this.responseFacebook.bind(this);
     this.responseGoogle = this.responseGoogle.bind(this);
     this.responseGoogleFailure = this.responseGoogleFailure.bind(this);
-
   }
 
   checkUserExistsOrNot = (email, callback) => {
     axios.defaults.withCredentials = true;
     //make a post request with the user data
-    axios.post(serverUrl + 'userEmail',
-     null,
-     { params: {
-       email
-    }}).then(
-      (res) => {
-        console.log('Status Code : ', res.status);
-        if (res.status === 200) {
-          callback(null, true)
-        } else {
-          callback(null, false);
+    axios
+      .post(serverUrl + 'userEmail', null, {
+        params: {
+          email,
+        },
+      })
+      .then(
+        (res) => {
+          console.log('Status Code : ', res.status);
+          if (res.status === 200) {
+            callback(null, true);
+          } else {
+            callback(null, false);
+          }
+        },
+        (error) => {
+          callback(error, false);
         }
-      },
-      (error) => {
-        callback(error,false);
-      }
-    );
-  }
+      );
+  };
 
   responseFacebook = (response) => {
-    this.checkUserExistsOrNot( response.email, (error, isExists) => {
-      if(error){
+    this.checkUserExistsOrNot(response.email, (error, isExists) => {
+      if (error) {
         /// Log error properly.
         console.log(error.response.data);
         this.setState({
           errorBlock: error.response.data,
           sigupSuccessful: false,
         });
-      } else if (isExists){
-        //User Already Exists.
-        // Set Cookie.
-          //Redirect to Home.
+      } else if (isExists) {
+        cookie.save('token', isExists.token);
+        cookie.save('userId', isExists.userId);
       } else {
         this.setState({
           fName: response.email,
@@ -90,29 +91,28 @@ class Login extends Component {
         });
       }
     });
-  }
+  };
 
-  responseGoogleFailure = (response) =>{
+  responseGoogleFailure = (response) => {
     /// show error message for the google Login failure
     this.setState({
       googleAuth: false,
-    })
-  }
+    });
+  };
 
   responseGoogle = (response) => {
     console.log(response);
-    this.checkUserExistsOrNot( response.wt.cu, (error, isExists) => {
-      if(error){
+    this.checkUserExistsOrNot(response.wt.cu, (error, isExists) => {
+      if (error) {
         /// Log error properly.
         console.log(error.response.data);
         this.setState({
           errorBlock: error.response.data,
           sigupSuccessful: false,
         });
-      } else if (isExists){
-        //User Already Exists.
-        // Set Cookie.
-          //Redirect to Home.
+      } else if (isExists) {
+        cookie.save('token', isExists.token);
+        cookie.save('userId', isExists.userId);
       } else {
         this.setState({
           fName: response.wt.cu,
@@ -120,8 +120,8 @@ class Login extends Component {
           authProviders: 'GOOGLE',
         });
       }
-    })
-  }
+    });
+  };
   componentWillMount() {
     if (this.props.location.pathname === '/Signup') {
       console.log('inside Signup');
@@ -165,45 +165,40 @@ class Login extends Component {
     });
   };
 
-  onChangeHandlerGender = (e) => {
-    this.setState({
-      gender: e.target.value,
-    });
-  };
-
   onSubmitSignUp = (e) => {
     //prevent page from refresh
     e.preventDefault();
     //set the with credentials to true
     axios.defaults.withCredentials = true;
     //make a post request with the user data
-    axios.post(serverUrl + 'user',
-     null,
-     { params: {
-      userName : this.state.username,
-      nickname : this.state.fName,
-      password : this.state.signupPassword,
-    }}).then(
-      (response) => {
-        console.log('Status Code : ', response.status);
-        if (response.status === 200) {
-          console.log(response.data);
-          // Redirect to Login
-        } else {
-          console.log(response.data);
-          // Display Error
+    axios
+      .post(serverUrl + 'user', null, {
+        params: {
+          userName: this.state.username,
+          nickname: this.state.fName,
+          password: this.state.signupPassword,
+        },
+      })
+      .then(
+        (response) => {
+          console.log('Status Code : ', response.status);
+          if (response.status === 200) {
+            console.log(response.data);
+            // Redirect to Login
+          } else {
+            console.log(response.data);
+            // Display Error
+          }
+        },
+        (error) => {
+          //Display Error
+          console.log(error.response.data);
+          this.setState({
+            errorBlock: error.response.data,
+            sigupSuccessful: false,
+          });
         }
-      },
-      (error) => {
-
-        //Display Error
-        console.log(error.response.data);
-        this.setState({
-          errorBlock: error.response.data,
-          sigupSuccessful: false,
-        });
-      }
-    );
+      );
   };
   /**Login Block */
   removeError = (e) => {
@@ -232,7 +227,25 @@ class Login extends Component {
   };
   //submit Login handler to send a request to the node backend
   submitLogin = (e) => {
+    console.log('login clicked');
+    e.preventDefault();
+    // notification['success']({
+    //   message: 'Success!!',
+    //   description: 'Product Deleted',
+    //   duration: 2,
+    // });
+    // notification['error']({
+    //   message: 'Warning!',
+    //   description: 'Product Deletion Cancelled',
+    //   duration: 2,
+    // });
+    notification.open({
+      message: 'Opp! Something went wrong.',
+      description: 'This feature has been updated later!',
+      duration: 5,
+    });
     //prevent page from refresh
+    /*
     e.preventDefault();
     const data = {
       username: this.state.username,
@@ -245,6 +258,9 @@ class Login extends Component {
       (response) => {
         console.log('Status Code : ', response.status);
         if (response.status === 200) {
+          cookie.save('token', response.token);
+          cookie.save('userId', response.userId);
+          //Store cookie and set redirect to Home
           // localStorage.setItem('token', cookie.load('cookie'));
           // localStorage.setItem('userrole', cookie.load('userrole'));
           // console.log('cookie: ', cookie.load('cookie'));
@@ -256,7 +272,6 @@ class Login extends Component {
           // };
           // this.props.updateLoginSuccess(payload);
 
-          //Store cookie and set redirect to Home
           this.setState({
             authFlag: true,
           });
@@ -273,6 +288,7 @@ class Login extends Component {
         });
       }
     );
+    */
   };
 
   checkSnackbar = () => {
@@ -284,15 +300,16 @@ class Login extends Component {
   };
   render() {
     let redirectVar = null;
-    // if (cookie.load('cookie')) {
-    //   if (cookie.load('userrole') === 'Restaurant') {
-    //     console.log('redirect to restaurant home page');
-    //     redirectVar = <Redirect to="/restaurantHome" />;
-    //   } else if (cookie.load('userrole') === 'Customer') {
-    //     console.log('redirect to custome home page');
-    //     redirectVar = <Redirect to="/home" />;
-    //   }
-    // }
+    if (cookie.load('token')) {
+      redirectVar = <Redirect to="/OfferList" />;
+      // if (cookie.load('userrole') === 'Restaurant') {
+      //   console.log('redirect to restaurant home page');
+      //   redirectVar = <Redirect to="/restaurantHome" />;
+      // } else if (cookie.load('userrole') === 'Customer') {
+      //   console.log('redirect to custome home page');
+      //   redirectVar = <Redirect to="/home" />;
+      // }
+    }
 
     let signupOrLogin = null;
     // console.log(history.location);
@@ -341,7 +358,8 @@ class Login extends Component {
                   autoLoad={true}
                   fields="name,email,picture"
                   onClick={this.componentClicked}
-                  callback={this.responseFacebook} />
+                  callback={this.responseFacebook}
+                />
               </p>
               <p class="google-start">
                 {/* <button
@@ -363,13 +381,13 @@ class Login extends Component {
                     </div>
                   </span>
                 </button> */}
-                 <GoogleLogin
+                <GoogleLogin
                   clientId="193224160021-l84huj79hc912hrn1a2itds827iemm57.apps.googleusercontent.com"
                   buttonText="Login"
                   onSuccess={this.responseGoogle}
                   onFailure={this.responseGoogleFailure}
-                  cookiePolicy={'single_host_origin'} />
-
+                  cookiePolicy={'single_host_origin'}
+                />
               </p>
               <p class="legal-copy">Don't worry, we never post without your permission.</p>
               <fieldset class="hr-line">
@@ -395,18 +413,6 @@ class Login extends Component {
                       value={this.state.fName}
                     />
                   </li>
-
-                  {/* <li>
-                    <label class="placeholder-sub">Last Name</label>
-                    <input
-                      id="last_name"
-                      name="last_name"
-                      placeholder="Last Name"
-                      required="required"
-                      type="text"
-                      onChange={this.onChangeHandlerLname}
-                    />
-                  </li> */}
                 </ul>
 
                 <div>
@@ -472,7 +478,6 @@ class Login extends Component {
         </div>
       );
     } else if (this.props.location.pathname === '/Login') {
-      // } else if (history.location.pathname === '/Login') {
       signupOrLogin = (
         <div class="login">
           <div class="signup-form-container">
@@ -509,21 +514,23 @@ class Login extends Component {
               </li>
 
               <li class="js-fb-login">
-              <FacebookLogin
+                <FacebookLogin
                   appId="673806016835125"
                   autoLoad={true}
                   fields="name,email,picture"
                   onClick={this.componentClicked}
-                  callback={this.responseFacebook} />
+                  callback={this.responseFacebook}
+                />
               </li>
 
               <li class="js-google-login" data-component-bound="true">
-              <GoogleLogin
+                <GoogleLogin
                   clientId="193224160021-l84huj79hc912hrn1a2itds827iemm57.apps.googleusercontent.com"
                   buttonText="Login"
                   onSuccess={this.responseGoogle}
                   onFailure={this.responseGoogleFailure}
-                  cookiePolicy={'single_host_origin'} />
+                  cookiePolicy={'single_host_origin'}
+                />
               </li>
             </ul>
             <fieldset class="login-separator hr-line">
@@ -600,22 +607,36 @@ class Login extends Component {
           <div>
             <div className="main-content-wrap main-content-wrap--full">
               <div id="super-container" className="content-container">
-                <div id="alert-container">
+                <div
+                  style={{
+                    marginLeft: '370px',
+                    backgroundColor: '#ca2626',
+                    color: 'white',
+                    width: '225px',
+                    borderRadius: '5px',
+                  }}
+                  id="alert-container"
+                >
                   <div class={errorClass}>
                     <a onClick={this.removeError} class="js-alert-dismiss dismiss-link" href="#">
-                      ×
+                      <h2 style={{ margin: '0%' }}> ×</h2>
                     </a>
                     <p class="alert-message">
                       <ul>{errorBlock}</ul>
                     </p>
                   </div>
                   <div class={successClass}>
-                    <a onClick={this.removeError} class="js-alert-dismiss dismiss-link" href="#">
+                    <a
+                      style={{ fontSize: 'xx-large' }}
+                      onClick={this.removeError}
+                      class="js-alert-dismiss dismiss-link"
+                      href="#"
+                    >
                       ×
                     </a>
-                    <p class="alert-message">
+                    <h4 class="alert-message">
                       <ul>{successBlock}</ul>
-                    </p>
+                    </h4>
                   </div>
                 </div>
 
