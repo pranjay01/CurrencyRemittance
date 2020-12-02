@@ -10,6 +10,7 @@ import OfferDetailPage from './OfferSearches/OfferDetailPage';
 import TransactionHistory from './OfferSearches/TransactionHistory';
 import MyOffers from './MyOffers/MyOffers';
 import ExchangeRate from './ExchangeRate/ConversionRate';
+import Login from './Login/Login';
 import axios from 'axios';
 import serverUrl from '../config';
 import { updateConversionRates, UpdateUserProfile } from '../constants/action-types';
@@ -132,6 +133,8 @@ class Main extends Component {
         {/* Render Different Component based on Route */}
         {/*<Switch>*/}
         <Route path="/" component={Navbar} />
+        <Route path="/Login" component={Login} />
+        <Route path="/Signup" component={Login} />
         <Route path="/Profile" component={Profile} />
         <Route path="/AccountInformation" component={AccountInformation} />
         <Route path="/PostOffer" component={PostOffer} />
@@ -160,7 +163,6 @@ class Main extends Component {
           <Route path="/Messages" component={MessageList} />
           <Route path="/CustomerStaticProfile" component={CustomerStaticProfile} />
   */}
-
         {/*</Switch>*/}
       </div>
     );
