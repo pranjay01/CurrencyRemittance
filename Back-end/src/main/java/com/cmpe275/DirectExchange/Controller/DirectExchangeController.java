@@ -20,6 +20,7 @@ import com.cmpe275.DirectExchange.Entity.TransactionUserMap;
 import com.cmpe275.DirectExchange.Entity.User;
 import com.cmpe275.DirectExchange.Helper.TransactionDTODeep;
 import com.cmpe275.DirectExchange.Service.AccountService;
+import com.cmpe275.DirectExchange.Service.CounterOfferService;
 import com.cmpe275.DirectExchange.Service.ExchangeRateService;
 import com.cmpe275.DirectExchange.Service.OfferService;
 import com.cmpe275.DirectExchange.Service.TransactionService;
@@ -47,6 +48,9 @@ public class DirectExchangeController {
 	
 	@Autowired
 	TransactionUserMapService transactionUserMapService;
+
+	@Autowired
+	CounterOfferService counterOfferService;
 
 	@GetMapping("/")
 	public String sayHello() {
@@ -180,6 +184,13 @@ public class DirectExchangeController {
 	@GetMapping("/user/{id}/transactionHistory")
 	public List<TransactionDTODeep> getMyTransactions(@PathVariable("id") Long userId){
 		return transactionService.getMyTransactions(userId);
+	}
+
+	@PostMapping("/createCounterOffer")
+	public Long createCounterOffer(@RequestParam(value="offerID") Long offerID,
+	@RequestParam(value="counterProposedAmount") double counterProposedAmount,
+	@RequestParam(value="userID") Long userID) {
+		return counterOfferService.createCounterOffer(offerID, counterProposedAmount, userID);
 	}
 	
 }
