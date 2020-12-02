@@ -32,6 +32,10 @@ public class CounterOffer {
     @Column(name="UserID")
     private Long userID;
 
+    public CounterOffer() {
+        super();
+	} 
+    
 	public CounterOffer(Long offerID, double counterProposedAmount, int accepted, Long userID) {
         super();
         OfferID = offerID;
@@ -74,6 +78,7 @@ public class CounterOffer {
 
 	public void setUserID(Long userID) {
 		this.userID = userID;
-	}    
+	}
+   
     
 }

@@ -1,5 +1,6 @@
 package com.cmpe275.DirectExchange.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -22,5 +23,13 @@ public class CounterOfferService {
         CounterOffer resultObj =  counterOfferRepository.save(offer);
         return resultObj.getID();
     }
+
+    public List<CounterOffer> searchCounterOffers(Long offerID) {
+		List<CounterOffer> counterOffers = new ArrayList<CounterOffer>();
+		
+		counterOffers.addAll(counterOfferRepository.findByOfferID(offerID));
+		
+		return counterOffers;
+	}
     
 }

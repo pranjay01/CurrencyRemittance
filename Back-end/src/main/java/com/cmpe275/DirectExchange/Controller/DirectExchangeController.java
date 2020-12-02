@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.*;
 
 import com.cmpe275.DirectExchange.Entity.Account;
+import com.cmpe275.DirectExchange.Entity.CounterOffer;
 import com.cmpe275.DirectExchange.Entity.ExchangeRate;
 import com.cmpe275.DirectExchange.Entity.Offer;
 import com.cmpe275.DirectExchange.Entity.Transaction;
@@ -27,7 +28,7 @@ import com.cmpe275.DirectExchange.Service.TransactionService;
 import com.cmpe275.DirectExchange.Service.TransactionUserMapService;
 import com.cmpe275.DirectExchange.Service.UserService;
 
-@CrossOrigin(allowCredentials = "true",origins = "http://localhost:3000",allowedHeaders = "*",  methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT}) 
+// @CrossOrigin(allowCredentials = "true",origins = "http://localhost:3000",allowedHeaders = "*",  methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT}) 
 @RestController
 public class DirectExchangeController {
 
@@ -191,6 +192,11 @@ public class DirectExchangeController {
 	@RequestParam(value="counterProposedAmount") double counterProposedAmount,
 	@RequestParam(value="userID") Long userID) {
 		return counterOfferService.createCounterOffer(offerID, counterProposedAmount, userID);
+	}
+
+	@GetMapping("/searchCounterOffers")
+	public List<CounterOffer> searchCounterOffers(@RequestParam(value="OfferID") Long OfferID){
+		return counterOfferService.searchCounterOffers(OfferID);
 	}
 	
 }
