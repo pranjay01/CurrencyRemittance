@@ -12,6 +12,7 @@ import { updateSnackbarData } from '../../constants/action-types';
 import FacebookLogin from 'react-facebook-login';
 import GoogleLogin from 'react-google-login';
 
+
 //Define a Login Component
 class Login extends Component {
   //call the constructor method
@@ -43,17 +44,56 @@ class Login extends Component {
     this.responseFacebook = this.responseFacebook.bind(this);
     this.responseGoogle = this.responseGoogle.bind(this);
     this.responseGoogleFailure = this.responseGoogleFailure.bind(this);
+
+  }
+
+  checkUserExistsOrNot = (email, callback) => {
+    axios.defaults.withCredentials = true;
+    //make a post request with the user data
+    axios.post(serverUrl + 'userEmail',
+     null,
+     { params: {
+       email
+    }}).then(
+      (res) => {
+        console.log('Status Code : ', res.status);
+        if (res.status === 200) {
+          callback(null, true)
+        } else {
+          callback(null, false);
+        }
+      },
+      (error) => {
+        callback(error,false);
+      }
+    );
   }
 
   responseFacebook = (response) => {
-    this.setState({
-      fName: response.email,
-      username: response.email,
-      authProviders: 'FACEBOOK',
+    this.checkUserExistsOrNot( response.email, (error, isExists) => {
+      if(error){
+        /// Log error properly.
+        console.log(error.response.data);
+        this.setState({
+          errorBlock: error.response.data,
+          sigupSuccessful: false,
+        });
+      } else if (isExists){
+        //User Already Exists.
+        // Set Cookie.
+          //Redirect to Home.
+      } else {
+        this.setState({
+          fName: response.email,
+          username: response.email,
+          authProviders: 'FACEBOOK',
+        });
+      }
     });
   }
 
   responseGoogleFailure = (response) =>{
+    /// show error message for the google Login failure
     this.setState({
       googleAuth: false,
     })
@@ -61,11 +101,26 @@ class Login extends Component {
 
   responseGoogle = (response) => {
     console.log(response);
-    this.setState({
-      fName: response.wt.cu,
-      username: response.wt.cu,
-      authProviders: 'GOOGLE',
-    });
+    this.checkUserExistsOrNot( response.wt.cu, (error, isExists) => {
+      if(error){
+        /// Log error properly.
+        console.log(error.response.data);
+        this.setState({
+          errorBlock: error.response.data,
+          sigupSuccessful: false,
+        });
+      } else if (isExists){
+        //User Already Exists.
+        // Set Cookie.
+          //Redirect to Home.
+      } else {
+        this.setState({
+          fName: response.wt.cu,
+          username: response.wt.cu,
+          authProviders: 'GOOGLE',
+        });
+      }
+    })
   }
   componentWillMount() {
     if (this.props.location.pathname === '/Signup') {
@@ -133,13 +188,15 @@ class Login extends Component {
         console.log('Status Code : ', response.status);
         if (response.status === 200) {
           console.log(response.data);
+          // Redirect to Login
         } else {
           console.log(response.data);
+          // Display Error
         }
       },
       (error) => {
-        // console.log('Status Code : ', error.status);
-        // console.log('Status Code : ', error.response);
+
+        //Display Error
         console.log(error.response.data);
         this.setState({
           errorBlock: error.response.data,
@@ -178,26 +235,28 @@ class Login extends Component {
     //prevent page from refresh
     e.preventDefault();
     const data = {
-      Email: this.state.username,
-      Password: this.state.password,
+      username: this.state.username,
+      password: this.state.password,
     };
     //set the with credentials to true
     axios.defaults.withCredentials = true;
     //make a post request with the user data
-    axios.post(serverUrl + 'customer/login', data).then(
+    axios.post(serverUrl + 'login', data).then(
       (response) => {
         console.log('Status Code : ', response.status);
         if (response.status === 200) {
-          localStorage.setItem('token', cookie.load('cookie'));
-          localStorage.setItem('userrole', cookie.load('userrole'));
-          console.log('cookie: ', cookie.load('cookie'));
-          console.log('role: ', cookie.load('userrole'));
-          let payload = {
-            userEmail: this.state.username,
-            role: cookie.load('userrole'),
-            loginStatus: true,
-          };
-          this.props.updateLoginSuccess(payload);
+          // localStorage.setItem('token', cookie.load('cookie'));
+          // localStorage.setItem('userrole', cookie.load('userrole'));
+          // console.log('cookie: ', cookie.load('cookie'));
+          // console.log('role: ', cookie.load('userrole'));
+          // let payload = {
+          //   userEmail: this.state.username,
+          //   role: cookie.load('userrole'),
+          //   loginStatus: true,
+          // };
+          // this.props.updateLoginSuccess(payload);
+
+          //Store cookie and set redirect to Home
           this.setState({
             authFlag: true,
           });
@@ -208,8 +267,6 @@ class Login extends Component {
         }
       },
       (error) => {
-        // console.log('Status Code : ', error.status);
-        // console.log('Status Code : ', error.response);
         this.setState({
           errorBlock: error.response.data,
           inputBlockHighlight: 'errorBlock',
@@ -452,46 +509,21 @@ class Login extends Component {
               </li>
 
               <li class="js-fb-login">
-                <button
-                  type="submit"
-                  value="submit"
-                  class="ybtn ybtn--social ybtn--facebook ybtn-full"
-                >
-                  <span>
-                    <div class="u-text-centered">
-                      <span
-                        aria-hidden="true"
-                        style={{ width: '24px', height: '24px' }}
-                        class="icon icon--24-facebook icon--size-24 icon--currentColor"
-                      >
-                        <svg role="img" class="icon_svg"></svg>
-                      </span>{' '}
-                      Sign in with Facebook
-                    </div>
-                  </span>
-                </button>
+              <FacebookLogin
+                  appId="673806016835125"
+                  autoLoad={true}
+                  fields="name,email,picture"
+                  onClick={this.componentClicked}
+                  callback={this.responseFacebook} />
               </li>
 
               <li class="js-google-login" data-component-bound="true">
-                <button
-                  type="submit"
-                  value="submit"
-                  class="ybtn ybtn--social ybtn--google ybtn-full"
-                >
-                  <span>
-                    <div class="u-text-centered">
-                      <span class="icon--png">
-                        <img
-                          height="24"
-                          width="24"
-                          src="https://s3-media0.fl.yelpcdn.com/assets/srv0/yelp_styleguide/cae242fd3929/assets/img/structural/24x24_google_rainbow.png"
-                          srcset="https://s3-media0.fl.yelpcdn.com/assets/srv0/yelp_styleguide/c193df424e16/assets/img/structural/24x24_google_rainbow@2x.png 2x"
-                        />
-                      </span>{' '}
-                      Sign in with Google
-                    </div>
-                  </span>
-                </button>
+              <GoogleLogin
+                  clientId="193224160021-l84huj79hc912hrn1a2itds827iemm57.apps.googleusercontent.com"
+                  buttonText="Login"
+                  onSuccess={this.responseGoogle}
+                  onFailure={this.responseGoogleFailure}
+                  cookiePolicy={'single_host_origin'} />
               </li>
             </ul>
             <fieldset class="login-separator hr-line">
