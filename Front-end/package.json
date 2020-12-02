@@ -13,6 +13,7 @@
     "chai": "^4.2.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.5",
+    "express": "^4.17.1",
     "google-map-react": "^2.1.7",
     "google-maps-react": "^2.0.6",
     "graphql": "^15.4.0",
@@ -47,10 +48,15 @@
     "snackbar": "^1.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "node app.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "postinstall": "react-scripts build"
+  },
+  "engines": {
+    "node": "~6.10.3",
+    "npm": "~5.6.0"
   },
   "eslintConfig": {
     "extends": "react-app"
