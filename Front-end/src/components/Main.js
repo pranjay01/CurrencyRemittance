@@ -14,6 +14,7 @@ import Login from './Login/Login';
 import axios from 'axios';
 import serverUrl from '../config';
 import { updateConversionRates, UpdateUserProfile } from '../constants/action-types';
+import MatchingOfferList from './MyOffers/MatchingOfferList';
 
 {
   /*import axios from 'axios';
@@ -143,6 +144,7 @@ class Main extends Component {
         <Route path="/TransactionHistory" component={TransactionHistory} />
         <Route path="/MyOffers" component={MyOffers} />
         <Route path="/ExchangeRate" component={ExchangeRate} />
+        <Route path="/MatchingOfferList" component={MatchingOfferList} />
         {/*
           <Route path="/customerLogin" component={CustomerLogin} />
           <Route path="/customerSignup" component={CustomerLogin} />

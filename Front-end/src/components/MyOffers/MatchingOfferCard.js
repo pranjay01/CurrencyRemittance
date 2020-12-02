@@ -1,10 +1,17 @@
 import React, { Component } from 'react';
 
-class MyOfferCard extends Component {
+class MatchingOfferCard extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { counterOffer: '' };
   }
+
+  onCOmmonChangeHandler = (e) => {
+    this.setState({
+      counterOffer: e.target.value,
+    });
+  };
+
   render() {
     const offer = this.props.offer;
 
@@ -43,10 +50,23 @@ class MyOfferCard extends Component {
                   className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU"
                 >
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    <strong> Offer Status </strong>:{' '}
+                    <strong> {offer.user.nickname}</strong>{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.offerStatus}
+                    <div
+                      className="lemon--div__373c0__1mboc i-stars__373c0__1T6rz i-stars--regular-5__373c0__N5JxY border-color--default__373c0__3-ifU overflow--hidden__373c0__2y4YK _0Star"
+                      aria-label="5 star rating"
+                      role="img"
+                      style={rating}
+                    >
+                      <img
+                        className="lemon--img__373c0__3GQUb offscreen__373c0__1KofL"
+                        src="https://s3-media0.fl.yelpcdn.com/assets/public/stars_v2.yji-52d3d7a328db670d4402843cbddeed89.png"
+                        width="132"
+                        height="560"
+                        alt=""
+                      />
+                    </div>
                   </span>
                 </div>
                 <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
@@ -97,7 +117,7 @@ class MyOfferCard extends Component {
                 </div>
                 <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    <strong> Destination Currency </strong>:{' '}
+                    <strong>Destination Currency </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
                     {offer.destinationCurrency}
@@ -112,7 +132,7 @@ class MyOfferCard extends Component {
                   className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU"
                 >
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    <strong>Accepting CounterOffers </strong> :{' '}
+                    <strong> Accepting CounterOffers </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
                     {offer.allowCounterOffers === 1 ? 'Accepting' : 'Not Accepting'}
@@ -162,37 +182,93 @@ class MyOfferCard extends Component {
               </p>
             </div>
             <div className="lemon--div__373c0__1mboc margin-b2__373c0__abANL border-color--default__373c0__3-ifU">
-              <p className="lemon--p__373c0__3Qnnj text__373c0__2Kxyz comment__373c0__3EKjH text-color--normal__373c0__3xep9 text-align--left__373c0__2XGa-">
-                <span className="lemon--span__373c0__3997G raw__373c0__3rKqk" lang="en">
-                  <button
-                    style={{
-                      marginLeft: '29%',
-                      color: '#222222',
-                      width: '157px',
-                      height: '35px',
-                      backgroundColor: '##ffffff',
-                      borderRadius: '7%',
-                      borderColor: '#9d9d9d',
-                      backgroundColor: 'white',
-                    }}
-                    className="link__06b83__343sR"
-                    aria-label="Toggle Menu"
-                    aria-haspopup="menu"
-                    aria-controls="header-dropdown-menu"
-                    aria-expanded="false"
-                    type="button"
-                    onClick={(event) => this.props.showMatchingOffers(event)}
-                  >
-                    <div className="lemon--div__06b83__1mboc button-content__06b83__1QNtB border-color--default__06b83mousedown-x__3-ifU">
-                      <span className="lemon--span__06b83__3997G text__06b83__2Kxyz button-content-text__06b83__Z-7FO text-color--blue-dark__06b83__1jX7S text-align--center__06b83__3VrfZ text-size--large__06b83__3t60B text--truncated__06b83__3sLaf">
-                        <span className="lemon--span__06b83__3997G display--inline__06b83__3JqBP border-color--default__06b83__3-ifU">
-                          Show Matching Offers
+              <form
+                onSubmit={this.sendCounterOffer}
+                className="yform signup-form  city-hidden"
+                id="signup-form"
+              >
+                <div style={{ flexDirection: 'column' }} className="js-more-fields more-fields">
+                  <ul style={{ display: 'flex', paddingLeft: '0px' }}>
+                    <li>
+                      <p className="lemon--p__373c0__3Qnnj text__373c0__2Kxyz comment__373c0__3EKjH text-color--normal__373c0__3xep9 text-align--left__373c0__2XGa-">
+                        <span className="lemon--span__373c0__3997G raw__373c0__3rKqk" lang="en">
+                          <button
+                            style={{
+                              marginLeft: '2%',
+                              color: 'white',
+                              width: '160px',
+                              height: '35px',
+                              backgroundColor: '#060505a6',
+                              borderRadius: '7%',
+                            }}
+                            className="link__06b83__343sR"
+                            aria-label="Toggle Menu"
+                            aria-haspopup="menu"
+                            aria-controls="header-dropdown-menu"
+                            aria-expanded="false"
+                            type="submit"
+                          >
+                            <div className="lemon--div__06b83__1mboc button-content__06b83__1QNtB border-color--default__06b83mousedown-x__3-ifU">
+                              <span className="lemon--span__06b83__3997G text__06b83__2Kxyz button-content-text__06b83__Z-7FO text-color--blue-dark__06b83__1jX7S text-align--center__06b83__3VrfZ text-size--large__06b83__3t60B text--truncated__06b83__3sLaf">
+                                <span className="lemon--span__06b83__3997G display--inline__06b83__3JqBP border-color--default__06b83__3-ifU">
+                                  Place Counter Offer
+                                </span>
+                              </span>
+                            </div>
+                          </button>
                         </span>
-                      </span>
-                    </div>
-                  </button>
-                </span>
-              </p>
+                      </p>
+                    </li>
+
+                    <li>
+                      <input
+                        style={{ marginLeft: '12%', height: '35px', width: '225px' }}
+                        id="first_name"
+                        min={0.9 * offer.sourceAmount}
+                        max={1.1 * offer.sourceAmount}
+                        name="counterOffer"
+                        placeholder="Counter Offer"
+                        required="required"
+                        type="number"
+                        onChange={this.onCOmmonChangeHandler}
+                        value={this.state.counterOffer}
+                      />
+                    </li>
+
+                    <li>
+                      <p className="lemon--p__373c0__3Qnnj text__373c0__2Kxyz comment__373c0__3EKjH text-color--normal__373c0__3xep9 text-align--left__373c0__2XGa-">
+                        <span className="lemon--span__373c0__3997G raw__373c0__3rKqk" lang="en">
+                          <button
+                            style={{
+                              marginLeft: '29%',
+                              color: 'white',
+                              width: '160px',
+                              height: '35px',
+                              backgroundColor: '#060505a6',
+                              borderRadius: '7%',
+                            }}
+                            className="link__06b83__343sR"
+                            aria-label="Toggle Menu"
+                            aria-haspopup="menu"
+                            aria-controls="header-dropdown-menu"
+                            aria-expanded="false"
+                            type="button"
+                            onClick={(event) => this.props.AcceptOffer(event, offer.offerId)}
+                          >
+                            <div className="lemon--div__06b83__1mboc button-content__06b83__1QNtB border-color--default__06b83mousedown-x__3-ifU">
+                              <span className="lemon--span__06b83__3997G text__06b83__2Kxyz button-content-text__06b83__Z-7FO text-color--blue-dark__06b83__1jX7S text-align--center__06b83__3VrfZ text-size--large__06b83__3t60B text--truncated__06b83__3sLaf">
+                                <span className="lemon--span__06b83__3997G display--inline__06b83__3JqBP border-color--default__06b83__3-ifU">
+                                  Accept Orignal Offer
+                                </span>
+                              </span>
+                            </div>
+                          </button>
+                        </span>
+                      </p>
+                    </li>
+                  </ul>
+                </div>
+              </form>
             </div>
           </div>
         </div>
@@ -201,4 +277,4 @@ class MyOfferCard extends Component {
   }
 }
 
-export default MyOfferCard;
+export default MatchingOfferCard;
