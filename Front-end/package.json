@@ -28,6 +28,8 @@
     "react-bootstrap-validation": "^0.1.11",
     "react-cookies": "^0.1.1",
     "react-dom": "^16.13.1",
+    "react-facebook-login": "^4.1.1",
+    "react-google-login": "^5.1.25",
     "react-js-pagination": "^3.0.3",
     "react-notifications-component": "^2.4.1",
     "react-paginate": "^6.5.0",

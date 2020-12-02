@@ -9,6 +9,8 @@ import './Login.css';
 import { updateLoginSuccess } from '../../constants/action-types';
 import { connect } from 'react-redux';
 import { updateSnackbarData } from '../../constants/action-types';
+import FacebookLogin from 'react-facebook-login';
+import GoogleLogin from 'react-google-login';
 
 //Define a Login Component
 class Login extends Component {
@@ -31,11 +33,28 @@ class Login extends Component {
       sigupSuccessful: false,
       genders: [],
       gender: null,
+      authProviders: ''
     };
     //Bind the handlers to this className
     // this.usernameChangeHandler = this.usernameChangeHandler.bind(this);
     // this.passwordChangeHandler = this.passwordChangeHandler.bind(this);
     // this.submitLogin = this.submitLogin.bind(this);
+    this.responseFacebook = this.responseFacebook.bind(this);
+    this.responseGoogle = this.responseGoogle.bind(this);
+  }
+
+  responseFacebook = (response) => {
+    console.log(response);
+  }
+
+  responseGoogle = (response) => {
+    console.log(response);
+    debugger;
+    this.setState({
+      fName: response.wt.cu,
+      username: response.wt.cu,
+      authProviders: 'GOOGLE',
+    })
   }
   componentWillMount() {
     if (this.props.location.pathname === '/Signup') {
@@ -89,34 +108,22 @@ class Login extends Component {
   onSubmitSignUp = (e) => {
     //prevent page from refresh
     e.preventDefault();
-    const data = {
-      Email: this.state.email,
-      Password: this.state.signupPassword,
-      First_Name: this.state.fName,
-      Last_Name: this.state.lName,
-      Gender: this.state.gender,
-    };
     //set the with credentials to true
     axios.defaults.withCredentials = true;
     //make a post request with the user data
-    axios.post(serverUrl + 'customer/signup', data).then(
+    axios.post(serverUrl + 'user',
+     null,
+     { params: {
+      userName : this.state.username,
+      nickname : this.state.fName,
+      password : this.state.signupPassword,
+    }}).then(
       (response) => {
         console.log('Status Code : ', response.status);
         if (response.status === 200) {
           console.log(response.data);
-          let payload = {
-            success: true,
-            message: 'Account Created Successfully!',
-          };
-          this.props.updateSnackbarData(payload);
-          this.setState({
-            authFlag: true,
-            //sigupSuccessful: true,
-          });
         } else {
-          this.setState({
-            authFlag: false,
-          });
+          console.log(response.data);
         }
       },
       (error) => {
@@ -243,7 +250,7 @@ class Login extends Component {
             </div>
             <div>
               <p class="fb-start">
-                <button
+                {/* <button
                   type="submit"
                   value="submit"
                   class="ybtn ybtn--social ybtn--facebook ybtn-full"
@@ -260,10 +267,16 @@ class Login extends Component {
                       Continue with Facebook
                     </div>
                   </span>
-                </button>
+                </button> */}
+                <FacebookLogin
+                  appId="673806016835125"
+                  autoLoad={true}
+                  fields="name,email,picture"
+                  onClick={this.componentClicked}
+                  callback={this.responseFacebook} />
               </p>
               <p class="google-start">
-                <button
+                {/* <button
                   type="submit"
                   value="submit"
                   class="ybtn ybtn--social ybtn--google ybtn-full"
@@ -281,7 +294,14 @@ class Login extends Component {
                       Continue with Google
                     </div>
                   </span>
-                </button>
+                </button> */}
+                 <GoogleLogin
+                  clientId="193224160021-l84huj79hc912hrn1a2itds827iemm57.apps.googleusercontent.com"
+                  buttonText="Login"
+                  onSuccess={this.responseGoogle}
+                  onFailure={this.responseGoogle}
+                  cookiePolicy={'single_host_origin'} />
+
               </p>
               <p class="legal-copy">Don't worry, we never post without your permission.</p>
               <fieldset class="hr-line">
@@ -296,7 +316,7 @@ class Login extends Component {
               <div class="js-password-meter-container">
                 <ul class="inline-layout clearfix">
                   <li>
-                    <label class="placeholder-sub">First Name</label>
+                    <label class="placeholder-sub">Nick Name</label>
                     <input
                       id="first_name"
                       name="first_name"
@@ -304,10 +324,11 @@ class Login extends Component {
                       required="required"
                       type="text"
                       onChange={this.onChangeHandlerFname}
+                      value={this.state.fName}
                     />
                   </li>
 
-                  <li>
+                  {/* <li>
                     <label class="placeholder-sub">Last Name</label>
                     <input
                       id="last_name"
@@ -317,7 +338,7 @@ class Login extends Component {
                       type="text"
                       onChange={this.onChangeHandlerLname}
                     />
-                  </li>
+                  </li> */}
                 </ul>
 
                 <div>
@@ -329,6 +350,7 @@ class Login extends Component {
                     required="required"
                     type="email"
                     onChange={this.onChangeHandlerEmail}
+                    value={this.state.username}
                   />
 
                   <label class="placeholder-sub">Password</label>
@@ -352,36 +374,8 @@ class Login extends Component {
                         ></div>
                       </div>
                     </div>
-
-                    <div class="js-password-meter-help-block help-block u-space-b2">
-                      Password must be at least 6 characters in length
-                    </div>
-                    <input
-                      type="hidden"
-                      class="js-password-meter-strength-result"
-                      name="result_password_strength_meter"
-                    />
                   </div>
-
-                  <input id="signup_source" name="signup_source" type="hidden" value="default" />
                 </div>
-              </div>
-              <div class="js-more-fields more-fields">
-                <label class="placeholder-sub">Gender</label>
-                <select
-                  placeholder="Gender"
-                  className="form-control"
-                  onChange={this.onChangeHandlerGender}
-                >
-                  <option className="Dropdown-menu" key="" value="">
-                    Gender
-                  </option>
-                  {this.state.genders.map((gender) => (
-                    <option className="Dropdown-menu" key={gender.key} value={gender.key}>
-                      {gender.value}
-                    </option>
-                  ))}
-                </select>
               </div>
 
               <button
