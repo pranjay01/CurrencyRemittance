@@ -33,7 +33,8 @@ class Login extends Component {
       sigupSuccessful: false,
       genders: [],
       gender: null,
-      authProviders: ''
+      authProviders: '',
+      googleAuth: false
     };
     //Bind the handlers to this className
     // this.usernameChangeHandler = this.usernameChangeHandler.bind(this);
@@ -41,20 +42,30 @@ class Login extends Component {
     // this.submitLogin = this.submitLogin.bind(this);
     this.responseFacebook = this.responseFacebook.bind(this);
     this.responseGoogle = this.responseGoogle.bind(this);
+    this.responseGoogleFailure = this.responseGoogleFailure.bind(this);
   }
 
   responseFacebook = (response) => {
-    console.log(response);
+    this.setState({
+      fName: response.email,
+      username: response.email,
+      authProviders: 'FACEBOOK',
+    });
+  }
+
+  responseGoogleFailure = (response) =>{
+    this.setState({
+      googleAuth: false,
+    })
   }
 
   responseGoogle = (response) => {
     console.log(response);
-    debugger;
     this.setState({
       fName: response.wt.cu,
       username: response.wt.cu,
       authProviders: 'GOOGLE',
-    })
+    });
   }
   componentWillMount() {
     if (this.props.location.pathname === '/Signup') {
@@ -299,7 +310,7 @@ class Login extends Component {
                   clientId="193224160021-l84huj79hc912hrn1a2itds827iemm57.apps.googleusercontent.com"
                   buttonText="Login"
                   onSuccess={this.responseGoogle}
-                  onFailure={this.responseGoogle}
+                  onFailure={this.responseGoogleFailure}
                   cookiePolicy={'single_host_origin'} />
 
               </p>
