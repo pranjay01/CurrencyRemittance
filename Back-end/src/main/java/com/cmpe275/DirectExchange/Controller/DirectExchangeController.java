@@ -28,7 +28,7 @@ import com.cmpe275.DirectExchange.Service.TransactionService;
 import com.cmpe275.DirectExchange.Service.TransactionUserMapService;
 import com.cmpe275.DirectExchange.Service.UserService;
 
-// @CrossOrigin(allowCredentials = "true",origins = "http://localhost:3000",allowedHeaders = "*",  methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT}) 
+@CrossOrigin(allowCredentials = "true",origins = "http://localhost:3000",allowedHeaders = "*",  methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT}) 
 @RestController
 public class DirectExchangeController {
 
