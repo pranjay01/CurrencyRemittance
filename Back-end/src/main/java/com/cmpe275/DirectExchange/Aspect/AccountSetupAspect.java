@@ -9,10 +9,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
 import com.cmpe275.DirectExchange.Entity.Account;
-import com.cmpe275.DirectExchange.Entity.Offer;
 import com.cmpe275.DirectExchange.Repository.AccountRepository;
 import com.cmpe275.DirectExchange.Repository.OfferRepository;
 

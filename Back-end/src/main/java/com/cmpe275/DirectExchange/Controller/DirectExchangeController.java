@@ -160,8 +160,11 @@ public class DirectExchangeController {
 
 	@PostMapping("/acceptOffer")
 	public String acceptOffer(@RequestParam(value="offerId1") Long offerId1,
+			@RequestParam(value="splitIndicator1", required = false) Integer splitIndicator1,
 			@RequestParam(value="offerId2") Long offerId2,
-			@RequestParam(value="offerId3", required = false) Long offerId3) {
+			@RequestParam(value="splitIndicator2", required = false) Integer splitIndicator2,
+			@RequestParam(value="offerId3", required = false) Long offerId3,
+			@RequestParam(value="splitIndicator3", required = false) Integer splitIndicator3) {
 		return transactionService.acceptOffer(offerId1, offerId2, offerId3);
 	}
 
@@ -196,11 +199,15 @@ public class DirectExchangeController {
 	}
 	
 	@PostMapping("/createCounterOffer")
-	public Long createCounterOffer(@RequestParam(value="offerID") Long offerID,
+	public Long createCounterOffer(@RequestParam(value="proposedOnOfferID") Long proposedOnOfferID,
 	@RequestParam(value="counterProposedAmount") double counterProposedAmount,
 	@RequestParam(value="userID") Long userID,
-	@RequestParam(value="counterOfferID") Long counterOfferID) {
-		return counterOfferService.createCounterOffer(offerID, counterProposedAmount, userID, counterOfferID);
+	@RequestParam(value="counterOfferID") Long counterOfferID,
+	@RequestParam(value="sourceOfferID", required = false) Long sourceOfferID,
+	@RequestParam(value="split1OfferID", required = false) Long split1OfferID,
+	@RequestParam(value="split2OfferID", required = false) Long split2OfferID) {
+		return counterOfferService.createCounterOffer(proposedOnOfferID, counterProposedAmount, userID, 
+				counterOfferID, sourceOfferID, split1OfferID, split2OfferID);
 	}
 
 	@GetMapping("/searchCounterOffers")

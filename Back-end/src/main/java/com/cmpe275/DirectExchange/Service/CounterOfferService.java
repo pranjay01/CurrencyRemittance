@@ -23,20 +23,28 @@ public class CounterOfferService {
     OfferRepository offerRepository;
 
     @Transactional
-	public Long createCounterOffer(Long offerID1, double counterProposedAmount, Long userID, Long counterOfferID) {
-		CounterOffer counterOffer = new CounterOffer(offerID1, counterProposedAmount, 0, userID, counterOfferID);
-        CounterOffer resultObj =  counterOfferRepository.save(counterOffer);
+	public Long createCounterOffer(Long proposedOnOfferID, double counterProposedAmount, Long userID, Long counterOfferID,
+			Long sourceOfferID, Long split1OfferID, Long split2OfferID) {
+    	
+    	if(sourceOfferID==null)
+    		sourceOfferID=proposedOnOfferID;
+    	if(split1OfferID==null)
+    		split1OfferID=counterOfferID;
+    	
+		CounterOffer counterOffer = new CounterOffer(proposedOnOfferID, counterProposedAmount, 0, userID, 
+				counterOfferID, sourceOfferID, split1OfferID, split2OfferID);
+        counterOfferRepository.save(counterOffer);
 
         Offer offer = offerRepository.findById(counterOfferID).orElse(null);
 		offer.setOfferStatus("counterMade");
 		offerRepository.save(offer);
-        return resultObj.getID();
+        return counterOffer.getID();
     }
 
     public List<CounterOffer> searchCounterOffers(Long offerID) {
 		List<CounterOffer> counterOffers = new ArrayList<CounterOffer>();
 		
-		counterOffers.addAll(counterOfferRepository.findByOfferID(offerID));
+		counterOffers.addAll(counterOfferRepository.findAllByProposedOnOfferID(offerID));
 		
 		return counterOffers;
 	}

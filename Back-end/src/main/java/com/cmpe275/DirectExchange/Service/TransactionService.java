@@ -51,7 +51,7 @@ public class TransactionService {
 			currentRequestId=Long.valueOf(1);
 		
 		Long requestID = currentRequestId+1;
-		
+					
 		Offer offer1 = offerRepository.findById(offerId1).orElse(null);
 		offer1.setOfferStatus("inTransaction");
 		offerRepository.save(offer1);
@@ -72,21 +72,48 @@ public class TransactionService {
 		transactionUserMapService.addMapping(transaction2, offer1.getUser());
 		
 		Offer offer3;
+		Transaction transaction3;
 		if(offerId3 != null) {
 			offer3 = offerRepository.findById(offerId3).orElse(null);
 			offer3.setOfferStatus("inTransaction");
 			offerRepository.save(offer3);
 			
-			Transaction transaction3 = new Transaction(requestID, offer3.getOfferId(), offer3.getUser().getId(), "Pending");
+			transaction3 = new Transaction(requestID, offer3.getOfferId(), offer3.getUser().getId(), "Pending");
 			transactionRepository.save(transaction3);
 			sendTransactionInitiationEmail(offer3.getUser().getUserName(), offerId3);
 			
 			transactionUserMapService.addMapping(transaction1, offer3.getUser());
-			transactionUserMapService.addMapping(transaction3, offer3.getUser());
+			transactionUserMapService.addMapping(transaction3, offer1.getUser());
 		}
 			
 		return "Transaction initiated";
 	}
+	
+//	public String acceptOffer(Long offerId1, Integer splitIndicator1, Long offerId2, Integer splitIndicator2, 
+//			Long offerId3, Integer splitIndicator3) {
+//		if(splitIndicator1==0 && splitIndicator2==0)
+//			return processOfferTransactions(offerId1, offerId2, offerId3);
+//		
+//		Long source;
+//		Long match1;
+//		Long match2;
+//		
+//		if(splitIndicator1==1) {
+//			match1=offerId1;
+//			if(splitIndicator2==1) {
+//				match2=offerId2;
+//				source=offerId3;
+//			} else {
+//				source=offerId2;
+//				match2=offerId3;
+//			}
+//		} else {
+//			source=offerId1;
+//			match1=offerId2;
+//			match2=offerId3;
+//		}
+//		return processOfferTransactions(source, match1, match2);
+//	}
 	
 	@Transactional
 	public String sendMoney(Long offerId) {
@@ -133,7 +160,7 @@ public class TransactionService {
 		offer.setSourceAmount(counterOffer.getCounterProposedAmount());
 		offerRepository.save(offer);
 		
-		acceptOffer(offerId, counterOffer.getCounterOfferID(), null);
+		acceptOffer(counterOffer.getSourceOfferID(), counterOffer.getSplit1OfferID(), counterOffer.getSplit2OfferID());
 		
 		counterOffer.setAccepted(1);
 		counterOfferRepository.save(counterOffer);
