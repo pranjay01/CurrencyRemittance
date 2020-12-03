@@ -6,6 +6,8 @@ import cookie from 'react-cookies';
 import { connect } from 'react-redux';
 // import { updateSnackbarData } from '../../../constants/action-types';
 // import { updateRestaurant } from '../../../mutations/UpdateProfile';
+import { notification } from 'antd';
+import 'antd/dist/antd.css';
 
 class AccountInformation extends Component {
   constructor(props) {
@@ -98,18 +100,7 @@ class AccountInformation extends Component {
       ...this.state.Account,
     };
     console.log(data);
-    // axios.post(serverUrl + 'account', data).then(
-    //   (response) => {
-    //     // console.log('Status Code : ', response.status);
-    //     if (response.status === 200) {
-    //       console.log(response.data);
-    //       this.editProfile();
-    //     }
-    //   },
-    //   (error) => {
-    //     // console.log(error);
-    //   }
-    // );
+
     axios
       .post(serverUrl + 'account', null, {
         params: {
@@ -124,8 +115,19 @@ class AccountInformation extends Component {
         (response) => {
           console.log(response.data);
           this.editProfile();
+          notification['success']({
+            message: 'Success!!',
+            description: 'Account Saved!!',
+            duration: 4,
+          });
         },
-        (error) => {}
+        (error) => {
+          notification['error']({
+            message: 'ERROR!',
+            description: 'Account Save Failed!',
+            duration: 4,
+          });
+        }
       );
   };
 

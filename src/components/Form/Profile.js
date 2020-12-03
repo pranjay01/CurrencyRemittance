@@ -6,6 +6,8 @@ import cookie from 'react-cookies';
 import { connect } from 'react-redux';
 import { UpdateUserProfile } from '../../constants/action-types';
 // import { updateRestaurant } from '../../../mutations/UpdateProfile';
+import { notification } from 'antd';
+import 'antd/dist/antd.css';
 
 class Profile extends Component {
   constructor(props) {
@@ -67,11 +69,17 @@ class Profile extends Component {
           this.setState({
             isFormDisable: true,
           });
+          notification['success']({
+            message: 'Success!!',
+            description: 'Profile Updated Successfully!!',
+            duration: 4,
+          });
         },
         (error) => {
-          this.setState({
-            submitError: true,
-            submitErrorBlock: JSON.stringify(error),
+          notification['error']({
+            message: 'ERROR!',
+            description: error.response.data,
+            duration: 4,
           });
         }
       );

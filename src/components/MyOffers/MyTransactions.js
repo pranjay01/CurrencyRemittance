@@ -1,57 +1,44 @@
 import React, { Component } from 'react';
 import ReactPaginate from 'react-paginate';
-import TransactionCard from './TransactionCard';
+import MyTransactionCard from './MyTransactionCard';
 import axios from 'axios';
 import serverUrl from '../../config';
 import { notification } from 'antd';
 import 'antd/dist/antd.css';
 import { getTransactionList } from '../../constants/action-types';
 import { connect } from 'react-redux';
-import { Link, Redirect } from 'react-router-dom';
 
-class TransactionHistory extends Component {
+class MyTransactions extends Component {
   constructor(props) {
     super(props);
     this.state = { transactions: [{ otherUsers: [1, 1] }] };
   }
 
   componentDidMount() {
-    if (this.props.location.state && this.props.location.state.openTransactionPage) {
-      axios
-        .get(serverUrl + 'user/' + this.props.location.state.userId + '/transactionHistory', {
-          params: {},
-          withCredentials: true,
-        })
-        .then((response) => {
-          console.log('Transactions ', response.data);
-          const TransactionList = response.data;
-          const payload = {
-            TransactionList,
-          };
-          if (response.data.length > 0) {
-            this.props.getTransactionList(payload);
-          } else {
-            notification.open({
-              message: 'Opp!.',
-              description: 'User hasn"t done any transactions yet!',
-              duration: 4,
-            });
-          }
-        });
-    }
+    axios
+      .get(serverUrl + 'user/' + localStorage.getItem('userId') + '/transactionHistory', {
+        params: {},
+        withCredentials: true,
+      })
+      .then((response) => {
+        console.log('Transactions ', response.data);
+        const TransactionList = response.data;
+        const payload = {
+          TransactionList,
+        };
+        if (response.data.length > 0) {
+          this.props.getTransactionList(payload);
+        } else {
+          notification.open({
+            message: 'Opp!.',
+            description: 'You haven"t done any transactions yet!',
+            duration: 4,
+          });
+        }
+      });
   }
 
   render() {
-    if (!this.props.location.state || this.props.location.state.openTransactionPage === false) {
-      return (
-        <Redirect
-          to={{
-            pathname: '/OfferList',
-            // state: { openDetailPage: this.state.openDetailPage, offerId: this.state.offerId },
-          }}
-        />
-      );
-    }
     return (
       <div className="lemon--div__06b83__1mboc responsive responsive-biz border-color--default__06b83__3-ifU">
         {/*redirectVar*/}
@@ -66,7 +53,7 @@ class TransactionHistory extends Component {
                 <div>
                   <ul className="lemon--ul__373c0__1_cxs undefined list__373c0__2G8oH">
                     {this.props.TransactionListStore.TransactionList.map((transaction) => (
-                      <TransactionCard
+                      <MyTransactionCard
                         key={transaction._id}
                         // openStaticProfile={(event) =>
                         //   this.openStaticProfile(event, review.CustomerID)
@@ -102,7 +89,7 @@ class TransactionHistory extends Component {
   }
 }
 
-// export default TransactionHistory;
+// export default MyTransactions;
 const mapStateToProps = (state) => {
   const { TransactionListStore } = state.TransactionReducer;
   return {
@@ -121,4 +108,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(TransactionHistory);
+export default connect(mapStateToProps, mapDispatchToProps)(MyTransactions);

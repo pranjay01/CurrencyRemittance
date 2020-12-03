@@ -3,15 +3,27 @@ import ReactPaginate from 'react-paginate';
 import { Link, Redirect } from 'react-router-dom';
 // import './Offerist.css';
 import { connect } from 'react-redux';
-import { getOfferLists, updateFocusOffer } from '../../constants/action-types';
+import {
+  getOfferLists,
+  updateFocusOffer,
+  updateConversionRates,
+} from '../../constants/action-types';
 import axios from 'axios';
 import serverUrl from '../../config';
 import MatchingOfferCard from './MatchingOfferCard';
+import { notification } from 'antd';
+import 'antd/dist/antd.css';
+import MatchingOfferCardSplit from './MatchingOfferCardSplit';
 
 class MatchingOfferList extends Component {
   constructor(props) {
     super(props);
-    this.state = { includeSplitOffers: 'yes', returnToMyOffers: false };
+    this.state = {
+      includeSplitOffers: 'yes',
+      returnToMyOffers: false,
+      openCounterOffers: false,
+      offerId: '',
+    };
   }
 
   onCOmmonChangeHandler = (e) => {
@@ -36,20 +48,46 @@ class MatchingOfferList extends Component {
         },
         withCredentials: true,
       })
-      .then((response) => {
-        console.log(response.data);
-        const offerLists = response.data;
-        const payload = {
-          offerLists,
-          PageNo,
-          TotalCount: 0,
-        };
-        this.props.getOfferLists(payload);
-      });
+      .then(
+        (response) => {
+          console.log(response.data);
+          const offerLists = response.data;
+          if (response.data.length > 0) {
+            const payload = {
+              offerLists,
+              PageNo,
+              TotalCount: 0,
+            };
+            this.props.getOfferLists(payload);
+          } else {
+            notification.open({
+              message: 'Opp! No matching offers found',
+              description: 'Seems there are no matching offers',
+              duration: 4,
+            });
+          }
+        },
+        (error) => {
+          console.log('error', error);
+          notification['error']({
+            message: 'ERROR!',
+            description: error.response.data,
+            duration: 4,
+          });
+        }
+      );
   };
 
   componentDidMount() {
-    this.commonFetch();
+    axios.get(serverUrl + 'getConversionRate').then((response) => {
+      console.log(response.data);
+      const conversionRates = response.data;
+      const payload = {
+        conversionRates,
+      };
+      this.props.updateConversionRates(payload);
+      this.commonFetch();
+    });
   }
 
   AcceptOffer = (Event, offerId2, offerId3 = null) => {
@@ -67,16 +105,21 @@ class MatchingOfferList extends Component {
       .then(
         (response) => {
           console.log(response.data);
+          notification['success']({
+            message: 'Success!!',
+            description: 'Transaction Initiated, please send mony within 10 minutes',
+            duration: 6,
+          });
           this.setState({
             returnToMyOffers: true,
-            submitErrorBlock: '',
-            submitError: false,
           });
         },
         (error) => {
-          this.setState({
-            submitErrorBlock: JSON.stringify(error),
-            submitError: true,
+          console.log(error.response);
+          notification['error']({
+            message: 'ERROR!',
+            description: error.response.data.error + '. Offer accept failed',
+            duration: 4,
           });
         }
       );
@@ -166,7 +209,7 @@ class MatchingOfferList extends Component {
                 style={{ width: '66.66666666666666%', marginLeft: '25%' }}
               >
                 <div>
-                  <ul className="lemon--ul__373c0__1_cxs undefined list__373c0__2G8oH">
+                  {/*<ul className="lemon--ul__373c0__1_cxs undefined list__373c0__2G8oH">
                     {this.props.OfferListStore.offerLists.map((offer) => (
                       <MatchingOfferCard
                         key={offer._id}
@@ -174,7 +217,19 @@ class MatchingOfferList extends Component {
                         offer={offer}
                         AcceptOffer={(event, offerId2) => this.AcceptOffer(event, offerId2)}
 
-                        //   }
+                        //   conditional cards will come here, remove down card while integration
+                      />
+                    ))}
+                    </ul>*/}
+                  <ul className="lemon--ul__373c0__1_cxs undefined list__373c0__2G8oH">
+                    {this.props.OfferListStore.offerLists.map((offer) => (
+                      <MatchingOfferCardSplit
+                        key={offer._id}
+                        openDetailsPage={(event) => this.openDetailsPage(event, offer)}
+                        offer={offer}
+                        AcceptOffer={(event, offerId2) => this.AcceptOffer(event, offerId2)}
+
+                        //   conditional cards will come here, remove down card while integration
                       />
                     ))}
                   </ul>
@@ -229,7 +284,12 @@ const mapDispatchToProps = (dispatch) => {
         payload,
       });
     },
+    updateConversionRates: (payload) => {
+      dispatch({
+        type: updateConversionRates,
+        payload,
+      });
+    },
   };
 };
-
 export default connect(mapStateToProps, mapDispatchToProps)(MatchingOfferList);

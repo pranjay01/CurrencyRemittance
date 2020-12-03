@@ -135,25 +135,24 @@ class Navbar extends Component {
             <Link to="/Profile">Profile</Link>
           </li>
 
+          <li class={this.props.location.pathname === '/MyAccounts' && 'active'}>
+            <Link to="/MyAccounts">My Accounts</Link>
+          </li>
           <li class={this.props.location.pathname === '/AccountInformation' && 'active'}>
             <Link to="/AccountInformation">Create Account</Link>
           </li>
-
           <li class={this.props.location.pathname === '/PostOffer' && 'active'}>
             <Link to="/PostOffer">Post Offer</Link>
           </li>
-
           <li class={this.props.location.pathname === '/ExchangeRate' && 'active'}>
             <Link to="/ExchangeRate">Current Conversion Rate</Link>
           </li>
-
           <li class={this.props.location.pathname === '/MyOffers' && 'active'}>
             <Link to="/MyOffers">My Offers</Link>
           </li>
           <li class={this.props.location.pathname === '/MyTransactions' && 'active'}>
             <Link to="/MyTransactions">My Transactions</Link>
           </li>
-
           <li class={this.props.location.pathname === '/restaurantEvents' && 'active'}>
             <Link to="/restaurantEvents">Reviews</Link>
           </li>

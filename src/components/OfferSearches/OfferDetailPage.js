@@ -1,39 +1,85 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { updateFocusOffer } from '../../constants/action-types';
+import axios from 'axios';
+import serverUrl from '../../config';
+import { notification } from 'antd';
+import 'antd/dist/antd.css';
+
+// import { Link, Redirect } from 'react-router-dom';
 
 class OfferDetailPage extends Component {
   constructor(props) {
     super(props);
-    this.state = { offerDetail: {} };
+    this.state = { offerDetail: {}, openTransactionPage: false, userId: '' };
   }
 
   componentDidMount() {
-    // axios
-    //   .get(serverUrl + 'searchOffers', {
-    //     params: {
-    //       sourceCurrency: this.state.sourceCurrency ? this.state.sourceCurrency : null,
-    //       sourceAmount: this.state.sourceAmount ? parseFloat(this.state.sourceAmount) : null,
-    //       destinationCurrency: this.state.destinationCurrency
-    //         ? this.state.destinationCurrency
-    //         : null,
-    //       destinationAmount: this.state.destinationAmount
-    //         ? parseFloat(this.state.destinationAmount)
-    //         : null,
-    //     },
-    //     withCredentials: true,
-    //   })
-    //   .then((response) => {
-    //     console.log(response.data);
-    //     const offerLists = response.data;
-    //     const payload = {
-    //       offerLists,
-    //     };
-    //     this.props.getOfferLists(payload);
-    //   });
+    console.log('this.props.location', this.props.location);
+    if (this.props.location.state && this.props.location.state.openDetailPage) {
+      console.log('property_id', this.props.location.state.offerId);
+      axios
+        .get(serverUrl + 'offer/' + this.props.location.state.offerId, {
+          params: {},
+          withCredentials: true,
+        })
+        .then((response) => {
+          console.log(response.data);
+          if (response.data) {
+            console.log('data to deit offer', response.data);
+            const payload = {
+              Offer: { ...response.data },
+            };
+            this.props.updateFocusOffer(payload);
+          } else {
+            notification.error({
+              message: 'ERROR!.',
+              description: 'Wrong Offer',
+              duration: 6,
+            });
+          }
+        });
+    }
   }
 
+  showTransactionHistory = (event) => {
+    event.preventDefault();
+    // localStorage.setItem('OpenOffer', offerId);
+    // const payload = {
+    //   Offer,
+    // };
+    // this.props.updateFocusOffer(payload);
+    this.setState({
+      openTransactionPage: true,
+      userId: this.props.onFocusOfferStore.Offer.user.id,
+    });
+  };
+
   render() {
+    if (!this.props.location.state || this.props.location.state.openDetailPage === false) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/OfferList',
+            // state: { openDetailPage: this.state.openDetailPage, offerId: this.state.offerId },
+          }}
+        />
+      );
+    }
+    if (this.state.openTransactionPage && this.state.userId) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/TransactionHistory',
+            state: {
+              openTransactionPage: this.state.openTransactionPage,
+              userId: this.state.userId,
+            },
+          }}
+        />
+      );
+    }
     let rating = { backgroundPosition: '0 -320px' };
     switch (2) {
       case 1:
@@ -86,7 +132,7 @@ class OfferDetailPage extends Component {
                     <ul className="ylist">
                       <li>
                         <h4>Reputaion</h4>
-                        <Link to="/TransactionHistory">
+                        <a onClick={this.showTransactionHistory}>
                           <div
                             className="lemon--div__373c0__1mboc i-stars__373c0__1T6rz i-stars--regular-5__373c0__N5JxY border-color--default__373c0__3-ifU overflow--hidden__373c0__2y4YK _0Star"
                             aria-label="5 star rating"
@@ -101,7 +147,7 @@ class OfferDetailPage extends Component {
                               alt=""
                             />
                           </div>
-                        </Link>
+                        </a>
                       </li>
                       <li>
                         <h4>Name: {this.props.onFocusOfferStore.Offer.user.nickname}</h4>
@@ -200,12 +246,12 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    // getOfferLists: (payload) => {
-    //   dispatch({
-    //     type: getOfferLists,
-    //     payload,
-    //   });
-    // },
+    updateFocusOffer: (payload) => {
+      dispatch({
+        type: updateFocusOffer,
+        payload,
+      });
+    },
     // updateFocusOffer: (payload) => {
     //   dispatch({
     //     type: updateFocusOffer,

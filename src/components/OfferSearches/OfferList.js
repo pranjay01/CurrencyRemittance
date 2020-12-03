@@ -17,6 +17,7 @@ class OfferList extends Component {
       destinationCurrency: '',
       destinationAmount: '',
       openDetailPage: false,
+      offerId: '',
     };
   }
 
@@ -77,22 +78,33 @@ class OfferList extends Component {
       });
   };
 
-  openDetailsPage = (event, Offer) => {
+  openDetailsPage = (event, offerId) => {
     event.preventDefault();
-    localStorage.setItem('OpenOffer', Offer.offerId);
-    const payload = {
-      Offer,
-    };
-    this.props.updateFocusOffer(payload);
+    // localStorage.setItem('OpenOffer', offerId);
+    // const payload = {
+    //   Offer,
+    // };
+    // this.props.updateFocusOffer(payload);
     this.setState({
       openDetailPage: true,
+      offerId,
     });
   };
 
   render() {
     let redirectVar = null;
-    if (this.state.openDetailPage) {
-      redirectVar = <Redirect to="OfferDetailPage" />;
+    // if (this.state.openDetailPage) {
+    //   redirectVar = <Redirect to="OfferDetailPage" />;
+    // }
+    if (this.state.openDetailPage && this.state.offerId) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/OfferDetailPage',
+            state: { openDetailPage: this.state.openDetailPage, offerId: this.state.offerId },
+          }}
+        />
+      );
     }
     return (
       <div className="lemon--div__06b83__1mboc responsive responsive-biz border-color--default__06b83__3-ifU">
@@ -262,7 +274,7 @@ class OfferList extends Component {
                     {this.props.OfferListStore.offerLists.map((offer) => (
                       <OfferCard
                         key={offer._id}
-                        openDetailsPage={(event) => this.openDetailsPage(event, offer)}
+                        openDetailsPage={(event) => this.openDetailsPage(event, offer.offerId)}
                         offer={offer}
 
                         //   }

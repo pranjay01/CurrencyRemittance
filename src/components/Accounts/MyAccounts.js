@@ -2,18 +2,18 @@ import React, { Component } from 'react';
 import ReactPaginate from 'react-paginate';
 import { Link, Redirect } from 'react-router-dom';
 import '../OfferSearches/Offerist.css';
-import MyOfferCard from './MyOfferCard';
 import { connect } from 'react-redux';
 import { getOfferLists } from '../../constants/action-types';
 import axios from 'axios';
 import serverUrl from '../../config';
 import { notification } from 'antd';
 import 'antd/dist/antd.css';
+import MyAccountCard from './MyAccountCard';
 
-class MyOffers extends Component {
+class MyAccounts extends Component {
   constructor(props) {
     super(props);
-    this.state = { editOffer: false, offerId: null, openCounterOffers: false };
+    this.state = { accounts: [1, 2] };
   }
 
   componentDidMount() {
@@ -63,19 +63,6 @@ class MyOffers extends Component {
     this.setState({ offerId, editOffer: true });
   };
 
-  openCounterOffer = (event, offerId) => {
-    event.preventDefault();
-    // localStorage.setItem('OpenOffer', offerId);
-    // const payload = {
-    //   Offer,
-    // };
-    // this.props.updateFocusOffer(payload);
-    this.setState({
-      openCounterOffers: true,
-      offerId,
-    });
-  };
-
   render() {
     if (this.state.editOffer && this.state.offerId) {
       return (
@@ -83,19 +70,6 @@ class MyOffers extends Component {
           to={{
             pathname: '/PostOffer',
             state: { editOffer: this.state.editOffer, offerId: this.state.offerId },
-          }}
-        />
-      );
-    }
-    if (this.state.openCounterOffers && this.state.offerId) {
-      return (
-        <Redirect
-          to={{
-            pathname: '/CounterOffers',
-            state: {
-              openCounterOffers: this.state.openCounterOffers,
-              offerId: this.state.offerId,
-            },
           }}
         />
       );
@@ -113,12 +87,11 @@ class MyOffers extends Component {
               >
                 <div>
                   <ul className="lemon--ul__373c0__1_cxs undefined list__373c0__2G8oH">
-                    {this.props.OfferListStore.offerLists.map((offer) => (
-                      <MyOfferCard
-                        key={offer.offerId}
-                        editOffer={() => this.editOffer(offer.offerId)}
-                        offer={offer}
-                        openCounterOffer={(event) => this.openCounterOffer(event, offer.offerId)}
+                    {this.props.OfferListStore.offerLists.map((account) => (
+                      <MyAccountCard
+                        key={account.offerId}
+                        // editOffer={() => this.editOffer(offer.offerId)}
+                        account={account}
 
                         //   }
                       />
@@ -168,4 +141,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(MyOffers);
+export default connect(mapStateToProps, mapDispatchToProps)(MyAccounts);
