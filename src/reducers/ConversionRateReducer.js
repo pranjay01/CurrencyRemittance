@@ -1,4 +1,4 @@
-import { updateConversionRates } from '../constants/action-types';
+import { logOut, updateConversionRates } from '../constants/action-types';
 
 const defaultState = {
   ConversionRateStore: {
@@ -12,6 +12,13 @@ const ConversionRateReducer = (state = defaultState, action) => {
       return {
         ...state,
         ConversionRateStore: { ...state.ConversionRateStore, ...action.payload },
+        //   return Object.assign(state, action.payload);
+      };
+    }
+    case logOut: {
+      return {
+        ...state,
+        ConversionRateStore: { conversionRates: [] },
         //   return Object.assign(state, action.payload);
       };
     }

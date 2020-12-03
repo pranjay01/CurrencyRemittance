@@ -18,6 +18,7 @@ import MatchingOfferList from './MyOffers/MatchingOfferList';
 import CounterOffers from './MyOffers/CounterOffers';
 import VerificationPage from './Login/VerificationPage';
 import MyTransactions from './MyOffers/MyTransactions';
+import MyAccounts from './Accounts/MyAccounts';
 
 {
   /*import axios from 'axios';
@@ -144,13 +145,14 @@ class Main extends Component {
         <Route path="/AccountInformation" component={AccountInformation} />
         <Route path="/PostOffer" render={(props) => <PostOffer {...props} />} />
         <Route path="/OfferList" component={OfferList} />
-        <Route path="/OfferDetailPage" component={OfferDetailPage} />
-        <Route path="/TransactionHistory" component={TransactionHistory} />
+        <Route path="/OfferDetailPage" render={(props) => <OfferDetailPage {...props} />} />
+        <Route path="/TransactionHistory" render={(props) => <TransactionHistory {...props} />} />
         <Route path="/MyOffers" component={MyOffers} />
         <Route path="/ExchangeRate" component={ExchangeRate} />
         <Route path="/MatchingOfferList" component={MatchingOfferList} />
         <Route path="/CounterOffers" component={CounterOffers} />
         <Route path="/MyTransactions" component={MyTransactions} />
+        <Route path="/MyAccounts" component={MyAccounts} />
         {/*
           <Route path="/customerLogin" component={CustomerLogin} />
           <Route path="/customerSignup" component={CustomerLogin} />

@@ -8,13 +8,13 @@ import { connect } from 'react-redux';
 // import { updateRestaurant } from '../../../mutations/UpdateProfile';
 import { notification } from 'antd';
 import 'antd/dist/antd.css';
+import { Link, Redirect } from 'react-router-dom';
 
 class PostOffer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      Countries: [],
-      States: [],
+      returnToMyoffers: false,
       isFormDisable: true,
       submitError: false,
       submitErrorBlock: '',
@@ -40,19 +40,22 @@ class PostOffer extends Component {
     const index1 = this.props.ConversionRateStore.conversionRates.findIndex(
       (x) => x.country === sourceCountry
     );
-    console.log('index1', index1);
-    const source = this.props.ConversionRateStore.conversionRates[index1].usdConversionRate;
     const index2 = this.props.ConversionRateStore.conversionRates.findIndex(
       (x) => x.country === destinationCountry
     );
-    const destination = this.props.ConversionRateStore.conversionRates[index2].usdConversionRate;
-    const currentExchangeRate = (Number(source) / Number(destination)).toFixed(3);
-    return currentExchangeRate;
+    if (index1 >= 0 && index2 >= 0) {
+      const source = this.props.ConversionRateStore.conversionRates[index1].usdConversionRate;
+
+      const destination = this.props.ConversionRateStore.conversionRates[index2].usdConversionRate;
+      const currentExchangeRate = (Number(source) / Number(destination)).toFixed(3);
+      return currentExchangeRate;
+    }
+    return '';
   };
 
   componentDidMount() {
     if (this.props.location.state && this.props.location.state.editOffer) {
-      console.log('property_id', this.props.location.state.offerId);
+      console.log('property_id', this.props.ConversionRateStore);
       axios
         .get(serverUrl + 'offer/' + this.props.location.state.offerId, {
           params: {},
@@ -245,10 +248,57 @@ class PostOffer extends Component {
       );
   };
 
+  updateOffer = (event) => {
+    event.preventDefault();
+    axios
+      .post(serverUrl + 'offer' + this.props.location.state.offerId, null, {
+        params: {
+          userId: parseInt(localStorage.getItem('userId')),
+          // userId: 12345,
+          sourceAmount: this.state.NewOffer.sourceAmount,
+          exchangeRate:
+            this.state.NewOffer.customExchangeRate !== ''
+              ? Number(this.state.NewOffer.customExchangeRate)
+              : Number(this.state.NewOffer.currentExchangeRate),
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log(response.data);
+          this.setState({
+            returnToMyoffers: true,
+          });
+          notification['success']({
+            message: 'Success!!',
+            description: 'Offer Updated Successfully!!',
+            duration: 4,
+          });
+        },
+        (error) => {
+          console.log('update', error);
+          notification['error']({
+            message: 'ERROR!',
+            description: 'Update Failed',
+            duration: 4,
+          });
+        }
+      );
+  };
+
   render(/**<fieldset disabled> */) {
     let errorClass = 'alert alert-error ';
     if (!this.state.submitError) {
       errorClass += 'hidden';
+    }
+    if (this.state.returnToMyoffers) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/MyOffers',
+          }}
+        />
+      );
     }
     return (
       <div style={{ marginTop: '3%' }}>
@@ -300,6 +350,7 @@ class PostOffer extends Component {
                     onChange={this.onCOmmonChangeHandler}
                     value={this.state.NewOffer.sourceCountry}
                     required
+                    disabled={this.props.location.state && this.props.location.state.editOffer}
                   >
                     <option className="Dropdown-menu" key="" value="">
                       Country
@@ -342,6 +393,7 @@ class PostOffer extends Component {
                     onChange={this.onCOmmonChangeHandler}
                     value={this.state.NewOffer.destinationCountry}
                     required
+                    disabled={this.props.location.state && this.props.location.state.editOffer}
                   >
                     <option className="Dropdown-menu" key="" value="">
                       Country
@@ -419,6 +471,7 @@ class PostOffer extends Component {
                     type="checkbox"
                     checked={this.state.NewOffer.allowCounterOffers}
                     onChange={this.onChangeHandlerAllowCounterOffers}
+                    disabled={this.props.location.state && this.props.location.state.editOffer}
                   />
                 </li>
                 <li style={{ width: '10%' }}></li>
@@ -430,6 +483,7 @@ class PostOffer extends Component {
                     type="checkbox"
                     checked={this.state.NewOffer.splitExchange}
                     onChange={this.onChangeHandlerSplitExchange}
+                    disabled={this.props.location.state && this.props.location.state.editOffer}
                   />
                 </li>
               </ul>
@@ -451,6 +505,7 @@ class PostOffer extends Component {
             <div>
               {this.props.location.state && this.props.location.state.editOffer ? (
                 <button
+                  onClick={this.updateOffer}
                   id="signup-button"
                   type="button"
                   className="ybtn ybtn--primary ybtn--big disable-on-submit submit signup-button"

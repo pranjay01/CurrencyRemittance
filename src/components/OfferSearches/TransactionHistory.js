@@ -1,13 +1,57 @@
 import React, { Component } from 'react';
 import ReactPaginate from 'react-paginate';
 import TransactionCard from './TransactionCard';
+import axios from 'axios';
+import serverUrl from '../../config';
+import { notification } from 'antd';
+import 'antd/dist/antd.css';
+import { getTransactionList } from '../../constants/action-types';
+import { connect } from 'react-redux';
+import { Link, Redirect } from 'react-router-dom';
 
 class TransactionHistory extends Component {
   constructor(props) {
     super(props);
     this.state = { transactions: [{ otherUsers: [1, 1] }] };
   }
+
+  componentDidMount() {
+    if (this.props.location.state && this.props.location.state.openTransactionPage) {
+      axios
+        .get(serverUrl + 'user/' + this.props.location.state.userId + '/transactionHistory', {
+          params: {},
+          withCredentials: true,
+        })
+        .then((response) => {
+          console.log('Transactions ', response.data);
+          const TransactionList = response.data;
+          const payload = {
+            TransactionList,
+          };
+          if (response.data.length > 0) {
+            this.props.getTransactionList(payload);
+          } else {
+            notification.open({
+              message: 'Opp!.',
+              description: 'User hasn"t done any transactions yet!',
+              duration: 4,
+            });
+          }
+        });
+    }
+  }
+
   render() {
+    if (!this.props.location.state || this.props.location.state.openTransactionPage === false) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/OfferList',
+            // state: { openDetailPage: this.state.openDetailPage, offerId: this.state.offerId },
+          }}
+        />
+      );
+    }
     return (
       <div className="lemon--div__06b83__1mboc responsive responsive-biz border-color--default__06b83__3-ifU">
         {/*redirectVar*/}
@@ -21,7 +65,7 @@ class TransactionHistory extends Component {
               >
                 <div>
                   <ul className="lemon--ul__373c0__1_cxs undefined list__373c0__2G8oH">
-                    {this.state.transactions.map((transaction) => (
+                    {this.props.TransactionListStore.TransactionList.map((transaction) => (
                       <TransactionCard
                         key={transaction._id}
                         // openStaticProfile={(event) =>
@@ -58,4 +102,23 @@ class TransactionHistory extends Component {
   }
 }
 
-export default TransactionHistory;
+// export default TransactionHistory;
+const mapStateToProps = (state) => {
+  const { TransactionListStore } = state.TransactionReducer;
+  return {
+    TransactionListStore,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getTransactionList: (payload) => {
+      dispatch({
+        type: getTransactionList,
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(TransactionHistory);

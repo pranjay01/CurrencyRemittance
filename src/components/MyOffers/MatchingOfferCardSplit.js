@@ -5,7 +5,7 @@ import { notification } from 'antd';
 import 'antd/dist/antd.css';
 import { connect } from 'react-redux';
 
-class MatchingOfferCard extends Component {
+class MatchingOfferCardSplit extends Component {
   constructor(props) {
     super(props);
     this.state = { counterOffer: '', showMessageArea: false, message: '' };
@@ -67,22 +67,33 @@ class MatchingOfferCard extends Component {
   };
 
   exactMath = () => {
-    const index = this.props.ConversionRateStore.conversionRates.findIndex(
+    debugger;
+    let index = this.props.ConversionRateStore.conversionRates.findIndex(
       (x) => x.currencyType === localStorage.getItem('OfferToMatchCurr')
     );
-    const sourceUSDValue = Number(
-      localStorage.getItem('OfferToMatchAmt') *
-        this.props.ConversionRateStore.conversionRates[index].usdConversionRate
-    );
+    let sourceUSDValue = 0;
+    if (index >= 0) {
+      sourceUSDValue = Math.round(
+        Number(
+          localStorage.getItem('OfferToMatchAmt') *
+            this.props.ConversionRateStore.conversionRates[index].usdConversionRate
+        )
+      );
+    }
     index = this.props.ConversionRateStore.conversionRates.findIndex(
       (x) => x.currencyType === this.props.offer.sourceCurrency
     );
-    const destinationUSDValue = Number(
-      this.props.offer.sourceAmount *
-        this.props.ConversionRateStore.conversionRates[index].usdConversionRate
-    );
+    let destinationUSDValue = 1;
+    if (index >= 0) {
+      destinationUSDValue = Math.round(
+        Number(
+          this.props.offer.sourceAmount *
+            this.props.ConversionRateStore.conversionRates[index].usdConversionRate
+        )
+      );
+    }
     return sourceUSDValue === destinationUSDValue;
-    return true;
+    // return true;
   };
 
   render() {
@@ -116,6 +127,20 @@ class MatchingOfferCard extends Component {
       >
         <div className="lemon--div__373c0__1mboc review__373c0__13kpL sidebarActionsHoverTarget__373c0__2kfhE arrange__373c0__2C9bH gutter-2__373c0__1DiLQ grid__373c0__1Pz7f layout-stack-small__373c0__27wVp border-color--default__373c0__3-ifU">
           <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT arrange-unit-grid-column--8__373c0__2dUx_ border-color--default__373c0__3-ifU">
+            <div className="lemon--div__373c0__1mboc margin-b2__373c0__abANL border-color--default__373c0__3-ifU">
+              <p
+                style={{ textAlign: 'center' }}
+                className="lemon--p__373c0__3Qnnj text__373c0__2Kxyz comment__373c0__3EKjH text-color--normal__373c0__3xep9 text-align--left__373c0__2XGa-"
+              >
+                <span
+                  style={{ marginRight: '170px' }}
+                  className="lemon--span__373c0__3997G raw__373c0__3rKqk"
+                  lang="en"
+                >
+                  <strong> User 1</strong>
+                </span>
+              </p>
+            </div>
             <div className="lemon--div__373c0__1mboc margin-t1__373c0__oLmO6 margin-b1__373c0__1khoT border-color--default__373c0__3-ifU">
               <div className="lemon--div__373c0__1mboc arrange__373c0__2C9bH gutter-1__373c0__2l5bx vertical-align-middle__373c0__1SDTo border-color--default__373c0__3-ifU">
                 <div
@@ -354,6 +379,148 @@ class MatchingOfferCard extends Component {
                 </div>
               </form>
             </div>
+            <div className="lemon--div__373c0__1mboc margin-b2__373c0__abANL border-color--default__373c0__3-ifU">
+              <p
+                style={{ textAlign: 'center' }}
+                className="lemon--p__373c0__3Qnnj text__373c0__2Kxyz comment__373c0__3EKjH text-color--normal__373c0__3xep9 text-align--left__373c0__2XGa-"
+              >
+                <span
+                  style={{ marginRight: '170px' }}
+                  className="lemon--span__373c0__3997G raw__373c0__3rKqk"
+                  lang="en"
+                >
+                  <strong> User 2</strong>
+                </span>
+              </p>
+            </div>
+            <div className="lemon--div__373c0__1mboc margin-t1__373c0__oLmO6 margin-b1__373c0__1khoT border-color--default__373c0__3-ifU">
+              <div className="lemon--div__373c0__1mboc arrange__373c0__2C9bH gutter-1__373c0__2l5bx vertical-align-middle__373c0__1SDTo border-color--default__373c0__3-ifU">
+                <div
+                  style={{ width: '50%' }}
+                  className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU"
+                >
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    <strong> {offer.user.nickname}</strong>{' '}
+                  </span>
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    <div
+                      className="lemon--div__373c0__1mboc i-stars__373c0__1T6rz i-stars--regular-5__373c0__N5JxY border-color--default__373c0__3-ifU overflow--hidden__373c0__2y4YK _0Star"
+                      aria-label="5 star rating"
+                      role="img"
+                      style={rating}
+                    >
+                      <img
+                        className="lemon--img__373c0__3GQUb offscreen__373c0__1KofL"
+                        src="https://s3-media0.fl.yelpcdn.com/assets/public/stars_v2.yji-52d3d7a328db670d4402843cbddeed89.png"
+                        width="132"
+                        height="560"
+                        alt=""
+                      />
+                    </div>
+                  </span>
+                </div>
+                <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    <strong> Transaction Amount </strong>:{' '}
+                  </span>
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    {offer.sourceAmount}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="lemon--div__373c0__1mboc margin-t1__373c0__oLmO6 margin-b1__373c0__1khoT border-color--default__373c0__3-ifU">
+              <div className="lemon--div__373c0__1mboc arrange__373c0__2C9bH gutter-1__373c0__2l5bx vertical-align-middle__373c0__1SDTo border-color--default__373c0__3-ifU">
+                <div
+                  style={{ width: '50%' }}
+                  className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU"
+                >
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    <strong> Source Country </strong>:{' '}
+                  </span>
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    {offer.sourceCountry}
+                  </span>
+                </div>
+                <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    <strong> Source Currency </strong>:{' '}
+                  </span>
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    {offer.sourceCurrency}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="lemon--div__373c0__1mboc margin-t1__373c0__oLmO6 margin-b1__373c0__1khoT border-color--default__373c0__3-ifU">
+              <div className="lemon--div__373c0__1mboc arrange__373c0__2C9bH gutter-1__373c0__2l5bx vertical-align-middle__373c0__1SDTo border-color--default__373c0__3-ifU">
+                <div
+                  style={{ width: '50%' }}
+                  className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU"
+                >
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    <strong> Destination Country </strong>:{' '}
+                  </span>
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    {offer.destinationCountry}
+                  </span>
+                </div>
+                <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    <strong>Destination Currency </strong>:{' '}
+                  </span>
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    {offer.destinationCurrency}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="lemon--div__373c0__1mboc margin-t1__373c0__oLmO6 margin-b1__373c0__1khoT border-color--default__373c0__3-ifU">
+              <div className="lemon--div__373c0__1mboc arrange__373c0__2C9bH gutter-1__373c0__2l5bx vertical-align-middle__373c0__1SDTo border-color--default__373c0__3-ifU">
+                <div
+                  style={{ width: '50%' }}
+                  className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU"
+                >
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    <strong> Accepting CounterOffers </strong>:{' '}
+                  </span>
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    {offer.allowCounterOffers === 1 ? 'Accepting' : 'Not Accepting'}
+                  </span>
+                </div>
+                <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    <strong> Accepting Spilt Offers </strong>:{' '}
+                  </span>
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    {offer.splitExchange === 1 ? 'Accepting' : 'Not Accepting'}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="lemon--div__373c0__1mboc margin-t1__373c0__oLmO6 margin-b1__373c0__1khoT border-color--default__373c0__3-ifU">
+              <div className="lemon--div__373c0__1mboc arrange__373c0__2C9bH gutter-1__373c0__2l5bx vertical-align-middle__373c0__1SDTo border-color--default__373c0__3-ifU">
+                <div
+                  style={{ width: '50%' }}
+                  className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU"
+                >
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    <strong> Asked Exchange Rate </strong>:{' '}
+                  </span>
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    {offer.exchangeRate}
+                  </span>
+                </div>
+                <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    <strong> Offer Expiring on </strong>:{' '}
+                  </span>
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    {offer.expirationDate}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </li>
@@ -388,4 +555,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(MatchingOfferCard);
+export default connect(mapStateToProps, mapDispatchToProps)(MatchingOfferCardSplit);

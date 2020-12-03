@@ -9,46 +9,31 @@ import serverUrl from '../../config';
 import MatchingOfferCard from './MatchingOfferCard';
 import { notification } from 'antd';
 import 'antd/dist/antd.css';
+import CounterOfferCard from './CounterOfferCard';
 
 class CounterOffers extends Component {
   constructor(props) {
     super(props);
-    this.state = { includeSplitOffers: 'yes', returnToMyOffers: false };
+    this.state = { counterOffers: [] };
   }
-
-  onCOmmonChangeHandler = (e) => {
-    this.setState({
-      includeSplitOffers: e.target.value,
-    });
-    this.commonFetch();
-  };
 
   commonFetch = (PageNo = 0) => {
     axios
-      .get(serverUrl + 'searchOffers', {
+      .get(serverUrl + 'searchCounterOffers', {
         params: {
-          sourceCurrency: this.state.sourceCurrency ? this.state.sourceCurrency : null,
-          sourceAmount: this.state.sourceAmount ? parseFloat(this.state.sourceAmount) : null,
-          destinationCurrency: this.state.destinationCurrency
-            ? this.state.destinationCurrency
-            : null,
-          destinationAmount: this.state.destinationAmount
-            ? parseFloat(this.state.destinationAmount)
-            : null,
+          OfferID: this.props.location.state.offerId,
         },
         withCredentials: true,
       })
       .then(
         (response) => {
           console.log(response.data);
-          const offerLists = response.data;
+          const counterOffers = response.data;
+          console.log('Cuter offers:', response.data);
+          this.setState({
+            counterOffers,
+          });
           if (response.data.length > 0) {
-            const payload = {
-              offerLists,
-              PageNo,
-              TotalCount: 0,
-            };
-            this.props.getOfferLists(payload);
           } else {
             notification.open({
               message: 'Opp! No matching offers found',
@@ -69,7 +54,9 @@ class CounterOffers extends Component {
   };
 
   componentDidMount() {
-    this.commonFetch();
+    if (this.props.location.state && this.props.location.state.openCounterOffers) {
+      this.commonFetch();
+    }
   }
 
   AcceptOffer = (Event, offerId2, offerId3 = null) => {
@@ -95,12 +82,13 @@ class CounterOffers extends Component {
           this.setState({
             returnToMyOffers: true,
           });
+          this.commonFetch();
         },
         (error) => {
           console.log(error.response);
           notification['error']({
             message: 'ERROR!',
-            description: error.response.data.error + ". Offer didn't get accepted",
+            description: error.response.data.error + '. Offer accept failed',
             duration: 4,
           });
         }
@@ -108,13 +96,18 @@ class CounterOffers extends Component {
   };
 
   render() {
+    if (!this.props.location.state || this.props.location.state.openCounterOffers === false) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/MyOffers',
+            // state: { openDetailPage: this.state.openDetailPage, offerId: this.state.offerId },
+          }}
+        />
+      );
+    }
     let redirectVar = null;
-    if (this.state.openDetailPage) {
-      redirectVar = <Redirect to="OfferDetailPage" />;
-    }
-    if (this.state.returnToMyOffers) {
-      redirectVar = <Redirect to="MyOffers" />;
-    }
+
     return (
       <div className="lemon--div__06b83__1mboc responsive responsive-biz border-color--default__06b83__3-ifU">
         {redirectVar}
@@ -128,11 +121,11 @@ class CounterOffers extends Component {
               >
                 <div>
                   <ul className="lemon--ul__373c0__1_cxs undefined list__373c0__2G8oH">
-                    {this.props.OfferListStore.offerLists.map((counteroffer) => (
-                      <MatchingOfferCard
+                    {this.state.counterOffers.map((counteroffer) => (
+                      <CounterOfferCard
                         key={counteroffer._id}
                         offer={counteroffer}
-                        AcceptOffer={(event, offerId2) => this.AcceptOffer(event, offerId2)}
+                        AcceptOffer={(event) => this.AcceptOffer(event, counteroffer.offerID)}
 
                         //   }
                       />

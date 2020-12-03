@@ -7,7 +7,7 @@ const defaultState = {
     TotalCount: 0,
   },
   onFocusOfferStore: {
-    Offer: {},
+    Offer: { user: {} },
   },
 };
 
@@ -31,7 +31,7 @@ const OfferListReducer = (state = defaultState, action) => {
       return {
         ...state,
         OfferListStore: { offerLists: [] },
-        onFocusOfferStore: { Offer: {} },
+        onFocusOfferStore: { Offer: { user: {} } },
         //   return Object.assign(state, action.payload);
       };
     }

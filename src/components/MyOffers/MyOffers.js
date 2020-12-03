@@ -13,7 +13,7 @@ import 'antd/dist/antd.css';
 class MyOffers extends Component {
   constructor(props) {
     super(props);
-    this.state = { editOffer: false, offerId: null };
+    this.state = { editOffer: false, offerId: null, openCounterOffers: false };
   }
 
   componentDidMount() {
@@ -63,6 +63,19 @@ class MyOffers extends Component {
     this.setState({ offerId, editOffer: true });
   };
 
+  openCounterOffer = (event, offerId) => {
+    event.preventDefault();
+    // localStorage.setItem('OpenOffer', offerId);
+    // const payload = {
+    //   Offer,
+    // };
+    // this.props.updateFocusOffer(payload);
+    this.setState({
+      openCounterOffers: true,
+      offerId,
+    });
+  };
+
   render() {
     if (this.state.editOffer && this.state.offerId) {
       return (
@@ -70,6 +83,19 @@ class MyOffers extends Component {
           to={{
             pathname: '/PostOffer',
             state: { editOffer: this.state.editOffer, offerId: this.state.offerId },
+          }}
+        />
+      );
+    }
+    if (this.state.openCounterOffers && this.state.offerId) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/CounterOffers',
+            state: {
+              openCounterOffers: this.state.openCounterOffers,
+              offerId: this.state.offerId,
+            },
           }}
         />
       );
@@ -92,6 +118,7 @@ class MyOffers extends Component {
                         key={offer.offerId}
                         editOffer={() => this.editOffer(offer.offerId)}
                         offer={offer}
+                        openCounterOffer={(event) => this.openCounterOffer(event, offer.offerId)}
 
                         //   }
                       />
