@@ -23,11 +23,11 @@ public class CounterOfferService {
     OfferRepository offerRepository;
 
     @Transactional
-	public Long createCounterOffer(Long offerID1, double counterProposedAmount, Long userID, Long offerID2) {
-		CounterOffer counterOffer = new CounterOffer(offerID1, counterProposedAmount, 0, userID);
+	public Long createCounterOffer(Long offerID1, double counterProposedAmount, Long userID, Long counterOfferID) {
+		CounterOffer counterOffer = new CounterOffer(offerID1, counterProposedAmount, 0, userID, counterOfferID);
         CounterOffer resultObj =  counterOfferRepository.save(counterOffer);
 
-        Offer offer = offerRepository.findById(offerID2).orElse(null);
+        Offer offer = offerRepository.findById(counterOfferID).orElse(null);
 		offer.setOfferStatus("counterMade");
 		offerRepository.save(offer);
         return resultObj.getID();

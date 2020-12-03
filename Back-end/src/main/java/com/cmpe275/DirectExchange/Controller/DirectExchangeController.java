@@ -196,11 +196,11 @@ public class DirectExchangeController {
 	}
 	
 	@PostMapping("/createCounterOffer")
-	public Long createCounterOffer(@RequestParam(value="offerID1") Long offerID1,
+	public Long createCounterOffer(@RequestParam(value="offerID") Long offerID,
 	@RequestParam(value="counterProposedAmount") double counterProposedAmount,
 	@RequestParam(value="userID") Long userID,
-	@RequestParam(value="offerID2") Long offerID2) {
-		return counterOfferService.createCounterOffer(offerID1, counterProposedAmount, userID, offerID2);
+	@RequestParam(value="counterOfferID") Long counterOfferID) {
+		return counterOfferService.createCounterOffer(offerID, counterProposedAmount, userID, counterOfferID);
 	}
 
 	@GetMapping("/searchCounterOffers")

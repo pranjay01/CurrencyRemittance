@@ -30,18 +30,22 @@ public class CounterOffer {
     private int accepted;
 
     @Column(name="UserID")
-    private Long userID;
+	private Long userID;
+	
+	@Column(name="CounterOfferID")
+	private Long counterOfferID;
 
     public CounterOffer() {
         super();
 	} 
     
-	public CounterOffer(Long offerID, double counterProposedAmount, int accepted, Long userID) {
+	public CounterOffer(Long offerID, double counterProposedAmount, int accepted, Long userID, Long counterOfferID) {
         super();
         OfferID = offerID;
 		CounterProposedAmount = counterProposedAmount;
 		this.accepted = accepted;
 		this.userID = userID;
+		this.counterOfferID = counterOfferID;
     }
 
 	public Long getID() {
@@ -78,6 +82,14 @@ public class CounterOffer {
 
 	public void setUserID(Long userID) {
 		this.userID = userID;
+	}
+
+	public Long getCounterOfferID() {
+		return counterOfferID;
+	}
+
+	public void setCounterOfferID(Long counterOfferID) {
+		this.counterOfferID = counterOfferID;
 	}
    
     
