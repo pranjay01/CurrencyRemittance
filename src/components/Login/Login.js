@@ -89,7 +89,7 @@ class Login extends Component {
         // });
       } else if (isExists) {
         localStorage.setItem('token', data.password);
-        localStorage.setItem('userrole', data.id);
+        localStorage.setItem('userId', data.id);
         localStorage.setItem('status', data.status);
         cookie.save('token', data.password);
         cookie.save('userId', data.id);
@@ -129,7 +129,7 @@ class Login extends Component {
       } else if (isExists) {
         // Add data from user to localstorage
         localStorage.setItem('token', data.password);
-        localStorage.setItem('userrole', data.id);
+        localStorage.setItem('userId', data.id);
         localStorage.setItem('status', data.status);
         cookie.save('token', data.password);
         cookie.save('userId', data.id);
@@ -282,7 +282,7 @@ class Login extends Component {
         if (response.status === 200) {
           //Store cookie and set redirect to Home
           localStorage.setItem('token', response.data.password);
-          localStorage.setItem('userrole', response.data.id);
+          localStorage.setItem('userId', response.data.id);
           localStorage.setItem('status', response.data.status);
           cookie.save('token', response.data.password);
           cookie.save('userId', response.data.id);
