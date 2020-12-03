@@ -37,6 +37,7 @@ class Login extends Component {
       gender: null,
       authProviders: '',
       googleAuth: false,
+      pathname: this.props.location?(this.props.location.pathname ? this.props.location.pathname: ""):"",
     };
     //Bind the handlers to this className
     // this.usernameChangeHandler = this.usernameChangeHandler.bind(this);
@@ -51,38 +52,42 @@ class Login extends Component {
     axios.defaults.withCredentials = true;
     //make a post request with the user data
     axios
-      .post(serverUrl + 'userEmail', null, {
-        params: {
-          email,
-        },
-      })
+      .get(serverUrl + 'userEmail/'+email)
       .then(
         (res) => {
           console.log('Status Code : ', res.status);
           if (res.status === 200) {
-            callback(null, true);
+            callback(null, true, res.data);
           } else {
-            callback(null, false);
+            callback(null, false, res.data);
           }
         },
         (error) => {
-          callback(error, false);
+          callback(error, false, null);
         }
       );
   };
 
   responseFacebook = (response) => {
-    this.checkUserExistsOrNot(response.email, (error, isExists) => {
+    this.checkUserExistsOrNot(response.email, (error, isExists, data) => {
       if (error) {
-        /// Log error properly.
+        notification['error']({
+          message: 'Error!!',
+          description: 'Facebook Login Failed!! Try Again.',
+          duration: 2,
+        });
         console.log(error.response.data);
         this.setState({
           errorBlock: error.response.data,
           sigupSuccessful: false,
         });
       } else if (isExists) {
-        cookie.save('token', isExists.token);
-        cookie.save('userId', isExists.userId);
+        localStorage.setItem('token', data.password);
+        localStorage.setItem('userrole', data.id);
+        localStorage.setItem('status', data.status);
+        cookie.save('token', data.password);
+        cookie.save('userId', data.id);
+        cookie.save('status', data.status);
       } else {
         this.setState({
           fName: response.email,
@@ -94,25 +99,30 @@ class Login extends Component {
   };
 
   responseGoogleFailure = (response) => {
-    /// show error message for the google Login failure
-    this.setState({
-      googleAuth: false,
+    notification['error']({
+      message: 'Error!!',
+      description: 'Google Login Failed!! Try Again.',
+      duration: 2,
     });
   };
 
   responseGoogle = (response) => {
     console.log(response);
-    this.checkUserExistsOrNot(response.wt.cu, (error, isExists) => {
+    this.checkUserExistsOrNot(response.wt.cu, (error, isExists, data) => {
       if (error) {
-        /// Log error properly.
-        console.log(error.response.data);
-        this.setState({
-          errorBlock: error.response.data,
-          sigupSuccessful: false,
+        notification['error']({
+          message: 'Error!!',
+          description: 'Google Login Failed!! Try Again.',
+          duration: 2,
         });
       } else if (isExists) {
-        cookie.save('token', isExists.token);
-        cookie.save('userId', isExists.userId);
+        // Add data from user to localstorage
+        localStorage.setItem('token', data.password);
+        localStorage.setItem('userrole', data.id);
+        localStorage.setItem('status', data.status);
+        cookie.save('token', data.password);
+        cookie.save('userId', data.id);
+        cookie.save('status', data.status);
       } else {
         this.setState({
           fName: response.wt.cu,
@@ -166,11 +176,8 @@ class Login extends Component {
   };
 
   onSubmitSignUp = (e) => {
-    //prevent page from refresh
     e.preventDefault();
-    //set the with credentials to true
     axios.defaults.withCredentials = true;
-    //make a post request with the user data
     axios
       .post(serverUrl + 'user', null, {
         params: {
@@ -184,14 +191,24 @@ class Login extends Component {
           console.log('Status Code : ', response.status);
           if (response.status === 200) {
             console.log(response.data);
-            // Redirect to Login
+            this.setState({
+              pathname: "/Login"
+            })
           } else {
             console.log(response.data);
-            // Display Error
+            notification['error']({
+              message: 'Error!!',
+              description: 'Signup Failed!! Try Again.',
+              duration: 2,
+            });
           }
         },
         (error) => {
-          //Display Error
+          notification['error']({
+            message: 'Error!!',
+            description: 'Signup Failed!! Try Again.',
+            duration: 2,
+          });
           console.log(error.response.data);
           this.setState({
             errorBlock: error.response.data,
@@ -200,14 +217,12 @@ class Login extends Component {
         }
       );
   };
-  /**Login Block */
   removeError = (e) => {
     this.setState({
       errorBlock: null,
       sigupSuccessful: false,
     });
   };
-  //username change handler to update state variable with the text entered by the user
   onChangeHandlerUsername = (e) => {
     this.setState({
       username: e.target.value,
@@ -216,7 +231,6 @@ class Login extends Component {
       // errorFlag: 1,
     });
   };
-  //password change handler to update state variable with the text entered by the user
   onChangeHandlerPassword = (e) => {
     this.setState({
       password: e.target.value,
@@ -239,14 +253,11 @@ class Login extends Component {
     //   description: 'Product Deletion Cancelled',
     //   duration: 2,
     // });
-    notification.open({
-      message: 'Opp! Something went wrong.',
-      description: 'This feature has been updated later!',
-      duration: 5,
-    });
-    //prevent page from refresh
-    /*
-    e.preventDefault();
+    // notification.open({
+    //   message: 'Opp! Something went wrong.',
+    //   description: 'This feature has been updated later!',
+    //   duration: 5,
+    // });
     const data = {
       username: this.state.username,
       password: this.state.password,
@@ -258,46 +269,49 @@ class Login extends Component {
       (response) => {
         console.log('Status Code : ', response.status);
         if (response.status === 200) {
-          cookie.save('token', response.token);
-          cookie.save('userId', response.userId);
           //Store cookie and set redirect to Home
-          // localStorage.setItem('token', cookie.load('cookie'));
-          // localStorage.setItem('userrole', cookie.load('userrole'));
-          // console.log('cookie: ', cookie.load('cookie'));
-          // console.log('role: ', cookie.load('userrole'));
-          // let payload = {
-          //   userEmail: this.state.username,
-          //   role: cookie.load('userrole'),
-          //   loginStatus: true,
-          // };
-          // this.props.updateLoginSuccess(payload);
+          localStorage.setItem('token', response.data.password);
+          localStorage.setItem('userrole', response.data.id);
+          localStorage.setItem('status', response.data.status);
+          cookie.save('token', response.data.password);
+          cookie.save('userId', response.data.id);
+          cookie.save('status', response.data.status);
 
           this.setState({
             authFlag: true,
           });
         } else {
-          this.setState({
-            authFlag: false,
+          // this.setState({
+          //   authFlag: false,
+          // });
+          notification['error']({
+            message: 'Error!!',
+            description: 'Login Failed!! Try Again.',
+            duration: 2,
           });
         }
       },
       (error) => {
-        this.setState({
-          errorBlock: error.response.data,
-          inputBlockHighlight: 'errorBlock',
+        // this.setState({
+        //   errorBlock: error.response.data,
+        //   inputBlockHighlight: 'errorBlock',
+        // });
+        notification['error']({
+          message: 'Error!!',
+          description: 'Login Failed!! Try Again.',
+          duration: 2,
         });
       }
     );
-    */
   };
 
-  checkSnackbar = () => {
-    let payload = {
-      success: true,
-      message: 'Account Created Successfully!',
-    };
-    this.props.updateSnackbarData(payload);
-  };
+  // checkSnackbar = () => {
+  //   let payload = {
+  //     success: true,
+  //     message: 'Account Created Successfully!',
+  //   };
+  //   this.props.updateSnackbarData(payload);
+  // };
   render() {
     let redirectVar = null;
     if (cookie.load('token')) {
@@ -313,7 +327,7 @@ class Login extends Component {
 
     let signupOrLogin = null;
     // console.log(history.location);
-    if (this.props.location.pathname === '/Signup') {
+    if (this.props.location.pathname === '/Signup' || this.state.pathname === '/Signup') {
       // if (history.location.pathname === '/Signup') {
       signupOrLogin = (
         <div class="flow-start">
@@ -335,52 +349,15 @@ class Login extends Component {
             </div>
             <div>
               <p class="fb-start">
-                {/* <button
-                  type="submit"
-                  value="submit"
-                  class="ybtn ybtn--social ybtn--facebook ybtn-full"
-                >
-                  <span>
-                    <div class="u-text-centered">
-                      <span
-                        aria-hidden="true"
-                        style={{ width: '24px', height: '24px' }}
-                        class="icon icon--24-facebook icon--size-24 icon--currentColor"
-                      >
-                        <svg role="img" class="icon_svg"></svg>
-                      </span>{' '}
-                      Continue with Facebook
-                    </div>
-                  </span>
-                </button> */}
                 <FacebookLogin
                   appId="673806016835125"
-                  autoLoad={true}
+                  autoLoad={false}
                   fields="name,email,picture"
                   onClick={this.componentClicked}
                   callback={this.responseFacebook}
                 />
               </p>
               <p class="google-start">
-                {/* <button
-                  type="submit"
-                  value="submit"
-                  class="ybtn ybtn--social ybtn--google ybtn-full"
-                >
-                  <span>
-                    <div class="u-text-centered">
-                      <span class="icon--png">
-                        <img
-                          height="24"
-                          width="24"
-                          src="https://s3-media0.fl.yelpcdn.com/assets/srv0/yelp_styleguide/cae242fd3929/assets/img/structural/24x24_google_rainbow.png"
-                          srcset="https://s3-media0.fl.yelpcdn.com/assets/srv0/yelp_styleguide/c193df424e16/assets/img/structural/24x24_google_rainbow@2x.png 2x"
-                        />
-                      </span>{' '}
-                      Continue with Google
-                    </div>
-                  </span>
-                </button> */}
                 <GoogleLogin
                   clientId="193224160021-l84huj79hc912hrn1a2itds827iemm57.apps.googleusercontent.com"
                   buttonText="Login"
@@ -469,7 +446,7 @@ class Login extends Component {
               </Link>
             </small>
             <small class="subtle-text">
-              Already on Yelp?{' '}
+              Already a member?{' '}
               <Link class="login-link" to="/Login">
                 Log in
               </Link>
@@ -477,7 +454,7 @@ class Login extends Component {
           </div>
         </div>
       );
-    } else if (this.props.location.pathname === '/Login') {
+    } else if (this.props.location.pathname === '/Login' || this.state.pathname === '/Login') {
       signupOrLogin = (
         <div class="login">
           <div class="signup-form-container">
