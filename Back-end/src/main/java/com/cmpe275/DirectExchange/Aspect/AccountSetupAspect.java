@@ -12,17 +12,22 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.cmpe275.DirectExchange.Entity.Account;
+import com.cmpe275.DirectExchange.Entity.Offer;
 import com.cmpe275.DirectExchange.Repository.AccountRepository;
+import com.cmpe275.DirectExchange.Repository.OfferRepository;
 
 @Aspect
 @Order(0)
 public class AccountSetupAspect {
 	
 	@Autowired
-	AccountRepository AccountRepository;
+	AccountRepository accountRepository;
+	
+	@Autowired
+	OfferRepository offerRepository;
 	
 	@Before("execution(public * com.cmpe275.DirectExchange.Service.OfferService.createOffer(..))")
-	public void checkAccountSetup(JoinPoint joinPoint) throws Throwable {
+	public void checkAccountSetupCreateOffer(JoinPoint joinPoint) throws Throwable {
 		System.out.printf("Checking accounts exist in source and destination countries"
 				+ " prior to the executuion of the metohd %s\n", joinPoint.getSignature().getName());
 		
@@ -30,7 +35,23 @@ public class AccountSetupAspect {
 		String sourceCountry = (String) joinPoint.getArgs()[1];
 		String destinationCountry = (String) joinPoint.getArgs()[4];
 		
-		List<Account> sourceCountryAccounts = AccountRepository.findByUserIdAndCountry(userId, sourceCountry);
+		validateAccounts(userId, sourceCountry, destinationCountry);
+	}
+	
+//	@Before("execution(public * com.cmpe275.DirectExchange.Service.TransactionService.acceptOffer(..))")
+//	public void checkAccountSetupAcceptOffer(JoinPoint joinPoint) throws Throwable {
+//		System.out.printf("Checking accounts exist in source and destination countries"
+//				+ " prior to the executuion of the metohd %s\n", joinPoint.getSignature().getName());
+//		
+//		Long offerId = (Long) joinPoint.getArgs()[0];
+//		
+//		Offer offer = offerRepository.findById(offerId).orElse(null);
+//
+//		validateAccounts(offer.getUser().getId(), offer.getSourceCountry(), offer.getDestinationCountry());
+//	}
+	
+	private void validateAccounts(Long userId, String sourceCountry, String destinationCountry) throws Throwable {
+		List<Account> sourceCountryAccounts = accountRepository.findByUserIdAndCountry(userId, sourceCountry);
 		boolean sourceAccountFound=false;
 		for(Account account : sourceCountryAccounts) {
 			if(account.getAccountType().equals("sending") || account.getAccountType().equals("both")) {
@@ -42,7 +63,7 @@ public class AccountSetupAspect {
 		if(!sourceAccountFound)
 			throw new AccountNotFoundException("Account not found for the user in source country");
 		
-		List<Account> destCountryAccounts = AccountRepository.findByUserIdAndCountry(userId, destinationCountry);
+		List<Account> destCountryAccounts = accountRepository.findByUserIdAndCountry(userId, destinationCountry);
 		boolean destAccountFound=false;
 		for(Account account : destCountryAccounts) {
 			if(account.getAccountType().equals("receiving") || account.getAccountType().equals("both")) {
