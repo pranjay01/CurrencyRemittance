@@ -1,6 +1,7 @@
 package com.cmpe275.DirectExchange.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.security.auth.login.AccountNotFoundException;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -46,6 +47,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	 */
 	@ExceptionHandler(EmptyResultDataAccessException.class)
 	public ResponseEntity<ErrorDetails> handleNotFound(EmptyResultDataAccessException ex) {
+		ErrorDetails errorDetails = new ErrorDetails(ex.getMessage());
+		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(AccountNotFoundException.class)
+	public ResponseEntity<ErrorDetails> handleAccountNotFound(AccountNotFoundException ex) {
 		ErrorDetails errorDetails = new ErrorDetails(ex.getMessage());
 		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
 	}
