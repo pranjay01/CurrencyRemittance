@@ -73,14 +73,16 @@ public class DirectExchangeController {
 	@PostMapping("/user")
 	public User signUp(@RequestParam(value="userName") String userName,
 			@RequestParam(value="nickname") String nickname,
-			@RequestParam(value = "password", required = false) String password) {
-		return userService.addUser(userName, nickname, password, "Pending");
+			@RequestParam(value = "password", required = false) String password,
+			@RequestParam(value = "authProvider", required = false) String authProvider) {
+		return userService.addUser(userName, nickname, password, "Pending", authProvider);
 	}
 
 	@PostMapping("/login")
 	public User login(@RequestBody Map<String, Object> body) {
 		return userService.getLoginUser(body.get("username").toString()
 								 , body.get("password").toString());
+									 							
 	}
 
 	// merged
@@ -192,7 +194,7 @@ public class DirectExchangeController {
 	public List<TransactionDTODeep> getMyTransactions(@PathVariable("id") Long userId){
 		return transactionService.getMyTransactions(userId);
 	}
-
+	
 	@PostMapping("/createCounterOffer")
 	public Long createCounterOffer(@RequestParam(value="offerID1") Long offerID1,
 	@RequestParam(value="counterProposedAmount") double counterProposedAmount,

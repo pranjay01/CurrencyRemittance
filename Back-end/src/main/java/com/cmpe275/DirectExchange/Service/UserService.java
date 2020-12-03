@@ -36,6 +36,9 @@ public class UserService {
 	@Value("${spring.mail.username}")
 	private String email;
 
+	@Value("${spring.mail.backendurl}")
+	private String backendUrl;
+
 	@Transactional
 	public User getUser(Long id) {
 		User user = userRepository.findById(id).orElse(null);
@@ -64,11 +67,10 @@ public class UserService {
 	}
 
 	@Transactional
-	public User addUser(String userName, String nickname, String password, String status) {
-		User user = new User(userName, nickname, password, status);
+	public User addUser(String userName, String nickname, String password, String status, String authProvider) {
+		User user = new User(userName, nickname, password, status,authProvider);
 		userRepository.save(user);
 
-		
 		ConfirmationToken confirmationToken = new ConfirmationToken(user);
 		confirmationTokenRepository.save(confirmationToken);
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -76,7 +78,7 @@ public class UserService {
 		mailMessage.setSubject("Complete Registration!");
 		mailMessage.setFrom(email);
 		mailMessage.setText("To confirm your account, please click here : "
-				+"http://localhost:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
+				+backendUrl+"/confirm-account?token="+confirmationToken.getConfirmationToken());
 
 		try {
 			emailVerificationService.sendEmail(mailMessage);
