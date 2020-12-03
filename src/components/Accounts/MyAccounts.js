@@ -64,6 +64,15 @@ class MyAccounts extends Component {
   };
 
   render() {
+    if (!localStorage.getItem('token')) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/Login',
+          }}
+        />
+      );
+    }
     if (this.state.editOffer && this.state.offerId) {
       return (
         <Redirect

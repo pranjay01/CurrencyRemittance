@@ -131,7 +131,7 @@ class TransactionCard extends Component {
                       <strong> Name </strong>:{' '}
                     </span>
                     <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                      {other.user.nickname}
+                      {other.user.nickname.substring(0, 2)}
                     </span>
                   </div>
                 </div>

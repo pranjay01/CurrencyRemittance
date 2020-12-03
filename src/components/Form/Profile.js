@@ -8,6 +8,7 @@ import { UpdateUserProfile } from '../../constants/action-types';
 // import { updateRestaurant } from '../../../mutations/UpdateProfile';
 import { notification } from 'antd';
 import 'antd/dist/antd.css';
+import { Link, Redirect } from 'react-router-dom';
 
 class Profile extends Component {
   constructor(props) {
@@ -104,6 +105,15 @@ class Profile extends Component {
     let errorClass = 'alert alert-error ';
     if (!this.state.submitError) {
       errorClass += 'hidden';
+    }
+    if (!localStorage.getItem('token')) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/Login',
+          }}
+        />
+      );
     }
     return (
       <div style={{ marginTop: '3%' }}>

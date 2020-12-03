@@ -25,7 +25,7 @@ class Login extends Component {
       username: null,
       password: null,
       authFlag: false,
-      errorBlock: 'error',
+      errorBlock: null,
       inputBlockHighlight: null,
       errorFlag: 1,
       fName: '',
@@ -35,9 +35,13 @@ class Login extends Component {
       sigupSuccessful: false,
       genders: [],
       gender: null,
-      authProviders: '',
+      authProvider: '',
       googleAuth: false,
-      pathname: this.props.location?(this.props.location.pathname ? this.props.location.pathname: ""):"",
+      pathname: this.props.location
+        ? this.props.location.pathname
+          ? this.props.location.pathname
+          : ''
+        : '',
     };
     //Bind the handlers to this className
     // this.usernameChangeHandler = this.usernameChangeHandler.bind(this);
@@ -51,21 +55,19 @@ class Login extends Component {
   checkUserExistsOrNot = (email, callback) => {
     axios.defaults.withCredentials = true;
     //make a post request with the user data
-    axios
-      .get(serverUrl + 'userEmail/'+email)
-      .then(
-        (res) => {
-          console.log('Status Code : ', res.status);
-          if (res.status === 200) {
-            callback(null, true, res.data);
-          } else {
-            callback(null, false, res.data);
-          }
-        },
-        (error) => {
-          callback(error, false, null);
+    axios.get(serverUrl + 'userEmail/' + email).then(
+      (res) => {
+        console.log('Status Code : ', res.status);
+        if (res.status === 200) {
+          callback(null, true, res.data);
+        } else {
+          callback(null, false, res.data);
         }
-      );
+      },
+      (error) => {
+        callback(error, false, null);
+      }
+    );
   };
 
   responseFacebook = (response) => {
@@ -80,7 +82,7 @@ class Login extends Component {
         this.setState({
           fName: response.email,
           username: response.email,
-          authProviders: 'FACEBOOK',
+          authProvider: 'FACEBOOK',
         });
         console.log(error.response.data);
         // this.setState({
@@ -94,11 +96,14 @@ class Login extends Component {
         cookie.save('token', data.password);
         cookie.save('userId', data.id);
         cookie.save('status', data.status);
+        this.setState({
+          authFlag: true,
+        });
       } else {
         this.setState({
           fName: response.email,
           username: response.email,
-          authProviders: 'FACEBOOK',
+          authProvider: 'FACEBOOK',
         });
       }
     });
@@ -124,7 +129,7 @@ class Login extends Component {
         this.setState({
           fName: response.wt.cu,
           username: response.wt.cu,
-          authProviders: 'GOOGLE',
+          authProvider: 'GOOGLE',
         });
       } else if (isExists) {
         // Add data from user to localstorage
@@ -134,11 +139,14 @@ class Login extends Component {
         cookie.save('token', data.password);
         cookie.save('userId', data.id);
         cookie.save('status', data.status);
+        this.setState({
+          authFlag: true,
+        });
       } else {
         this.setState({
           fName: response.wt.cu,
           username: response.wt.cu,
-          authProviders: 'GOOGLE',
+          authProvider: 'GOOGLE',
         });
       }
     });
@@ -187,6 +195,7 @@ class Login extends Component {
   };
 
   onSubmitSignUp = (e) => {
+    debugger;
     e.preventDefault();
     axios.defaults.withCredentials = true;
     axios
@@ -195,17 +204,29 @@ class Login extends Component {
           userName: this.state.username,
           nickname: this.state.fName,
           password: this.state.signupPassword,
+          authProvider: this.state.authProvider,
         },
       })
       .then(
         (response) => {
+          debugger;
           console.log('Status Code : ', response.status);
           if (response.status === 200) {
-            console.log(response.data);
+            localStorage.setItem('token', response.data.password);
+            localStorage.setItem('userId', response.data.id);
+            localStorage.setItem('status', response.data.status);
+            cookie.save('token', response.data.password);
+            cookie.save('userId', response.data.id);
+            cookie.save('status', response.data.status);
+            // console.log(response.data);
             this.setState({
-              pathname: "/Login"
-            })
+              authFlag: true,
+            });
           } else {
+            this.setState({
+              authFlag: false,
+            });
+            debugger;
             console.log(response.data);
             notification['error']({
               message: 'Error!!',
@@ -215,16 +236,20 @@ class Login extends Component {
           }
         },
         (error) => {
+          this.setState({
+            authFlag: false,
+          });
+          debugger;
           notification['error']({
             message: 'Error!!',
             description: 'Signup Failed!! Try Again.',
             duration: 2,
           });
-          console.log(error.response.data);
-          this.setState({
-            errorBlock: error.response.data,
-            sigupSuccessful: false,
-          });
+          // console.log(error.response.data);
+          // this.setState({
+          //   errorBlock: error.response.data,
+          //   sigupSuccessful: false,
+          // });
         }
       );
   };
@@ -254,21 +279,7 @@ class Login extends Component {
   submitLogin = (e) => {
     console.log('login clicked');
     e.preventDefault();
-    // notification['success']({
-    //   message: 'Success!!',
-    //   description: 'Product Deleted',
-    //   duration: 2,
-    // });
-    // notification['error']({
-    //   message: 'Warning!',
-    //   description: 'Product Deletion Cancelled',
-    //   duration: 2,
-    // });
-    // notification.open({
-    //   message: 'Opp! Something went wrong.',
-    //   description: 'This feature has been updated later!',
-    //   duration: 5,
-    // });
+
     const data = {
       username: this.state.username,
       password: this.state.password,
@@ -287,14 +298,13 @@ class Login extends Component {
           cookie.save('token', response.data.password);
           cookie.save('userId', response.data.id);
           cookie.save('status', response.data.status);
-
           this.setState({
             authFlag: true,
           });
         } else {
-          // this.setState({
-          //   authFlag: false,
-          // });
+          this.setState({
+            authFlag: false,
+          });
           notification['error']({
             message: 'Error!!',
             description: 'Login Failed!! Try Again.',
@@ -303,10 +313,9 @@ class Login extends Component {
         }
       },
       (error) => {
-        // this.setState({
-        //   errorBlock: error.response.data,
-        //   inputBlockHighlight: 'errorBlock',
-        // });
+        this.setState({
+          authFlag: false,
+        });
         notification['error']({
           message: 'Error!!',
           description: 'Login Failed!! Try Again.',
@@ -324,16 +333,14 @@ class Login extends Component {
   //   this.props.updateSnackbarData(payload);
   // };
   render() {
+    debugger;
     let redirectVar = null;
-    if (cookie.load('token')) {
-      redirectVar = <Redirect to="/OfferList" />;
-      // if (cookie.load('userrole') === 'Restaurant') {
-      //   console.log('redirect to restaurant home page');
-      //   redirectVar = <Redirect to="/restaurantHome" />;
-      // } else if (cookie.load('userrole') === 'Customer') {
-      //   console.log('redirect to custome home page');
-      //   redirectVar = <Redirect to="/home" />;
-      // }
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('status') === 'Pending') {
+        redirectVar = <Redirect to="/VerificationPage" />;
+      } else {
+        redirectVar = <Redirect to="/OfferList" />;
+      }
     }
 
     let signupOrLogin = null;
@@ -387,11 +394,12 @@ class Login extends Component {
               class="yform signup-form  city-hidden"
               id="signup-form"
             >
-              <div class="js-password-meter-container">
-                <ul class="inline-layout clearfix">
-                  <li>
+              <div style={{ flexDirection: 'column' }} class="js-password-meter-container">
+                <ul style={{ display: 'flex' }} class="inline-layout clearfix">
+                  <li style={{ flex: 'auto' }}>
                     <label class="placeholder-sub">Nick Name</label>
                     <input
+                      style={{ marginLeft: '3%', height: '35px', width: '180px' }}
                       id="first_name"
                       name="first_name"
                       placeholder="First Name"
@@ -402,39 +410,44 @@ class Login extends Component {
                     />
                   </li>
                 </ul>
-
-                <div>
-                  <label class="placeholder-sub">Email</label>
-                  <input
-                    id="email"
-                    name="email"
-                    placeholder="Email"
-                    required="required"
-                    type="email"
-                    onChange={this.onChangeHandlerEmail}
-                    value={this.state.username}
-                  />
-
-                  <label class="placeholder-sub">Password</label>
-                  <input
-                    id="password"
-                    name="password"
-                    placeholder="Password"
-                    required="required"
-                    type="password"
-                    onChange={this.onChangeHandlerPasswordSignup}
-                  />
-
-                  <div class="js-password-meter-wrapper password-meter-wrapper u-hidden">
-                    <div class="progress-bar-container--minimal">
-                      <h4 class="progress-bar-text"></h4>
-                      <div class="progress-bar new js-progress-bar">
-                        <div
-                          class="progress-bar_fill js-progress-bar_fill new"
-                          role="presentation"
-                          style={{ width: '0%' }}
-                        ></div>
-                      </div>
+                <ul style={{ display: 'flex' }} class="inline-layout clearfix">
+                  <li style={{ flex: 'auto' }}>
+                    <label class="placeholder-sub">Email</label>
+                    <input
+                      style={{ marginLeft: '3%', height: '35px', width: '213px' }}
+                      id="email"
+                      name="email"
+                      placeholder="Email"
+                      required="required"
+                      type="email"
+                      onChange={this.onChangeHandlerEmail}
+                      value={this.state.username}
+                    />
+                  </li>
+                </ul>
+                <ul style={{ display: 'flex' }} class="inline-layout clearfix">
+                  <li style={{ flex: 'auto' }}>
+                    <label class="placeholder-sub">Password</label>
+                    <input
+                      style={{ marginLeft: '3%', height: '35px', width: '186px' }}
+                      id="password"
+                      name="password"
+                      placeholder="Password"
+                      required="required"
+                      type="password"
+                      onChange={this.onChangeHandlerPasswordSignup}
+                    />
+                  </li>
+                </ul>
+                <div class="js-password-meter-wrapper password-meter-wrapper u-hidden">
+                  <div class="progress-bar-container--minimal">
+                    <h4 class="progress-bar-text"></h4>
+                    <div class="progress-bar new js-progress-bar">
+                      <div
+                        class="progress-bar_fill js-progress-bar_fill new"
+                        role="presentation"
+                        style={{ width: '0%' }}
+                      ></div>
                     </div>
                   </div>
                 </div>
@@ -448,20 +461,6 @@ class Login extends Component {
                 <span>Sign Up</span>
               </button>
             </form>
-          </div>
-          <div class="sub-text-box">
-            <small class="subtle-text" style={{ textAlign: 'left', paddingRight: '21px' }}>
-              Restaurant Signup{' '}
-              <Link class="login-link" to="/restaurantSignup">
-                Sign Up
-              </Link>
-            </small>
-            <small class="subtle-text">
-              Already a member?{' '}
-              <Link class="login-link" to="/Login">
-                Log in
-              </Link>
-            </small>
           </div>
         </div>
       );
@@ -525,48 +524,42 @@ class Login extends Component {
               <legend align="center">OR</legend>
             </fieldset>
             <form class="yform" onSubmit={this.submitLogin}>
-              <label class="placeholder-sub">Email</label>
-              <input
-                id="email"
-                name="email"
-                placeholder="Email"
-                required="required"
-                type="email"
-                onChange={this.onChangeHandlerUsername}
-                class={this.state.inputBlockHighlight}
-              />
-              <label class="placeholder-sub">Password</label>
-              <input
-                onChange={this.onChangeHandlerPassword}
-                id="password"
-                name="password"
-                placeholder="Password"
-                required="required"
-                type="password"
-                class={this.state.inputBlockHighlight}
-              />
-              <button type="submit" class="ybtn ybtn--primary ybtn--big submit ybtn-full">
-                <span>Sign in</span>
-              </button>
+              <div style={{ flexDirection: 'column' }} className="js-more-fields more-fields">
+                <ul style={{ display: 'flex' }} className="inline-layout clearfix">
+                  <li style={{ width: '45%', flex: 'auto' }}>
+                    <label class="placeholder-sub">Email</label>
+                    <input
+                      style={{ marginLeft: '3%', height: '35px', width: '213px' }}
+                      id="email"
+                      name="email"
+                      placeholder="Email"
+                      required="required"
+                      type="email"
+                      onChange={this.onChangeHandlerUsername}
+                      class={this.state.inputBlockHighlight}
+                    />
+                  </li>
+                </ul>
+                <ul style={{ display: 'flex' }} className="inline-layout clearfix">
+                  <li style={{ width: '45%', flex: 'auto' }}>
+                    <label class="placeholder-sub">Password</label>
+                    <input
+                      style={{ marginLeft: '3%', height: '35px', width: '186px' }}
+                      onChange={this.onChangeHandlerPassword}
+                      id="password"
+                      name="password"
+                      placeholder="Password"
+                      required="required"
+                      type="password"
+                      class={this.state.inputBlockHighlight}
+                    />
+                  </li>
+                </ul>
+                <button type="submit" class="ybtn ybtn--primary ybtn--big submit ybtn-full">
+                  <span>Sign in</span>
+                </button>
+              </div>
             </form>
-          </div>
-          <div class="sub-text-box">
-            <small class="subtle-text">
-              Restaurant Login{' '}
-              <Link
-                class="signup-link"
-                to="/restaurantLogin"
-                style={{ textAlign: 'left', paddingRight: '55px' }}
-              >
-                Log In
-              </Link>
-            </small>
-            <small class="subtle-text">
-              New to Yelp?{' '}
-              <Link class="signup-link" to="/Signup">
-                Sign up
-              </Link>
-            </small>
           </div>
         </div>
       );

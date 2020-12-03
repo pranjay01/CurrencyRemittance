@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 // import { updateRestaurant } from '../../../mutations/UpdateProfile';
 import { notification } from 'antd';
 import 'antd/dist/antd.css';
+import { Redirect } from 'react-router-dom';
 
 class AccountInformation extends Component {
   constructor(props) {
@@ -132,6 +133,15 @@ class AccountInformation extends Component {
   };
 
   render(/**<fieldset disabled> */) {
+    if (!localStorage.getItem('token')) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/Login',
+          }}
+        />
+      );
+    }
     let errorClass = 'alert alert-error ';
     if (!this.state.submitError) {
       errorClass += 'hidden';

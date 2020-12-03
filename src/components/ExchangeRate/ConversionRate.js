@@ -4,6 +4,7 @@ import axios from 'axios';
 import serverUrl from '../../config';
 import { connect } from 'react-redux';
 import { updateConversionRates } from '../../constants/action-types';
+import { Redirect } from 'react-router-dom';
 
 class ExchangeRate extends Component {
   state = {
@@ -26,6 +27,15 @@ class ExchangeRate extends Component {
   }
 
   render() {
+    if (!localStorage.getItem('token')) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/Login',
+          }}
+        />
+      );
+    }
     return (
       <div>
         <ReactBootStrap.Table striped bordered hover variant="dark">

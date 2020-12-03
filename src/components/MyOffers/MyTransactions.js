@@ -7,6 +7,7 @@ import { notification } from 'antd';
 import 'antd/dist/antd.css';
 import { getTransactionList } from '../../constants/action-types';
 import { connect } from 'react-redux';
+import { Link, Redirect } from 'react-router-dom';
 
 class MyTransactions extends Component {
   constructor(props) {
@@ -39,6 +40,15 @@ class MyTransactions extends Component {
   }
 
   render() {
+    if (!localStorage.getItem('token')) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/Login',
+          }}
+        />
+      );
+    }
     return (
       <div className="lemon--div__06b83__1mboc responsive responsive-biz border-color--default__06b83__3-ifU">
         {/*redirectVar*/}

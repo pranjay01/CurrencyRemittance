@@ -64,7 +64,7 @@ class MyTransactionCard extends Component {
     Event.preventDefault();
     const offerId1 = null;
     axios
-      .post(serverUrl + 'offer' + this.props.transaction.offerID + 'sendMoney', null, {
+      .post(serverUrl + 'offer/' + this.props.transaction.offerID + '/sendMoney', null, {
         params: {},
         withCredentials: true,
       })

@@ -251,7 +251,7 @@ class PostOffer extends Component {
   updateOffer = (event) => {
     event.preventDefault();
     axios
-      .post(serverUrl + 'offer' + this.props.location.state.offerId, null, {
+      .post(serverUrl + 'offer/' + this.props.location.state.offerId, null, {
         params: {
           userId: parseInt(localStorage.getItem('userId')),
           // userId: 12345,
@@ -287,6 +287,15 @@ class PostOffer extends Component {
   };
 
   render(/**<fieldset disabled> */) {
+    if (!localStorage.getItem('token')) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/Login',
+          }}
+        />
+      );
+    }
     let errorClass = 'alert alert-error ';
     if (!this.state.submitError) {
       errorClass += 'hidden';

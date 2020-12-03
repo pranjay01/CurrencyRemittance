@@ -126,6 +126,15 @@ class MatchingOfferList extends Component {
   };
 
   render() {
+    if (!localStorage.getItem('token')) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/Login',
+          }}
+        />
+      );
+    }
     let redirectVar = null;
     if (this.state.openDetailPage) {
       redirectVar = <Redirect to="OfferDetailPage" />;

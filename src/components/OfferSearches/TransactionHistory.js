@@ -42,6 +42,15 @@ class TransactionHistory extends Component {
   }
 
   render() {
+    if (!localStorage.getItem('token')) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/Login',
+          }}
+        />
+      );
+    }
     if (!this.props.location.state || this.props.location.state.openTransactionPage === false) {
       return (
         <Redirect

@@ -118,14 +118,15 @@ class Navbar extends Component {
       redirectVar = <Redirect to="/home" />;
     }
 
+    if (localStorage.getItem('token') && localStorage.getItem('status') === 'Pending') {
+      redirectVar = <Redirect to="/VerificationPage" />;
+    }
     if (!localStorage.getItem('token')) {
-      if (this.props.location.pathname === '/RestaurantList') {
-        redirectVar = <Redirect to="/RestaurantList" />;
-      }
+      redirectVar = <Redirect to="/Login" />;
     }
 
     let options = null;
-    if (localStorage.getItem('token')) {
+    if (localStorage.getItem('token') && localStorage.getItem('status') === 'Verified') {
       options = (
         <ul class="nav navbar-nav">
           <li class={this.props.location.pathname === '/OfferList' && 'active'}>

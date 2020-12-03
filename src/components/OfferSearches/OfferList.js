@@ -92,6 +92,15 @@ class OfferList extends Component {
   };
 
   render() {
+    if (!localStorage.getItem('token')) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/Login',
+          }}
+        />
+      );
+    }
     let redirectVar = null;
     // if (this.state.openDetailPage) {
     //   redirectVar = <Redirect to="OfferDetailPage" />;
@@ -182,7 +191,7 @@ class OfferList extends Component {
                                 </li>
 
                                 <li style={{ width: '100%', flex: 'auto', marginLeft: '2%' }}>
-                                  <label className="placeholder-sub">Destinatoin Currency</label>
+                                  <label className="placeholder-sub">Destination Currency</label>
                                   <select
                                     placeholder="Gender"
                                     className="form-control"
