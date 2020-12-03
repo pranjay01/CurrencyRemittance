@@ -154,8 +154,10 @@ public class DirectExchangeController {
 	@PostMapping("/offer/{id}")
 	public Offer updateOfferDetails(@RequestParam(value="sourceAmount", required = false) Double sourceAmount,
 			@RequestParam(value="exchangeRate", required = false) Double exchangeRate,
+			@RequestParam(value="allowCounterOffers") Integer allowCounterOffers,
+			@RequestParam(value="splitExchange") Integer splitExchange,
 			@PathVariable("id") Long offerId) {
-		return offerService.updateOfferDetails(offerId, sourceAmount, exchangeRate);
+		return offerService.updateOfferDetails(offerId, sourceAmount, exchangeRate, allowCounterOffers, splitExchange);
 	}
 
 	@PostMapping("/acceptOffer")
