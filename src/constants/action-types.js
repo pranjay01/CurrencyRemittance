@@ -6,3 +6,4 @@ export const updateFocusOffer = 'update-focus-offer';
 export const showSignupModal = 'showSignupModal';
 export const hideSignupModal = 'hideSignupModal';
 export const GetAllTransactions = 'Get-all-transactions';
+export const getTransactionList = 'get-transaction-list';

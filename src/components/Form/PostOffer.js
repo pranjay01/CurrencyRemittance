@@ -6,6 +6,8 @@ import cookie from 'react-cookies';
 import { connect } from 'react-redux';
 // import { updateSnackbarData } from '../../../constants/action-types';
 // import { updateRestaurant } from '../../../mutations/UpdateProfile';
+import { notification } from 'antd';
+import 'antd/dist/antd.css';
 
 class PostOffer extends Component {
   constructor(props) {
@@ -34,7 +36,52 @@ class PostOffer extends Component {
     };
   }
 
-  componentDidMount() {}
+  getCurrentExchangeRate = (sourceCountry, destinationCountry) => {
+    const index1 = this.props.ConversionRateStore.conversionRates.findIndex(
+      (x) => x.country === sourceCountry
+    );
+    console.log('index1', index1);
+    const source = this.props.ConversionRateStore.conversionRates[index1].usdConversionRate;
+    const index2 = this.props.ConversionRateStore.conversionRates.findIndex(
+      (x) => x.country === destinationCountry
+    );
+    const destination = this.props.ConversionRateStore.conversionRates[index2].usdConversionRate;
+    const currentExchangeRate = (Number(source) / Number(destination)).toFixed(3);
+    return currentExchangeRate;
+  };
+
+  componentDidMount() {
+    if (this.props.location.state && this.props.location.state.editOffer) {
+      console.log('property_id', this.props.location.state.offerId);
+      axios
+        .get(serverUrl + 'offer/' + this.props.location.state.offerId, {
+          params: {},
+          withCredentials: true,
+        })
+        .then((response) => {
+          console.log(response.data);
+          if (response.data) {
+            console.log('data to deit offer', response.data);
+            this.setState({
+              NewOffer: {
+                ...response.data,
+                currentExchangeRate: this.getCurrentExchangeRate(
+                  response.data.sourceCountry,
+                  response.data.destinationCountry
+                ),
+                customExchangeRate: response.data.exchangeRate,
+              },
+            });
+          } else {
+            notification.error({
+              message: 'ERROR!.',
+              description: 'Wrong Offer',
+              duration: 6,
+            });
+          }
+        });
+    }
+  }
 
   updateConversionRate = () => {
     if (this.state.NewOffer.sourceCurrency && this.state.NewOffer.destinationCurrency) {
@@ -158,8 +205,8 @@ class PostOffer extends Component {
             this.state.NewOffer.customExchangeRate !== ''
               ? Number(this.state.NewOffer.customExchangeRate)
               : Number(this.state.NewOffer.currentExchangeRate),
-          allowCounterOffers: this.state.allowCounterOffers ? 1 : 0,
-          splitExchange: this.state.splitExchange ? 1 : 0,
+          allowCounterOffers: this.state.NewOffer.allowCounterOffers ? 1 : 0,
+          splitExchange: this.state.NewOffer.splitExchange ? 1 : 0,
         },
         withCredentials: true,
       })
@@ -167,8 +214,6 @@ class PostOffer extends Component {
         (response) => {
           console.log(response.data);
           this.setState({
-            submitErrorBlock: '',
-            submitError: false,
             NewOffer: {
               sourceCountry: '',
               sourceCurrency: '',
@@ -184,11 +229,17 @@ class PostOffer extends Component {
               destinationExchangeRate: 0,
             },
           });
+          notification['success']({
+            message: 'Success!!',
+            description: 'Offer Posted Successfully!!',
+            duration: 4,
+          });
         },
         (error) => {
-          this.setState({
-            submitErrorBlock: JSON.stringify(error),
-            submitError: true,
+          notification['error']({
+            message: 'ERROR!',
+            description: error.response.data,
+            duration: 4,
           });
         }
       );
@@ -384,7 +435,7 @@ class PostOffer extends Component {
               </ul>
               <ul style={{ display: 'flex' }}>
                 <li style={{ width: '100%' }}>
-                  <label className="placeholder-sub">Event Date :</label>
+                  <label className="placeholder-sub">Offer Valid till :</label>
                   <input
                     type="date"
                     style={{ marginLeft: '39%', height: '35px' }}
@@ -398,7 +449,19 @@ class PostOffer extends Component {
             </div>
 
             <div>
-              {
+              {this.props.location.state && this.props.location.state.editOffer ? (
+                <button
+                  id="signup-button"
+                  type="button"
+                  className="ybtn ybtn--primary ybtn--big disable-on-submit submit signup-button"
+                  style={{
+                    marginTop: '2%',
+                    marginLeft: '40%',
+                  }}
+                >
+                  <span>Edit and Save</span>
+                </button>
+              ) : (
                 <button
                   id="signup-button"
                   type="submit"
@@ -410,7 +473,7 @@ class PostOffer extends Component {
                 >
                   <span>Save</span>
                 </button>
-              }
+              )}
 
               {/*<button
                 className="ybtn ybtn--primary ybtn--big disable-on-submit submit signup-button"

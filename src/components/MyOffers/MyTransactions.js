@@ -1,79 +1,44 @@
 import React, { Component } from 'react';
 import ReactPaginate from 'react-paginate';
-import { Link, Redirect } from 'react-router-dom';
-import '../OfferSearches/Offerist.css';
-import MyOfferCard from './MyOfferCard';
-import { connect } from 'react-redux';
-import { getOfferLists } from '../../constants/action-types';
+import MyTransactionCard from './MyTransactionCard';
 import axios from 'axios';
 import serverUrl from '../../config';
 import { notification } from 'antd';
 import 'antd/dist/antd.css';
+import { getTransactionList } from '../../constants/action-types';
+import { connect } from 'react-redux';
 
-class MyOffers extends Component {
+class MyTransactions extends Component {
   constructor(props) {
     super(props);
-    this.state = { editOffer: false, offerId: null };
+    this.state = { transactions: [{ otherUsers: [1, 1] }] };
   }
 
   componentDidMount() {
     axios
-      .get(serverUrl + 'user/' + localStorage.getItem('userId') + '/offers', {
-        params: {
-          sourceCurrency: this.state.sourceCurrency,
-          sourceAmount: this.state.sourceAmount ? parseFloat(this.state.sourceAmount) : '',
-          destinationCurrency: this.state.destinationCurrency,
-          destinationAmount: this.state.destinationAmount
-            ? parseFloat(this.state.destinationAmount)
-            : '',
-        },
+      .get(serverUrl + 'user/' + localStorage.getItem('userId') + '/transactionHistory', {
+        params: {},
         withCredentials: true,
       })
       .then((response) => {
-        console.log(response.data);
+        console.log('Transactions ', response.data);
         if (response.data.length > 0) {
-          const offerLists = response.data;
+          const TransactionList = response.data;
           const payload = {
-            offerLists,
+            TransactionList,
           };
-          this.props.getOfferLists(payload);
+          this.props.getTransactionList(payload);
         } else {
           notification.open({
             message: 'Opp!.',
-            description: 'You haven"t posted any offer yet!',
-            duration: 6,
+            description: 'You haven"t done any transactions yet!',
+            duration: 4,
           });
         }
       });
   }
 
-  showMatchingOffers = (event, Offer) => {
-    event.preventDefault();
-    localStorage.setItem('OpenOffer', Offer.offerId);
-    const payload = {
-      Offer,
-    };
-    this.props.updateFocusOffer(payload);
-    this.setState({
-      openDetailPage: true,
-    });
-  };
-
-  editOffer = (offerId) => {
-    this.setState({ offerId, editOffer: true });
-  };
-
   render() {
-    if (this.state.editOffer && this.state.offerId) {
-      return (
-        <Redirect
-          to={{
-            pathname: '/PostOffer',
-            state: { editOffer: this.state.editOffer, offerId: this.state.offerId },
-          }}
-        />
-      );
-    }
     return (
       <div className="lemon--div__06b83__1mboc responsive responsive-biz border-color--default__06b83__3-ifU">
         {/*redirectVar*/}
@@ -87,11 +52,13 @@ class MyOffers extends Component {
               >
                 <div>
                   <ul className="lemon--ul__373c0__1_cxs undefined list__373c0__2G8oH">
-                    {this.props.OfferListStore.offerLists.map((offer) => (
-                      <MyOfferCard
-                        key={offer.offerId}
-                        editOffer={() => this.editOffer(offer.offerId)}
-                        offer={offer}
+                    {this.props.TransactionListStore.TransactionList.map((transaction) => (
+                      <MyTransactionCard
+                        key={transaction._id}
+                        // openStaticProfile={(event) =>
+                        //   this.openStaticProfile(event, review.CustomerID)
+                        // }
+                        transaction={transaction}
 
                         //   }
                       />
@@ -122,23 +89,23 @@ class MyOffers extends Component {
   }
 }
 
-// export default MyOffers;
+// export default MyTransactions;
 const mapStateToProps = (state) => {
-  const { OfferListStore } = state.OfferListReducer;
+  const { TransactionListStore } = state.TransactionReducer;
   return {
-    OfferListStore,
+    TransactionListStore,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getOfferLists: (payload) => {
+    getTransactionList: (payload) => {
       dispatch({
-        type: getOfferLists,
+        type: getTransactionList,
         payload,
       });
     },
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(MyOffers);
+export default connect(mapStateToProps, mapDispatchToProps)(MyTransactions);

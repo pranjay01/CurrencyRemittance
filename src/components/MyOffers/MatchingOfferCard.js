@@ -1,15 +1,72 @@
 import React, { Component } from 'react';
+import axios from 'axios';
+import serverUrl from '../../config';
+import { notification } from 'antd';
+import 'antd/dist/antd.css';
 
 class MatchingOfferCard extends Component {
   constructor(props) {
     super(props);
-    this.state = { counterOffer: '' };
+    this.state = { counterOffer: '', showMessageArea: false, message: '' };
   }
 
   onCOmmonChangeHandler = (e) => {
     this.setState({
       counterOffer: e.target.value,
     });
+  };
+
+  openReviewForm = () => {
+    this.setState({
+      showMessageArea: !this.state.showMessageArea,
+      message: '',
+      //RegisteredCustomerList: [],
+    });
+  };
+
+  onChangeMessageHandler = (e) => {
+    this.setState({
+      message: e.target.value,
+    });
+  };
+
+  sendMessage = (Event) => {
+    Event.preventDefault();
+    const offerId1 = null;
+    axios
+      .post(serverUrl + 'sendOffer', null, {
+        params: {
+          senderId: localStorage.getItem('userId'),
+          receiverId: this.props.offer.user.id,
+          mailText: this.state.message,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log(response.data);
+          this.setState({
+            showMessageArea: false,
+            message: '',
+          });
+          notification['success']({
+            message: 'Success!!',
+            description: 'Message Sent!!',
+            duration: 4,
+          });
+        },
+        (error) => {
+          notification['error']({
+            message: 'ERROR!',
+            description: error.response.data,
+            duration: 4,
+          });
+        }
+      );
+  };
+
+  exactMath = () => {
+    return true;
   };
 
   render() {
@@ -189,83 +246,94 @@ class MatchingOfferCard extends Component {
               >
                 <div style={{ flexDirection: 'column' }} className="js-more-fields more-fields">
                   <ul style={{ display: 'flex', paddingLeft: '0px' }}>
-                    <li>
-                      <p className="lemon--p__373c0__3Qnnj text__373c0__2Kxyz comment__373c0__3EKjH text-color--normal__373c0__3xep9 text-align--left__373c0__2XGa-">
-                        <span className="lemon--span__373c0__3997G raw__373c0__3rKqk" lang="en">
-                          <button
-                            style={{
-                              marginLeft: '2%',
-                              color: 'white',
-                              width: '160px',
-                              height: '35px',
-                              backgroundColor: '#060505a6',
-                              borderRadius: '7%',
-                            }}
-                            className="link__06b83__343sR"
-                            aria-label="Toggle Menu"
-                            aria-haspopup="menu"
-                            aria-controls="header-dropdown-menu"
-                            aria-expanded="false"
-                            type="submit"
-                          >
-                            <div className="lemon--div__06b83__1mboc button-content__06b83__1QNtB border-color--default__06b83mousedown-x__3-ifU">
-                              <span className="lemon--span__06b83__3997G text__06b83__2Kxyz button-content-text__06b83__Z-7FO text-color--blue-dark__06b83__1jX7S text-align--center__06b83__3VrfZ text-size--large__06b83__3t60B text--truncated__06b83__3sLaf">
-                                <span className="lemon--span__06b83__3997G display--inline__06b83__3JqBP border-color--default__06b83__3-ifU">
-                                  Place Counter Offer
+                    {offer.allowCounterOffers !== 0 ? (
+                      <li>
+                        <p className="lemon--p__373c0__3Qnnj text__373c0__2Kxyz comment__373c0__3EKjH text-color--normal__373c0__3xep9 text-align--left__373c0__2XGa-">
+                          <span className="lemon--span__373c0__3997G raw__373c0__3rKqk" lang="en">
+                            <button
+                              style={{
+                                marginLeft: '2%',
+                                color: 'white',
+                                width: '160px',
+                                height: '35px',
+                                backgroundColor: '#060505a6',
+                                borderRadius: '7%',
+                              }}
+                              className="link__06b83__343sR"
+                              aria-label="Toggle Menu"
+                              aria-haspopup="menu"
+                              aria-controls="header-dropdown-menu"
+                              aria-expanded="false"
+                              type="submit"
+                            >
+                              <div className="lemon--div__06b83__1mboc button-content__06b83__1QNtB border-color--default__06b83mousedown-x__3-ifU">
+                                <span className="lemon--span__06b83__3997G text__06b83__2Kxyz button-content-text__06b83__Z-7FO text-color--blue-dark__06b83__1jX7S text-align--center__06b83__3VrfZ text-size--large__06b83__3t60B text--truncated__06b83__3sLaf">
+                                  <span className="lemon--span__06b83__3997G display--inline__06b83__3JqBP border-color--default__06b83__3-ifU">
+                                    Place Counter Offer
+                                  </span>
                                 </span>
-                              </span>
-                            </div>
-                          </button>
-                        </span>
-                      </p>
-                    </li>
+                              </div>
+                            </button>
+                          </span>
+                        </p>
+                      </li>
+                    ) : (
+                      ''
+                    )}
+                    {offer.allowCounterOffers !== 0 ? (
+                      <li>
+                        <input
+                          style={{ marginLeft: '12%', height: '35px', width: '225px' }}
+                          id="first_name"
+                          min={0.9 * offer.sourceAmount}
+                          max={1.1 * offer.sourceAmount}
+                          name="counterOffer"
+                          placeholder="Counter Offer"
+                          required="required"
+                          type="number"
+                          onChange={this.onCOmmonChangeHandler}
+                          value={this.state.counterOffer}
+                        />
+                      </li>
+                    ) : (
+                      ''
+                    )}
 
-                    <li>
-                      <input
-                        style={{ marginLeft: '12%', height: '35px', width: '225px' }}
-                        id="first_name"
-                        min={0.9 * offer.sourceAmount}
-                        max={1.1 * offer.sourceAmount}
-                        name="counterOffer"
-                        placeholder="Counter Offer"
-                        required="required"
-                        type="number"
-                        onChange={this.onCOmmonChangeHandler}
-                        value={this.state.counterOffer}
-                      />
-                    </li>
-
-                    <li>
-                      <p className="lemon--p__373c0__3Qnnj text__373c0__2Kxyz comment__373c0__3EKjH text-color--normal__373c0__3xep9 text-align--left__373c0__2XGa-">
-                        <span className="lemon--span__373c0__3997G raw__373c0__3rKqk" lang="en">
-                          <button
-                            style={{
-                              marginLeft: '29%',
-                              color: 'white',
-                              width: '160px',
-                              height: '35px',
-                              backgroundColor: '#060505a6',
-                              borderRadius: '7%',
-                            }}
-                            className="link__06b83__343sR"
-                            aria-label="Toggle Menu"
-                            aria-haspopup="menu"
-                            aria-controls="header-dropdown-menu"
-                            aria-expanded="false"
-                            type="button"
-                            onClick={(event) => this.props.AcceptOffer(event, offer.offerId)}
-                          >
-                            <div className="lemon--div__06b83__1mboc button-content__06b83__1QNtB border-color--default__06b83mousedown-x__3-ifU">
-                              <span className="lemon--span__06b83__3997G text__06b83__2Kxyz button-content-text__06b83__Z-7FO text-color--blue-dark__06b83__1jX7S text-align--center__06b83__3VrfZ text-size--large__06b83__3t60B text--truncated__06b83__3sLaf">
-                                <span className="lemon--span__06b83__3997G display--inline__06b83__3JqBP border-color--default__06b83__3-ifU">
-                                  Accept Orignal Offer
+                    {this.exactMath() ? (
+                      <li>
+                        <p className="lemon--p__373c0__3Qnnj text__373c0__2Kxyz comment__373c0__3EKjH text-color--normal__373c0__3xep9 text-align--left__373c0__2XGa-">
+                          <span className="lemon--span__373c0__3997G raw__373c0__3rKqk" lang="en">
+                            <button
+                              style={{
+                                marginLeft: '29%',
+                                color: 'white',
+                                width: '160px',
+                                height: '35px',
+                                backgroundColor: '#060505a6',
+                                borderRadius: '7%',
+                              }}
+                              className="link__06b83__343sR"
+                              aria-label="Toggle Menu"
+                              aria-haspopup="menu"
+                              aria-controls="header-dropdown-menu"
+                              aria-expanded="false"
+                              type="button"
+                              onClick={(event) => this.props.AcceptOffer(event, offer.offerId)}
+                            >
+                              <div className="lemon--div__06b83__1mboc button-content__06b83__1QNtB border-color--default__06b83mousedown-x__3-ifU">
+                                <span className="lemon--span__06b83__3997G text__06b83__2Kxyz button-content-text__06b83__Z-7FO text-color--blue-dark__06b83__1jX7S text-align--center__06b83__3VrfZ text-size--large__06b83__3t60B text--truncated__06b83__3sLaf">
+                                  <span className="lemon--span__06b83__3997G display--inline__06b83__3JqBP border-color--default__06b83__3-ifU">
+                                    Accept Orignal Offer
+                                  </span>
                                 </span>
-                              </span>
-                            </div>
-                          </button>
-                        </span>
-                      </p>
-                    </li>
+                              </div>
+                            </button>
+                          </span>
+                        </p>
+                      </li>
+                    ) : (
+                      ''
+                    )}
                   </ul>
                 </div>
               </form>

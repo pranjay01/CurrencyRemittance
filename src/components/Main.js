@@ -15,6 +15,9 @@ import axios from 'axios';
 import serverUrl from '../config';
 import { updateConversionRates, UpdateUserProfile } from '../constants/action-types';
 import MatchingOfferList from './MyOffers/MatchingOfferList';
+import CounterOffers from './MyOffers/CounterOffers';
+import VerificationPage from './Login/VerificationPage';
+import MyTransactions from './MyOffers/MyTransactions';
 
 {
   /*import axios from 'axios';
@@ -134,17 +137,20 @@ class Main extends Component {
         {/* Render Different Component based on Route */}
         {/*<Switch>*/}
         <Route path="/" component={Navbar} />
+        <Route path="/VerificationPage" component={VerificationPage} />
         <Route path="/Login" component={Login} />
         <Route path="/Signup" component={Login} />
         <Route path="/Profile" component={Profile} />
         <Route path="/AccountInformation" component={AccountInformation} />
-        <Route path="/PostOffer" component={PostOffer} />
+        <Route path="/PostOffer" render={(props) => <PostOffer {...props} />} />
         <Route path="/OfferList" component={OfferList} />
         <Route path="/OfferDetailPage" component={OfferDetailPage} />
         <Route path="/TransactionHistory" component={TransactionHistory} />
         <Route path="/MyOffers" component={MyOffers} />
         <Route path="/ExchangeRate" component={ExchangeRate} />
         <Route path="/MatchingOfferList" component={MatchingOfferList} />
+        <Route path="/CounterOffers" component={CounterOffers} />
+        <Route path="/MyTransactions" component={MyTransactions} />
         {/*
           <Route path="/customerLogin" component={CustomerLogin} />
           <Route path="/customerSignup" component={CustomerLogin} />
