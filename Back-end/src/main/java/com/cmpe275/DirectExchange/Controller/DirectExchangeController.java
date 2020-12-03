@@ -28,7 +28,7 @@ import com.cmpe275.DirectExchange.Service.TransactionService;
 import com.cmpe275.DirectExchange.Service.TransactionUserMapService;
 import com.cmpe275.DirectExchange.Service.UserService;
 
-@CrossOrigin(allowCredentials = "true",origins = "http://localhost:3000",allowedHeaders = "*",  methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT}) 
+// @CrossOrigin(allowCredentials = "true",origins = "http://localhost:3000",allowedHeaders = "*",  methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT}) 
 @RestController
 public class DirectExchangeController {
 
@@ -193,10 +193,11 @@ public class DirectExchangeController {
 	}
 
 	@PostMapping("/createCounterOffer")
-	public Long createCounterOffer(@RequestParam(value="offerID") Long offerID,
+	public Long createCounterOffer(@RequestParam(value="offerID1") Long offerID1,
 	@RequestParam(value="counterProposedAmount") double counterProposedAmount,
-	@RequestParam(value="userID") Long userID) {
-		return counterOfferService.createCounterOffer(offerID, counterProposedAmount, userID);
+	@RequestParam(value="userID") Long userID,
+	@RequestParam(value="offerID2") Long offerID2) {
+		return counterOfferService.createCounterOffer(offerID1, counterProposedAmount, userID, offerID2);
 	}
 
 	@GetMapping("/searchCounterOffers")
