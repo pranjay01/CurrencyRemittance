@@ -6,20 +6,26 @@ import axios from 'axios';
 import serverUrl from '../../config';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { GetAllTransactions } from '../../constants/action-types';
+import { GetAllTransactions, logOut, UpdateUserProfile } from '../../constants/action-types';
 
 // create the Navbar Component
 class Navbar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      stateNames: [],
-      countryNames: [],
-      genderNames: [],
+      authflag: false,
     };
-    // this.handleLogout = this.handleLogout.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
   }
   componentDidMount() {
+    axios.get(serverUrl + 'user/' + localStorage.getItem('userId')).then((response) => {
+      console.log(response.data);
+      const UserProfile = response.data;
+      const payload = {
+        UserProfile,
+      };
+      this.props.UpdateUserProfile(payload);
+    });
     axios
       .get(serverUrl + 'user/' + localStorage.getItem('userId') + '/transactionHistory')
       .then((response) => {
@@ -31,54 +37,14 @@ class Navbar extends Component {
         this.props.GetAllTransactions(payload);
       });
   }
-  /*
-  handleLogout = () => {
-    const data = {
-      token: localStorage.getItem('token'),
-      role: localStorage.getItem('role'),
-    };
-    let url = '';
-    if (data.role === 'Customer') url = serverUrl + 'customer/logoutCustomer';
-    else url = serverUrl + 'restaurant/restaurantLogout';
-    axios
-      .post(url, data)
-      .then((response) => {
-        console.log('Status Code : ', response.status);
-        if (response.status === 200) {
-          this.setState({
-            authFlag: false,
-          });
 
-          let payload = {
-            emailID: '',
-            role: '',
-            loginStatus: 'false',
-          };
-          this.props.updateLoginInfo(payload);
-          payload = {
-            emailID: '',
-            role: '',
-            signupStatus: '',
-          };
-          this.props.updateSignUpInfo(payload);
-          payload = {
-            Name: '',
-          };
-          this.props.updateNameInfo(payload);
-        } else {
-          this.setState({
-            authFlag: true,
-          });
-        }
-      })
-      .catch((error) => {
-        this.setState({
-          errorFlag: 1,
-        });
-      });
+  handleLogout = () => {
     localStorage.clear();
+    this.setState({
+      authflag: true,
+    });
+    this.props.logOut();
   };
-  */
 
   render() {
     // if Token is set render Logout Button
@@ -100,13 +66,13 @@ class Navbar extends Component {
       navLogin = (
         <ul class="nav navbar-nav navbar-right">
           <li>
-            <Link to="/customerLogin">
+            <Link to="/Login">
               <span class="glyphicon glyphicon-log-in"></span> User Login
             </Link>
           </li>
 
           <li>
-            <Link to="/customerSignup">
+            <Link to="/Signup">
               <span class="glyphicon glyphicon-log-in"></span>User Signup
             </Link>
           </li>
@@ -154,73 +120,13 @@ class Navbar extends Component {
           <li class={this.props.location.pathname === '/MyTransactions' && 'active'}>
             <Link to="/MyTransactions">My Transactions</Link>
           </li>
-          <li class={this.props.location.pathname === '/restaurantEvents' && 'active'}>
-            <Link to="/restaurantEvents">Reviews</Link>
+          <li class={this.props.location.pathname === '/' && 'active'}>
+            <Link to="/">Reviews</Link>
           </li>
         </ul>
       );
     }
-    // if (!localStorage.getItem('token')) {
-    //   options = (
-    //     <ul class="nav navbar-nav">
-    //       <li class={this.props.location.pathname === '/search' && 'active'}>
-    //         <Link to="/search">Search</Link>
-    //       </li>
-    //     </ul>
-    //   );
-    // } else if (localStorage.getItem('token') && localStorage.getItem('role') === 'Restaurant') {
-    //   options = (
-    //     <ul class="nav navbar-nav">
-    //       <li class={this.props.location.pathname === '/restaurantProfile' && 'active'}>
-    //         <Link to="/restaurantProfile">Profile</Link>
-    //       </li>
-    //       <li class={this.props.location.pathname === '/restaurantMenu' && 'active'}>
-    //         <Link to="/restaurantMenu">Food Menu</Link>
-    //       </li>
-    //       <li class={this.props.location.pathname === '/restaurantOrders' && 'active'}>
-    //         <Link to="/restaurantOrders">Orders</Link>
-    //       </li>
-    //       <li class={this.props.location.pathname === '/restaurantReview' && 'active'}>
-    //         <Link to="/restaurantReview">Review</Link>
-    //       </li>
-    //       <li class={this.props.location.pathname === '/restaurantEvents' && 'active'}>
-    //         <Link to="/restaurantEvents">Events</Link>
-    //       </li>
-    //       <li class={this.props.location.pathname === '/messages' && 'active'}>
-    //         <Link to="/messages">Message</Link>
-    //       </li>
-    //     </ul>
-    //   );
-    // } else if (localStorage.getItem('token') && localStorage.getItem('role') === 'Customer') {
-    //   options = (
-    //     <ul class="nav navbar-nav">
-    //       <li class={this.props.location.pathname === '/customerProfile' && 'active'}>
-    //         <Link to="/customerProfile">Profile</Link>
-    //       </li>
-    //       <li class={this.props.location.pathname === '/customerProfileUpdate' && 'active'}>
-    //         <Link to="/customerProfileUpdate">Profile Update</Link>
-    //       </li>
-    //       <li class={this.props.location.pathname === '/customerContactUpdate' && 'active'}>
-    //         <Link to="/customerContactUpdate">Contact Info Update</Link>
-    //       </li>
-    //       <li class={this.props.location.pathname === '/search' && 'active'}>
-    //         <Link to="/search">Search</Link>
-    //       </li>
-    //       <li class={this.props.location.pathname === '/customerEvents' && 'active'}>
-    //         <Link to="/customerEvents">Events</Link>
-    //       </li>
-    //       <li class={this.props.location.pathname === '/orderHistory' && 'active'}>
-    //         <Link to="/orderHistory">Order History</Link>
-    //       </li>
-    //       <li class={this.props.location.pathname === '/users' && 'active'}>
-    //         <Link to="/users">Yelp Users</Link>
-    //       </li>
-    //       <li class={this.props.location.pathname === '/messages' && 'active'}>
-    //         <Link to="/messages">Message</Link>
-    //       </li>
-    //     </ul>
-    //   );
-    // }
+
     return (
       <div>
         {redirectVar}
@@ -228,7 +134,7 @@ class Navbar extends Component {
           <div class="container-fluid">
             <div class="navbar-header">
               <a className="navbar-brand">
-                <Link to="/WebPage">Direct Exchange</Link>
+                <Link>Direct Exchange</Link>
               </a>
             </div>
 
@@ -247,6 +153,16 @@ const mapDispatchToProps = (dispatch) => {
       dispatch({
         type: GetAllTransactions,
         payload,
+      });
+    },
+    logOut: () => {
+      dispatch({
+        type: logOut,
+      });
+    },
+    UpdateUserProfile: () => {
+      dispatch({
+        type: UpdateUserProfile,
       });
     },
   };

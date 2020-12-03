@@ -22,7 +22,16 @@ class Profile extends Component {
     };
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    axios.get(serverUrl + 'user/' + localStorage.getItem('userId')).then((response) => {
+      console.log(response.data);
+      const UserProfile = response.data;
+      const payload = {
+        UserProfile,
+      };
+      this.props.UpdateUserProfile(payload);
+    });
+  }
 
   editProfile = () => {
     if (this.state.isFormDisable) {
@@ -169,7 +178,7 @@ class Profile extends Component {
               </ul>
               <ul style={{ display: 'flex' }}>
                 <li style={{ width: '40%', flex: 'auto' }}>
-                  <label className="placeholder-sub">NickName: </label>
+                  <label className="placeholder-sub">Password: </label>
                   <input
                     style={{ height: '35px' }}
                     id="first_name"

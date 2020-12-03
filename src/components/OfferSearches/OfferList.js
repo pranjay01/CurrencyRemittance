@@ -4,7 +4,7 @@ import OfferCard from './OfferCard';
 import { Link, Redirect } from 'react-router-dom';
 import './Offerist.css';
 import { connect } from 'react-redux';
-import { getOfferLists, updateFocusOffer } from '../../constants/action-types';
+import { getOfferLists, updateFocusOffer, UpdateUserProfile } from '../../constants/action-types';
 import axios from 'axios';
 import serverUrl from '../../config';
 
@@ -44,6 +44,15 @@ class OfferList extends Component {
         };
         this.props.getOfferLists(payload);
       });
+
+    axios.get(serverUrl + 'user/' + localStorage.getItem('userId')).then((response) => {
+      console.log(response.data);
+      const UserProfile = response.data;
+      const payload = {
+        UserProfile,
+      };
+      this.props.UpdateUserProfile(payload);
+    });
   }
 
   onCOmmonChangeHandler = (e) => {
@@ -336,6 +345,12 @@ const mapDispatchToProps = (dispatch) => {
     updateFocusOffer: (payload) => {
       dispatch({
         type: updateFocusOffer,
+        payload,
+      });
+    },
+    UpdateUserProfile: (payload) => {
+      dispatch({
+        type: UpdateUserProfile,
         payload,
       });
     },

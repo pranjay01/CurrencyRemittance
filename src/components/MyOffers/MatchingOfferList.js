@@ -30,10 +30,10 @@ class MatchingOfferList extends Component {
     this.setState({
       includeSplitOffers: e.target.value,
     });
-    this.commonFetch();
+    this.commonFetch(0, e.target.value);
   };
 
-  commonFetch = (PageNo = 0) => {
+  commonFetch = (PageNo = 0, filter) => {
     axios
       .get(serverUrl + 'searchOffers', {
         params: {
@@ -86,7 +86,9 @@ class MatchingOfferList extends Component {
         conversionRates,
       };
       this.props.updateConversionRates(payload);
-      this.commonFetch();
+      if (this.props.location.state && this.props.location.state.openMatchingOffersPage) {
+        this.commonFetch();
+      }
     });
   }
 
@@ -125,12 +127,61 @@ class MatchingOfferList extends Component {
       );
   };
 
+  CreateCounterOffer = (event, offerID, counterProposedAmount) => {
+    event.preventDefault();
+
+    // Event.preventDefault();
+    // const offerId1 = null;
+    axios
+      .post(serverUrl + 'acceptOffer', null, {
+        params: {
+          // matching one id
+          offerID,
+          counterProposedAmount,
+          userID: localStorage.getItem('userId'),
+          counterOfferID: this.props.location.state.offerId,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log(response.data);
+          notification['success']({
+            message: 'Success!!',
+            description: 'Transaction Initiated, please send mony within 10 minutes',
+            duration: 6,
+          });
+          this.setState({
+            returnToMyOffers: true,
+          });
+        },
+        (error) => {
+          console.log(error.response);
+          notification['error']({
+            message: 'ERROR!',
+            description: error.response.data.error + '. Offer accept failed',
+            duration: 4,
+          });
+        }
+      );
+  };
+
   render() {
     if (!localStorage.getItem('token')) {
       return (
         <Redirect
           to={{
             pathname: '/Login',
+          }}
+        />
+      );
+    }
+    if (!this.props.location.state || this.props.location.state.openMatchingOffersPage === false) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/MyOffers',
+            // state: { openDetailPage: this.state.openDetailPage, offerId: this.state.offerId },
           }}
         />
       );

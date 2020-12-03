@@ -260,6 +260,8 @@ class PostOffer extends Component {
             this.state.NewOffer.customExchangeRate !== ''
               ? Number(this.state.NewOffer.customExchangeRate)
               : Number(this.state.NewOffer.currentExchangeRate),
+          allowCounterOffers: this.state.NewOffer.allowCounterOffers ? 1 : 0,
+          splitExchange: this.state.NewOffer.splitExchange ? 1 : 0,
         },
         withCredentials: true,
       })
@@ -480,7 +482,6 @@ class PostOffer extends Component {
                     type="checkbox"
                     checked={this.state.NewOffer.allowCounterOffers}
                     onChange={this.onChangeHandlerAllowCounterOffers}
-                    disabled={this.props.location.state && this.props.location.state.editOffer}
                   />
                 </li>
                 <li style={{ width: '10%' }}></li>
@@ -492,7 +493,6 @@ class PostOffer extends Component {
                     type="checkbox"
                     checked={this.state.NewOffer.splitExchange}
                     onChange={this.onChangeHandlerSplitExchange}
-                    disabled={this.props.location.state && this.props.location.state.editOffer}
                   />
                 </li>
               </ul>

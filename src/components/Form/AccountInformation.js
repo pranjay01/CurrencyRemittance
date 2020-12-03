@@ -119,14 +119,14 @@ class AccountInformation extends Component {
           notification['success']({
             message: 'Success!!',
             description: 'Account Saved!!',
-            duration: 4,
+            duration: 3,
           });
         },
         (error) => {
           notification['error']({
             message: 'ERROR!',
             description: 'Account Save Failed!',
-            duration: 4,
+            duration: 3,
           });
         }
       );

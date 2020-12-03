@@ -55,15 +55,6 @@ class Main extends Component {
       };
       this.props.updateConversionRates(payload);
     });
-
-    axios.get(serverUrl + 'user/' + localStorage.getItem('userId')).then((response) => {
-      console.log(response.data);
-      const UserProfile = response.data;
-      const payload = {
-        UserProfile,
-      };
-      this.props.UpdateUserProfile(payload);
-    });
   }
   /*
   componentDidMount() {

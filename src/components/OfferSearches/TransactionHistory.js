@@ -12,7 +12,7 @@ import { Link, Redirect } from 'react-router-dom';
 class TransactionHistory extends Component {
   constructor(props) {
     super(props);
-    this.state = { transactions: [{ otherUsers: [1, 1] }] };
+    this.state = {};
   }
 
   componentDidMount() {
@@ -28,8 +28,8 @@ class TransactionHistory extends Component {
           const payload = {
             TransactionList,
           };
+          this.props.getTransactionList(payload);
           if (response.data.length > 0) {
-            this.props.getTransactionList(payload);
           } else {
             notification.open({
               message: 'Opp!.',

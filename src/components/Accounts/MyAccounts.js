@@ -13,34 +13,30 @@ import MyAccountCard from './MyAccountCard';
 class MyAccounts extends Component {
   constructor(props) {
     super(props);
-    this.state = { accounts: [1, 2] };
+    this.state = { accounts: [] };
   }
 
   componentDidMount() {
     axios
-      .get(serverUrl + 'user/' + localStorage.getItem('userId') + '/offers', {
+      .get(serverUrl + 'getAllAccounts', {
         params: {
-          sourceCurrency: this.state.sourceCurrency,
-          sourceAmount: this.state.sourceAmount ? parseFloat(this.state.sourceAmount) : '',
-          destinationCurrency: this.state.destinationCurrency,
-          destinationAmount: this.state.destinationAmount
-            ? parseFloat(this.state.destinationAmount)
-            : '',
+          userId: localStorage.getItem('userId'),
         },
         withCredentials: true,
       })
       .then((response) => {
         console.log(response.data);
+        this.setState({
+          accounts: response.data,
+        });
         if (response.data.length > 0) {
-          const offerLists = response.data;
-          const payload = {
-            offerLists,
-          };
-          this.props.getOfferLists(payload);
         } else {
+          this.setState({
+            accounts: [],
+          });
           notification.open({
             message: 'Opp!.',
-            description: 'You haven"t posted any offer yet!',
+            description: 'You haven"t created any account yet!',
             duration: 6,
           });
         }
@@ -96,7 +92,7 @@ class MyAccounts extends Component {
               >
                 <div>
                   <ul className="lemon--ul__373c0__1_cxs undefined list__373c0__2G8oH">
-                    {this.props.OfferListStore.offerLists.map((account) => (
+                    {this.state.accounts.map((account) => (
                       <MyAccountCard
                         key={account.offerId}
                         // editOffer={() => this.editOffer(offer.offerId)}

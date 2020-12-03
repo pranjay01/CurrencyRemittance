@@ -59,15 +59,14 @@ class CounterOffers extends Component {
     }
   }
 
-  AcceptOffer = (Event, offerId2, offerId3 = null) => {
+  AcceptOffer = (Event, id) => {
     Event.preventDefault();
     const offerId1 = null;
     axios
-      .post(serverUrl + 'acceptOffer', null, {
+      .post(serverUrl + 'acceptCounterOffer', null, {
         params: {
-          offerId1: parseInt(localStorage.getItem('offerId')),
-          offerId2,
-          offerId3,
+          offerId: this.props.location.state.offerId,
+          id,
         },
         withCredentials: true,
       })
@@ -134,7 +133,7 @@ class CounterOffers extends Component {
                       <CounterOfferCard
                         key={counteroffer._id}
                         offer={counteroffer}
-                        AcceptOffer={(event) => this.AcceptOffer(event, counteroffer.offerID)}
+                        AcceptOffer={(event) => this.AcceptOffer(event, counteroffer.id)}
 
                         //   }
                       />

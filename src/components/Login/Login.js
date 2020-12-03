@@ -351,10 +351,9 @@ class Login extends Component {
         <div class="flow-start">
           <div class="signup-form-container">
             <div class="header">
-              <h2>Sign Up for Yelp</h2>
-              <p class="subheading">Connect with great local businesses</p>
+              <h2>Sign Up for Direct Exchange</h2>
               <p class="legal-copy">
-                By continuing, you agree to Yelp’s{' '}
+                By continuing, you agree to Direct Exchange’s{' '}
                 <Link class="legal-link" href="#">
                   Terms of Service
                 </Link>{' '}
@@ -366,8 +365,9 @@ class Login extends Component {
               </p>
             </div>
             <div>
-              <p class="fb-start">
+              <p class="fb-start facebook-class">
                 <FacebookLogin
+                  className="facebook-class"
                   appId="673806016835125"
                   autoLoad={false}
                   fields="name,email,picture"
@@ -377,6 +377,7 @@ class Login extends Component {
               </p>
               <p class="google-start">
                 <GoogleLogin
+                  className="google-class"
                   clientId="193224160021-l84huj79hc912hrn1a2itds827iemm57.apps.googleusercontent.com"
                   buttonText="Login"
                   onSuccess={this.responseGoogle}
@@ -399,7 +400,7 @@ class Login extends Component {
                   <li style={{ flex: 'auto' }}>
                     <label class="placeholder-sub">Nick Name</label>
                     <input
-                      style={{ marginLeft: '3%', height: '35px', width: '180px' }}
+                      style={{ marginLeft: '3%', height: '35px', width: '213px' }}
                       id="first_name"
                       name="first_name"
                       placeholder="First Name"
@@ -414,7 +415,7 @@ class Login extends Component {
                   <li style={{ flex: 'auto' }}>
                     <label class="placeholder-sub">Email</label>
                     <input
-                      style={{ marginLeft: '3%', height: '35px', width: '213px' }}
+                      style={{ marginLeft: '7%', height: '35px', width: '213px' }}
                       id="email"
                       name="email"
                       placeholder="Email"
@@ -429,7 +430,7 @@ class Login extends Component {
                   <li style={{ flex: 'auto' }}>
                     <label class="placeholder-sub">Password</label>
                     <input
-                      style={{ marginLeft: '3%', height: '35px', width: '186px' }}
+                      style={{ marginLeft: '4%', height: '35px', width: '213px' }}
                       id="password"
                       name="password"
                       placeholder="Password"
@@ -477,7 +478,7 @@ class Login extends Component {
                 </Link>
               </p>
               <p class="legal-copy">
-                By logging in, you agree to Yelp’s{' '}
+                By logging in, you agree to Direct Exchange’s{' '}
                 <Link class="legal-link" to="#">
                   Terms of Service
                 </Link>{' '}
@@ -500,10 +501,15 @@ class Login extends Component {
                 ></div>
               </li>
 
-              <li class="js-fb-login">
+              <li
+                className="facebook-class js-fb-login"
+                style={{ marginBlockEnd: '1em' }}
+                // class="js-fb-login"
+              >
                 <FacebookLogin
+                  className="facebook-class"
                   appId="673806016835125"
-                  autoLoad={true}
+                  autoLoad={false}
                   fields="name,email,picture"
                   onClick={this.componentClicked}
                   callback={this.responseFacebook}
@@ -512,6 +518,7 @@ class Login extends Component {
 
               <li class="js-google-login" data-component-bound="true">
                 <GoogleLogin
+                  className="google-class "
                   clientId="193224160021-l84huj79hc912hrn1a2itds827iemm57.apps.googleusercontent.com"
                   buttonText="Login"
                   onSuccess={this.responseGoogle}
@@ -529,7 +536,7 @@ class Login extends Component {
                   <li style={{ width: '45%', flex: 'auto' }}>
                     <label class="placeholder-sub">Email</label>
                     <input
-                      style={{ marginLeft: '3%', height: '35px', width: '213px' }}
+                      style={{ marginLeft: '10%', height: '35px', width: '213px' }}
                       id="email"
                       name="email"
                       placeholder="Email"
@@ -544,7 +551,7 @@ class Login extends Component {
                   <li style={{ width: '45%', flex: 'auto' }}>
                     <label class="placeholder-sub">Password</label>
                     <input
-                      style={{ marginLeft: '3%', height: '35px', width: '186px' }}
+                      style={{ marginLeft: '6%', height: '35px', width: '213px' }}
                       onChange={this.onChangeHandlerPassword}
                       id="password"
                       name="password"
@@ -555,7 +562,11 @@ class Login extends Component {
                     />
                   </li>
                 </ul>
-                <button type="submit" class="ybtn ybtn--primary ybtn--big submit ybtn-full">
+                <button
+                  style={{ width: '150px' }}
+                  type="submit"
+                  class="ybtn ybtn--primary ybtn--big submit ybtn-full"
+                >
                   <span>Sign in</span>
                 </button>
               </div>

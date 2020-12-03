@@ -30,7 +30,7 @@ const OfferListReducer = (state = defaultState, action) => {
     case logOut: {
       return {
         ...state,
-        OfferListStore: { offerLists: [] },
+        OfferListStore: { offerLists: [], PageNo: 0, TotalCount: 0 },
         onFocusOfferStore: { Offer: { user: {} } },
         //   return Object.assign(state, action.payload);
       };

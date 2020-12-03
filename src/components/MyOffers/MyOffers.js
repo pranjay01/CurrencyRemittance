@@ -13,10 +13,15 @@ import 'antd/dist/antd.css';
 class MyOffers extends Component {
   constructor(props) {
     super(props);
-    this.state = { editOffer: false, offerId: null, openCounterOffers: false };
+    this.state = {
+      editOffer: false,
+      offerId: null,
+      openCounterOffers: false,
+      openMatchingOffersPage: false,
+    };
   }
 
-  componentDidMount() {
+  commonFetch = (PageNo = 0) => {
     axios
       .get(serverUrl + 'user/' + localStorage.getItem('userId') + '/offers', {
         params: {
@@ -45,17 +50,18 @@ class MyOffers extends Component {
           });
         }
       });
+  };
+
+  componentDidMount() {
+    this.commonFetch();
   }
 
-  showMatchingOffers = (event, Offer) => {
+  showMatchingOffers = (event, offerId) => {
     event.preventDefault();
-    localStorage.setItem('OpenOffer', Offer.offerId);
-    const payload = {
-      Offer,
-    };
-    this.props.updateFocusOffer(payload);
+
     this.setState({
-      openDetailPage: true,
+      openMatchingOffersPage: true,
+      offerId,
     });
   };
 
@@ -65,11 +71,7 @@ class MyOffers extends Component {
 
   openCounterOffer = (event, offerId) => {
     event.preventDefault();
-    // localStorage.setItem('OpenOffer', offerId);
-    // const payload = {
-    //   Offer,
-    // };
-    // this.props.updateFocusOffer(payload);
+
     this.setState({
       openCounterOffers: true,
       offerId,
@@ -82,6 +84,19 @@ class MyOffers extends Component {
         <Redirect
           to={{
             pathname: '/Login',
+          }}
+        />
+      );
+    }
+    if (this.state.openMatchingOffersPage && this.state.offerId) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/MatchingOfferList',
+            state: {
+              openMatchingOffersPage: this.state.openMatchingOffersPage,
+              offerId: this.state.offerId,
+            },
           }}
         />
       );
@@ -128,6 +143,9 @@ class MyOffers extends Component {
                         editOffer={() => this.editOffer(offer.offerId)}
                         offer={offer}
                         openCounterOffer={(event) => this.openCounterOffer(event, offer.offerId)}
+                        showMatchingOffers={(event) =>
+                          this.showMatchingOffers(event, offer.offerId)
+                        }
 
                         //   }
                       />

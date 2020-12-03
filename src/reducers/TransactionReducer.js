@@ -20,7 +20,7 @@ const TransactionReducer = (state = defaultState, action) => {
     case logOut: {
       return {
         ...state,
-        TransactionListStore: { TransactionList: [] },
+        TransactionListStore: { TransactionList: [], PageNo: 0, TotalCount: 0 },
       };
     }
 

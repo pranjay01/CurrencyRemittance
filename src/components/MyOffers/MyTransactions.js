@@ -27,8 +27,8 @@ class MyTransactions extends Component {
         const payload = {
           TransactionList,
         };
+        this.props.getTransactionList(payload);
         if (response.data.length > 0) {
-          this.props.getTransactionList(payload);
         } else {
           notification.open({
             message: 'Opp!.',
