@@ -20,6 +20,7 @@ import com.cmpe275.DirectExchange.Entity.Transaction;
 import com.cmpe275.DirectExchange.Entity.TransactionUserMap;
 import com.cmpe275.DirectExchange.Entity.User;
 import com.cmpe275.DirectExchange.Helper.TransactionDTODeep;
+import com.cmpe275.DirectExchange.Repository.AccountRepository;
 import com.cmpe275.DirectExchange.Service.AccountService;
 import com.cmpe275.DirectExchange.Service.CounterOfferService;
 import com.cmpe275.DirectExchange.Service.ExchangeRateService;
@@ -203,6 +204,11 @@ public class DirectExchangeController {
 	@GetMapping("/searchCounterOffers")
 	public List<CounterOffer> searchCounterOffers(@RequestParam(value="OfferID") Long OfferID){
 		return counterOfferService.searchCounterOffers(OfferID);
+	}
+
+	@GetMapping("/getAllAccounts")
+	public List<Account> getAllAccounts(@RequestParam(value="userId") Long userId){
+		return accountService.searchAllAccounts(userId);
 	}
 	
 }
