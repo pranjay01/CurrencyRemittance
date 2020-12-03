@@ -42,6 +42,16 @@ public class OfferService {
 		return offerRepository.save(offer);
 	}
 	
+	@Transactional
+	public Offer updateOfferDetails(Long offerId, Double sourceAmount, Double exchangeRate) {
+		Offer offer = offerRepository.findById(offerId).orElse(null);
+		if(sourceAmount != null)
+			offer.setSourceAmount(sourceAmount);
+		if(exchangeRate != null)
+			offer.setExchangeRate(exchangeRate);
+		return offerRepository.save(offer);
+	}
+	
 	private java.sql.Date parseDate(String date) {
 	    try {
 	        return new Date(DATE_FORMAT.parse(date).getTime());

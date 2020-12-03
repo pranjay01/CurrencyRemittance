@@ -147,6 +147,13 @@ public class DirectExchangeController {
 	public Offer getOfferDetails(@PathVariable("id") Long offerId) {
 		return offerService.getOfferDetails(offerId);
 	}
+	
+	@PostMapping("/offer/{id}")
+	public Offer updateOfferDetails(@RequestParam(value="sourceAmount", required = false) Double sourceAmount,
+			@RequestParam(value="exchangeRate", required = false) Double exchangeRate,
+			@PathVariable("id") Long offerId) {
+		return offerService.updateOfferDetails(offerId, sourceAmount, exchangeRate);
+	}
 
 	@PostMapping("/acceptOffer")
 	public String acceptOffer(@RequestParam(value="offerId1") Long offerId1,
@@ -159,8 +166,6 @@ public class DirectExchangeController {
 	public String sendMoney(@PathVariable("id") Long offerId) {
 		return transactionService.sendMoney(offerId);
 	}
-
-	//modify offer - which parameters can be modified?
 
 	// merged
 	@GetMapping("/getConversionRate")
