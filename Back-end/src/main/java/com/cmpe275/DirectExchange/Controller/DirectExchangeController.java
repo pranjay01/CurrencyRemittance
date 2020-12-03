@@ -17,12 +17,15 @@ import com.cmpe275.DirectExchange.Entity.Account;
 import com.cmpe275.DirectExchange.Entity.CounterOffer;
 import com.cmpe275.DirectExchange.Entity.ExchangeRate;
 import com.cmpe275.DirectExchange.Entity.Offer;
+import com.cmpe275.DirectExchange.Entity.SingleMatch;
+import com.cmpe275.DirectExchange.Entity.SingleMatchPageCount;
 import com.cmpe275.DirectExchange.Entity.User;
 import com.cmpe275.DirectExchange.Helper.TransactionDTODeep;
 import com.cmpe275.DirectExchange.Service.AccountService;
 import com.cmpe275.DirectExchange.Service.CounterOfferService;
 import com.cmpe275.DirectExchange.Service.ExchangeRateService;
 import com.cmpe275.DirectExchange.Service.OfferService;
+import com.cmpe275.DirectExchange.Service.SingleMatchProc;
 import com.cmpe275.DirectExchange.Service.TransactionService;
 import com.cmpe275.DirectExchange.Service.TransactionUserMapService;
 import com.cmpe275.DirectExchange.Service.UserService;
@@ -224,6 +227,16 @@ public class DirectExchangeController {
 	@GetMapping("/getAllAccounts")
 	public List<Account> getAllAccounts(@RequestParam(value="userId") Long userId){
 		return accountService.searchAllAccounts(userId);
+	}
+
+	@GetMapping("/getSingleOffers/{UserId}/{startindex}/{rowcount}")
+	public SingleMatchPageCount getSingleOffers(@RequestParam(value="OfferId") Long OfferId,
+	@PathVariable(value="UserId") Long UserId,
+	@PathVariable(value="startindex") int startindex,
+	@PathVariable(value="rowcount") int rowcount) {
+		SingleMatchProc single = new SingleMatchProc();
+		return single.getSingleMatch(OfferId, UserId, startindex, rowcount);
+		
 	}
 	
 }
