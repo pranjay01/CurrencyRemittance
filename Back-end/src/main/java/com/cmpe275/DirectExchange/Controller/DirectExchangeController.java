@@ -1,5 +1,8 @@
 package com.cmpe275.DirectExchange.Controller;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,17 +13,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
-
 import com.cmpe275.DirectExchange.Entity.Account;
 import com.cmpe275.DirectExchange.Entity.CounterOffer;
 import com.cmpe275.DirectExchange.Entity.ExchangeRate;
 import com.cmpe275.DirectExchange.Entity.Offer;
-import com.cmpe275.DirectExchange.Entity.Transaction;
-import com.cmpe275.DirectExchange.Entity.TransactionUserMap;
 import com.cmpe275.DirectExchange.Entity.User;
 import com.cmpe275.DirectExchange.Helper.TransactionDTODeep;
-import com.cmpe275.DirectExchange.Repository.AccountRepository;
 import com.cmpe275.DirectExchange.Service.AccountService;
 import com.cmpe275.DirectExchange.Service.CounterOfferService;
 import com.cmpe275.DirectExchange.Service.ExchangeRateService;
