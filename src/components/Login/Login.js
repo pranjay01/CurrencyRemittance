@@ -71,16 +71,22 @@ class Login extends Component {
   responseFacebook = (response) => {
     this.checkUserExistsOrNot(response.email, (error, isExists, data) => {
       if (error) {
-        notification['error']({
-          message: 'Error!!',
-          description: 'Facebook Login Failed!! Try Again.',
-          duration: 2,
+        // notification['error']({
+        //   message: 'Error!!',
+        //   description: 'Facebook Login Failed!! Try Again.',
+        //   duration: 2,
+        // });
+
+        this.setState({
+          fName: response.email,
+          username: response.email,
+          authProviders: 'FACEBOOK',
         });
         console.log(error.response.data);
-        this.setState({
-          errorBlock: error.response.data,
-          sigupSuccessful: false,
-        });
+        // this.setState({
+        //   errorBlock: error.response.data,
+        //   sigupSuccessful: false,
+        // });
       } else if (isExists) {
         localStorage.setItem('token', data.password);
         localStorage.setItem('userrole', data.id);
@@ -110,10 +116,15 @@ class Login extends Component {
     console.log(response);
     this.checkUserExistsOrNot(response.wt.cu, (error, isExists, data) => {
       if (error) {
-        notification['error']({
-          message: 'Error!!',
-          description: 'Google Login Failed!! Try Again.',
-          duration: 2,
+        // notification['error']({
+        //   message: 'Error!!',
+        //   description: 'Google Login Failed!! Try Again.',
+        //   duration: 2,
+        // });
+        this.setState({
+          fName: response.wt.cu,
+          username: response.wt.cu,
+          authProviders: 'GOOGLE',
         });
       } else if (isExists) {
         // Add data from user to localstorage
