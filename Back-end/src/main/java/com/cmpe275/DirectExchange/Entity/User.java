@@ -34,16 +34,20 @@ public class User {
 	@Column(name = "Status")
 	String status;
 
+	@Column(name = "AuthProvider")
+	String authProvider;
+
 	public User() {
 		super();
 	}
 
-	public User(String userName, String nickname, String password, String status) {
+	public User(String userName, String nickname, String password, String status, String authProvider) {
 		super();
 		this.userName = userName;
 		this.nickname = nickname;
 		this.password = generateEncryptedPassword(password);;
 		this.status = status;
+		this.authProvider = authProvider;
 	}
 
 	public Long getId() {
