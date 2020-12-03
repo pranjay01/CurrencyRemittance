@@ -207,6 +207,12 @@ public class DirectExchangeController {
 	public List<CounterOffer> searchCounterOffers(@RequestParam(value="OfferID") Long OfferID){
 		return counterOfferService.searchCounterOffers(OfferID);
 	}
+	
+	@PostMapping("/acceptCounterOffer")
+	public String acceptCounterOffer(@RequestParam(value="offerId") Long offerId,
+			@RequestParam(value="id") Long id) {
+		return transactionService.acceptCounterOffer(offerId, id);
+	} 
 
 	@GetMapping("/getAllAccounts")
 	public List<Account> getAllAccounts(@RequestParam(value="userId") Long userId){

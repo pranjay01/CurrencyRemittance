@@ -12,5 +12,7 @@ public interface CounterOfferRepository extends JpaRepository<CounterOffer, Long
     
     @Query("SELECT o FROM CounterOffer o WHERE (o.OfferID = :OfferID)")
 	List<CounterOffer> findByOfferID(@Param("OfferID") Long OfferID);
+    
+    
 }
 

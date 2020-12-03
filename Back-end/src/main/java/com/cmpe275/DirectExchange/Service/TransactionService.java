@@ -11,9 +11,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
+import com.cmpe275.DirectExchange.Entity.CounterOffer;
 import com.cmpe275.DirectExchange.Entity.Offer;
 import com.cmpe275.DirectExchange.Entity.Transaction;
 import com.cmpe275.DirectExchange.Helper.TransactionDTODeep;
+import com.cmpe275.DirectExchange.Repository.CounterOfferRepository;
 import com.cmpe275.DirectExchange.Repository.OfferRepository;
 import com.cmpe275.DirectExchange.Repository.TransactionRepository;
 
@@ -22,6 +24,9 @@ public class TransactionService {
 	
 	@Autowired
 	TransactionRepository transactionRepository;
+	
+	@Autowired
+	CounterOfferRepository counterOfferRepository;
 	
 	@Autowired
 	OfferRepository offerRepository;
@@ -118,6 +123,22 @@ public class TransactionService {
 		}
 		
 		return "Money received by DirectExchange";
+	}
+	
+	@Transactional
+	public String acceptCounterOffer(Long offerId, Long id) {
+		CounterOffer counterOffer = counterOfferRepository.findById(id).orElse(null);
+		Offer offer = offerRepository.findById(offerId).orElse(null);
+		
+		offer.setSourceAmount(counterOffer.getCounterProposedAmount());
+		offerRepository.save(offer);
+		
+		acceptOffer(offerId, counterOffer.getCounterOfferID(), null);
+		
+		counterOffer.setAccepted(1);
+		counterOfferRepository.save(counterOffer);
+		
+		return "Transaction initiated";
 	}
 	
 	private void sendTransactionInitiationEmail(String sendTo, Long offerId) {
