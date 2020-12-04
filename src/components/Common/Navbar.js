@@ -80,8 +80,11 @@ class Navbar extends Component {
       );
     }
     let redirectVar = null;
-    if (localStorage.getItem('token') && this.props.location.pathname === '/login') {
-      redirectVar = <Redirect to="/home" />;
+    if (
+      localStorage.getItem('token') &&
+      (this.props.location.pathname === '/login' || this.props.location.pathname === '/')
+    ) {
+      redirectVar = <Redirect to="/OfferList" />;
     }
 
     if (localStorage.getItem('token') && localStorage.getItem('status') === 'Pending') {
