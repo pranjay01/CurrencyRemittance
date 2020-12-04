@@ -7,6 +7,7 @@ import {
   getOfferLists,
   updateFocusOffer,
   updateConversionRates,
+  getSplitOfferLists,
 } from '../../constants/action-types';
 import axios from 'axios';
 import serverUrl from '../../config';
@@ -30,38 +31,99 @@ class MatchingOfferList extends Component {
     this.setState({
       includeSplitOffers: e.target.value,
     });
-    this.commonFetch(0, e.target.value);
+    if (e.target.value === 'yes') {
+      this.commonFetchSingleOffers();
+      // this.commonFetchSplitOffers();
+    } else {
+      this.commonFetchSingleOffers();
+    }
   };
 
-  commonFetch = (PageNo = 0, filter) => {
+  handlePageClickSingle = (e) => {
+    this.commonFetchSingleOffers(e.selected);
+  };
+
+  handlePageClickSplitOffers = (e) => {
+    this.commonFetchSplitOffers(e.selected);
+  };
+  commonFetchSingleOffers = (PageNo = 0) => {
     axios
-      .get(serverUrl + 'searchOffers', {
-        params: {
-          sourceCurrency: this.state.sourceCurrency ? this.state.sourceCurrency : null,
-          sourceAmount: this.state.sourceAmount ? parseFloat(this.state.sourceAmount) : null,
-          destinationCurrency: this.state.destinationCurrency
-            ? this.state.destinationCurrency
-            : null,
-          destinationAmount: this.state.destinationAmount
-            ? parseFloat(this.state.destinationAmount)
-            : null,
-        },
-        withCredentials: true,
-      })
+      .get(
+        serverUrl +
+          'getSingleOffers/' +
+          localStorage.getItem('userId') +
+          '/' +
+          (PageNo + 1) +
+          '/' +
+          10,
+        {
+          params: {
+            OfferId: this.props.location.state.offerId,
+          },
+          withCredentials: true,
+        }
+      )
       .then(
         (response) => {
-          console.log(response.data);
-          const offerLists = response.data;
-          if (response.data.length > 0) {
-            const payload = {
-              offerLists,
-              PageNo,
-              TotalCount: 0,
-            };
-            this.props.getOfferLists(payload);
+          console.log('Matching offers', response.data);
+          const offerLists = response.data.list;
+          const payload = {
+            offerLists,
+            PageNo,
+            PageCount: response.data.pagecount,
+          };
+          this.props.getOfferLists(payload);
+          if (response.data.list.length > 0) {
           } else {
             notification.open({
-              message: 'Opp! No matching offers found',
+              message: 'Opp! No single matching offers found',
+              description: 'Seems there are no matching offers',
+              duration: 4,
+            });
+          }
+        },
+        (error) => {
+          console.log('error', error);
+          notification['error']({
+            message: 'ERROR!',
+            description: error.response.data,
+            duration: 4,
+          });
+        }
+      );
+  };
+
+  commonFetchSplitOffers = (PageNo = 0) => {
+    axios
+      .get(
+        serverUrl +
+          'getSplitOffers/' +
+          localStorage.getItem('userId') +
+          '/' +
+          (PageNo + 1) +
+          '/' +
+          10,
+        {
+          params: {
+            OfferId: this.props.location.state.offerId,
+          },
+          withCredentials: true,
+        }
+      )
+      .then(
+        (response) => {
+          console.log('Matching split offers', response.data);
+          const offerLists = response.data.list;
+          const payload = {
+            offerLists,
+            PageNo,
+            PageCount: response.data.pagecount,
+          };
+          this.props.getSplitOfferLists(payload);
+          if (response.data.list.length > 0) {
+          } else {
+            notification.open({
+              message: 'Opp! No split matching offers found',
               description: 'Seems there are no matching offers',
               duration: 4,
             });
@@ -79,18 +141,76 @@ class MatchingOfferList extends Component {
   };
 
   componentDidMount() {
-    axios.get(serverUrl + 'getConversionRate').then((response) => {
-      console.log(response.data);
-      const conversionRates = response.data;
-      const payload = {
-        conversionRates,
-      };
-      this.props.updateConversionRates(payload);
-      if (this.props.location.state && this.props.location.state.openMatchingOffersPage) {
-        this.commonFetch();
-      }
-    });
+    // axios.get(serverUrl + 'getConversionRate').then((response) => {
+    //   console.log(response.data);
+    //   const conversionRates = response.data;
+    //   const payload = {
+    //     conversionRates,
+    //   };
+    //   this.props.updateConversionRates(payload);
+
+    // });
+    if (this.props.location.state && this.props.location.state.openMatchingOffersPage) {
+      this.commonFetchSingleOffers();
+      this.commonFetchSplitOffers();
+    }
   }
+
+  AcceptSplitOffer = (
+    event,
+    offerB_sourceCountry,
+    offerB_offerID,
+    offerC_sourceCountry,
+    offerC_offerID
+  ) => {
+    event.preventDefault();
+    let offerId1;
+    let offerId2;
+    let offerId3;
+    if (offerB_sourceCountry === offerC_sourceCountry) {
+      offerId1 = parseInt(localStorage.getItem('offerId'));
+      offerId2 = offerB_offerID;
+      offerId3 = offerC_offerID;
+    } else if (offerB_sourceCountry === this.props.location.state.userSourceCountry) {
+      offerId2 = parseInt(localStorage.getItem('offerId'));
+      offerId3 = offerB_offerID;
+      offerId1 = offerC_offerID;
+    } else {
+      offerId2 = parseInt(localStorage.getItem('offerId'));
+      offerId3 = offerC_offerID;
+      offerId1 = offerB_offerID;
+    }
+    axios
+      .post(serverUrl + 'acceptOffer', null, {
+        params: {
+          offerId1: parseInt(localStorage.getItem('offerId')),
+          offerId2,
+          offerId3,
+        },
+        withCredentials: true,
+      })
+      .then(
+        (response) => {
+          console.log(response.data);
+          notification['success']({
+            message: 'Success!!',
+            description: 'Transaction Initiated, please send mony within 10 minutes',
+            duration: 6,
+          });
+          this.setState({
+            returnToMyOffers: true,
+          });
+        },
+        (error) => {
+          console.log(error.response);
+          notification['error']({
+            message: 'ERROR!',
+            description: error.response.data.error + '. Offer accept failed',
+            duration: 4,
+          });
+        }
+      );
+  };
 
   AcceptOffer = (Event, offerId2, offerId3 = null) => {
     Event.preventDefault();
@@ -127,19 +247,29 @@ class MatchingOfferList extends Component {
       );
   };
 
-  CreateCounterOffer = (event, offerID, counterProposedAmount) => {
+  CreateCounterOffer = (
+    event,
+    proposedOnOfferID,
+    counterProposedAmount,
+    sourceOfferID = null,
+    split1OfferID = null,
+    split2OfferID = null
+  ) => {
     event.preventDefault();
 
     // Event.preventDefault();
     // const offerId1 = null;
     axios
-      .post(serverUrl + 'acceptOffer', null, {
+      .post(serverUrl + 'createCounterOffer', null, {
         params: {
           // matching one id
-          offerID,
-          counterProposedAmount,
+          proposedOnOfferID,
+          counterProposedAmount: Number(counterProposedAmount),
           userID: localStorage.getItem('userId'),
           counterOfferID: this.props.location.state.offerId,
+          sourceOfferID,
+          split1OfferID,
+          split2OfferID,
         },
         withCredentials: true,
       })
@@ -148,7 +278,7 @@ class MatchingOfferList extends Component {
           console.log(response.data);
           notification['success']({
             message: 'Success!!',
-            description: 'Transaction Initiated, please send mony within 10 minutes',
+            description: 'COunter Offer Placed Successfully',
             duration: 6,
           });
           this.setState({
@@ -164,6 +294,56 @@ class MatchingOfferList extends Component {
           });
         }
       );
+  };
+
+  createSplitCounterOffer = (
+    event,
+    counterProposedAmount,
+    offerB_sourceCountry,
+    offerB_sourceAmount,
+    offerB_offerID,
+    offerC_sourceCountry,
+    offerC_sourceAmount,
+    offerC_offerID
+  ) => {
+    let proposedOnOfferID = null;
+    let sourceOfferID = null;
+    let split1OfferID = null;
+    let split2OfferID = null;
+    if (offerB_sourceCountry === offerC_sourceCountry) {
+      if (offerB_sourceAmount > offerC_sourceAmount) {
+        sourceOfferID = this.props.location.state.offerId;
+        proposedOnOfferID = offerB_offerID;
+        split1OfferID = offerC_offerID;
+        split2OfferID = offerB_offerID;
+      } else {
+        sourceOfferID = this.props.location.state.offerId;
+        proposedOnOfferID = offerC_offerID;
+        split1OfferID = offerC_offerID;
+        split2OfferID = offerB_offerID;
+      }
+    } else {
+      if (offerB_sourceCountry === this.props.location.state.userSourceCountry) {
+        proposedOnOfferID = offerC_offerID;
+        sourceOfferID = offerC_offerID;
+        split1OfferID = this.props.location.state.offerId;
+        split2OfferID = offerB_offerID;
+      } else {
+        proposedOnOfferID = offerB_offerID;
+        sourceOfferID = offerB_offerID;
+        split1OfferID = this.props.location.state.offerId;
+        split2OfferID = offerC_offerID;
+      }
+    }
+
+    this.CreateCounterOffer(
+      event,
+      proposedOnOfferID,
+      counterProposedAmount,
+      sourceOfferID,
+      split1OfferID,
+      split2OfferID
+    );
   };
 
   render() {
@@ -260,6 +440,56 @@ class MatchingOfferList extends Component {
             </div>
           </div>
         </div>
+        <div
+          style={{ marginBottom: '40px' }}
+          className="lemon--div__06b83__1mboc component__06b83__mFK-M border-color--default__06b83__3-ifU"
+        >
+          <div className="lemon--div__06b83__1mboc header-container__06b83__bjkGB border-color--default__06b83__3-ifU">
+            <div className="lemon--div__06b83__1mboc header-nav-container__06b83__euina border-color--default__06b83__3-ifU">
+              <div className="lemon--div__06b83__1mboc fs-block border-color--default__06b83__3-ifU">
+                <div className="lemon--div__06b83__1mboc border-color--default__06b83__3-ifU">
+                  <div className="lemon--div__06b83__1mboc tooltipContainer__06b83__2PjJt auth-tooltip-container__06b83__e-34S display--inline-block__06b83__1ZKqC border-color--default__06b83__3-ifU">
+                    <div className="lemon--div__06b83__1mboc notification-wrapper__06b83__RCXT7 display--inline-block__06b83__1ZKqC border-color--default__06b83__3-ifU">
+                      <div className="lemon--div__06b83__1mboc inline__06b83__2fx1q">
+                        <div
+                          className="lemon--div__06b83__1mboc dropdown__06b83__2flBr"
+                          role="presentation"
+                        >
+                          <form
+                            style={{
+                              display: 'flex',
+
+                              flexDirection: 'row',
+
+                              justifyContent: 'center',
+                            }}
+                            onSubmit={this.getOffers}
+                            className="yform signup-form  city-hidden"
+                            id="signup-form"
+                          >
+                            {' '}
+                            <div
+                              style={{ flexDirection: 'column', minWidth: '200px' }}
+                              className="js-password-meter-container"
+                            >
+                              <ul style={{ display: 'flex' }}>
+                                <li style={{ width: '100%', flex: 'auto' }}>
+                                  <label className="placeholder-sub">Direct Matches</label>
+                                </li>
+                              </ul>
+                            </div>
+                          </form>
+
+                          {/*menu*/}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="lemon--div__06b83__1mboc biz-container__06b83__3snKt border-color--default__06b83__3-ifU">
           {/*<LeftPannel profileInfo={this.state} onTabChangeHandler={this.onTabChangeHandler} />*/}
           <div className="lemon--div__06b83__1mboc container-default__06b83__1Sj3L content-container__06b83__2gSeg border-color--default__06b83__3-ifU">
@@ -273,7 +503,6 @@ class MatchingOfferList extends Component {
                     {this.props.OfferListStore.offerLists.map((offer) => (
                       <MatchingOfferCard
                         key={offer._id}
-                        openDetailsPage={(event) => this.openDetailsPage(event, offer)}
                         offer={offer}
                         AcceptOffer={(event, offerId2) => this.AcceptOffer(event, offerId2)}
 
@@ -283,11 +512,19 @@ class MatchingOfferList extends Component {
                     </ul>*/}
                   <ul className="lemon--ul__373c0__1_cxs undefined list__373c0__2G8oH">
                     {this.props.OfferListStore.offerLists.map((offer) => (
-                      <MatchingOfferCardSplit
-                        key={offer._id}
-                        openDetailsPage={(event) => this.openDetailsPage(event, offer)}
+                      <MatchingOfferCard
+                        key={offer.row_num}
                         offer={offer}
+                        sourceCountry={this.props.location.state.userDestinationCountry}
+                        destinationCountry={this.props.location.state.userSourceCountry}
                         AcceptOffer={(event, offerId2) => this.AcceptOffer(event, offerId2)}
+                        CreateCounterOffer={(event, counterProposedAmount) =>
+                          this.CreateCounterOffer(
+                            event,
+                            offer.matchingOfferId,
+                            counterProposedAmount
+                          )
+                        }
 
                         //   conditional cards will come here, remove down card while integration
                       />
@@ -300,19 +537,153 @@ class MatchingOfferList extends Component {
                     nextLabel={'next'}
                     breakLabel={'...'}
                     breakClassName={'break-me'}
-                    pageCount={5}
+                    pageCount={this.props.OfferListStore.PageCount}
                     marginPagesDisplayed={2}
                     pageRangeDisplayed={2}
-                    onPageChange={this.handlePageClick}
+                    onPageChange={this.handlePageClickSingle}
                     containerClassName={'pagination'}
                     subContainerClassName={'pages pagination'}
                     activeClassName={'active'}
+                    forcePage={this.props.OfferListStore.PageNo}
                   />
                 </div>
               </div>
             </div>
           </div>
         </div>
+        {this.state.includeSplitOffers === 'yes' ? (
+          <div
+            style={{ marginBottom: '40px' }}
+            className="lemon--div__06b83__1mboc component__06b83__mFK-M border-color--default__06b83__3-ifU"
+          >
+            <div className="lemon--div__06b83__1mboc header-container__06b83__bjkGB border-color--default__06b83__3-ifU">
+              <div className="lemon--div__06b83__1mboc header-nav-container__06b83__euina border-color--default__06b83__3-ifU">
+                <div className="lemon--div__06b83__1mboc fs-block border-color--default__06b83__3-ifU">
+                  <div className="lemon--div__06b83__1mboc border-color--default__06b83__3-ifU">
+                    <div className="lemon--div__06b83__1mboc tooltipContainer__06b83__2PjJt auth-tooltip-container__06b83__e-34S display--inline-block__06b83__1ZKqC border-color--default__06b83__3-ifU">
+                      <div className="lemon--div__06b83__1mboc notification-wrapper__06b83__RCXT7 display--inline-block__06b83__1ZKqC border-color--default__06b83__3-ifU">
+                        <div className="lemon--div__06b83__1mboc inline__06b83__2fx1q">
+                          <div
+                            className="lemon--div__06b83__1mboc dropdown__06b83__2flBr"
+                            role="presentation"
+                          >
+                            <form
+                              style={{
+                                display: 'flex',
+
+                                flexDirection: 'row',
+
+                                justifyContent: 'center',
+                              }}
+                              onSubmit={this.getOffers}
+                              className="yform signup-form  city-hidden"
+                              id="signup-form"
+                            >
+                              {' '}
+                              <div
+                                style={{ flexDirection: 'column', minWidth: '200px' }}
+                                className="js-password-meter-container"
+                              >
+                                <ul style={{ display: 'flex' }}>
+                                  <li style={{ width: '100%', flex: 'auto' }}>
+                                    <label className="placeholder-sub">Split Matches</label>
+                                  </li>
+                                </ul>
+                              </div>
+                            </form>
+
+                            {/*menu*/}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          ''
+        )}
+        {this.state.includeSplitOffers === 'yes' ? (
+          <div className="lemon--div__06b83__1mboc biz-container__06b83__3snKt border-color--default__06b83__3-ifU">
+            {/*<LeftPannel profileInfo={this.state} onTabChangeHandler={this.onTabChangeHandler} />*/}
+            <div className="lemon--div__06b83__1mboc container-default__06b83__1Sj3L content-container__06b83__2gSeg border-color--default__06b83__3-ifU">
+              <div className="lemon--div__06b83__1mboc grid__06b83__15mIv border-color--default__06b83__3-ifU">
+                <div
+                  className="lemon--div__06b83__1mboc grid-column__06b83__3ZRhU border-color--default__06b83__3-ifU"
+                  style={{ width: '66.66666666666666%', marginLeft: '25%' }}
+                >
+                  <div>
+                    {/*<ul className="lemon--ul__373c0__1_cxs undefined list__373c0__2G8oH">
+                    {this.props.OfferListStore.offerLists.map((offer) => (
+                      <MatchingOfferCard
+                        key={offer._id}
+                        offer={offer}
+                        AcceptOffer={(event, offerId2) => this.AcceptOffer(event, offerId2)}
+
+                        //   conditional cards will come here, remove down card while integration
+                      />
+                    ))}
+                    </ul>*/}
+                    <ul className="lemon--ul__373c0__1_cxs undefined list__373c0__2G8oH">
+                      {this.props.SplitOfferListStore.offerLists.map((offer) => (
+                        <MatchingOfferCardSplit
+                          key={offer.row_num}
+                          offer={offer}
+                          sourceCountry={this.props.location.state.userDestinationCountry}
+                          destinationCountry={this.props.location.state.userSourceCountry}
+                          AcceptOffer={(event) =>
+                            this.AcceptSplitOffer(
+                              event,
+                              offer.matchingSourceCountry1,
+                              offer.matchingSourceAmount1,
+                              offer.matchingOfferId1,
+                              offer.matchingSourceCountry2,
+                              offer.matchingSourceAmount2,
+                              offer.matchingOfferId2
+                            )
+                          }
+                          createSplitCounterOffer={(event, counterProposedAmount) =>
+                            this.createSplitCounterOffer(
+                              event,
+                              counterProposedAmount,
+                              offer.matchingSourceCountry1,
+                              offer.matchingSourceAmount1,
+                              offer.matchingOfferId1,
+                              offer.matchingSourceCountry2,
+                              offer.matchingSourceAmount2,
+                              offer.matchingOfferId2
+                            )
+                          }
+                          //   conditional cards will come here, remove down card while integration
+                        />
+                      ))}
+                    </ul>
+                  </div>
+                  <div style={{ left: '50%', bottom: '3%', right: '0' }}>
+                    <ReactPaginate
+                      previousLabel={'prev'}
+                      nextLabel={'next'}
+                      breakLabel={'...'}
+                      breakClassName={'break-me'}
+                      pageCount={this.props.SplitOfferListStore.PageCount}
+                      marginPagesDisplayed={2}
+                      pageRangeDisplayed={2}
+                      onPageChange={this.handlePageClickSingle}
+                      containerClassName={'pagination'}
+                      subContainerClassName={'pages pagination'}
+                      activeClassName={'active'}
+                      forcePage={this.props.SplitOfferListStore.PageNo}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          ''
+        )}
       </div>
     );
   }
@@ -323,10 +694,11 @@ class MatchingOfferList extends Component {
 // export default OfferList;
 const mapStateToProps = (state) => {
   const { ConversionRateStore } = state.ConversionRateReducer;
-  const { OfferListStore } = state.OfferListReducer;
+  const { OfferListStore, SplitOfferListStore } = state.OfferListReducer;
   return {
     ConversionRateStore,
     OfferListStore,
+    SplitOfferListStore,
   };
 };
 
@@ -335,6 +707,12 @@ const mapDispatchToProps = (dispatch) => {
     getOfferLists: (payload) => {
       dispatch({
         type: getOfferLists,
+        payload,
+      });
+    },
+    getSplitOfferLists: (payload) => {
+      dispatch({
+        type: getSplitOfferLists,
         payload,
       });
     },

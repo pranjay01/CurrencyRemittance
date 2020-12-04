@@ -18,6 +18,10 @@ class MyOffers extends Component {
       offerId: null,
       openCounterOffers: false,
       openMatchingOffersPage: false,
+      userSourceCountry: null,
+      userDestinationCountry: null,
+      userSourceAmount: null,
+      userexchangeRate: null,
     };
   }
 
@@ -56,12 +60,23 @@ class MyOffers extends Component {
     this.commonFetch();
   }
 
-  showMatchingOffers = (event, offerId) => {
+  showMatchingOffers = (
+    event,
+    offerId,
+    userSourceCountry,
+    userDestinationCountry,
+    userSourceAmount,
+    userexchangeRate
+  ) => {
     event.preventDefault();
 
     this.setState({
       openMatchingOffersPage: true,
       offerId,
+      userSourceCountry,
+      userDestinationCountry,
+      userSourceAmount,
+      userexchangeRate,
     });
   };
 
@@ -88,7 +103,14 @@ class MyOffers extends Component {
         />
       );
     }
-    if (this.state.openMatchingOffersPage && this.state.offerId) {
+    if (
+      this.state.openMatchingOffersPage &&
+      this.state.offerId &&
+      this.state.userSourceCountry &&
+      this.state.userDestinationCountry &&
+      this.state.userSourceAmount &&
+      this.state.userexchangeRate
+    ) {
       return (
         <Redirect
           to={{
@@ -96,6 +118,10 @@ class MyOffers extends Component {
             state: {
               openMatchingOffersPage: this.state.openMatchingOffersPage,
               offerId: this.state.offerId,
+              userSourceCountry: this.state.userSourceCountry,
+              userDestinationCountry: this.state.userDestinationCountry,
+              userSourceAmount: this.state.userSourceAmount,
+              userexchangeRate: this.state.userexchangeRate,
             },
           }}
         />
@@ -144,7 +170,14 @@ class MyOffers extends Component {
                         offer={offer}
                         openCounterOffer={(event) => this.openCounterOffer(event, offer.offerId)}
                         showMatchingOffers={(event) =>
-                          this.showMatchingOffers(event, offer.offerId)
+                          this.showMatchingOffers(
+                            event,
+                            offer.offerId,
+                            offer.sourceCountry,
+                            offer.destinationCountry,
+                            offer.sourceAmount,
+                            offer.exchangeRate
+                          )
                         }
 
                         //   }

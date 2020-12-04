@@ -1,10 +1,22 @@
-import { getOfferLists, logOut, updateFocusOffer } from '../constants/action-types';
+import {
+  getOfferLists,
+  logOut,
+  updateFocusOffer,
+  getSplitOfferLists,
+} from '../constants/action-types';
 
 const defaultState = {
   OfferListStore: {
     offerLists: [],
     PageNo: 0,
     TotalCount: 0,
+    PageCount: 1,
+  },
+  SplitOfferListStore: {
+    offerLists: [],
+    PageNo: 0,
+    TotalCount: 0,
+    PageCount: 1,
   },
   onFocusOfferStore: {
     Offer: { user: {} },
@@ -17,6 +29,13 @@ const OfferListReducer = (state = defaultState, action) => {
       return {
         ...state,
         OfferListStore: { ...state.OfferListStore, ...action.payload },
+        //   return Object.assign(state, action.payload);
+      };
+    }
+    case getSplitOfferLists: {
+      return {
+        ...state,
+        SplitOfferListStore: { ...state.SplitOfferListStore, ...action.payload },
         //   return Object.assign(state, action.payload);
       };
     }

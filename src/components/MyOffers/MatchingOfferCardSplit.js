@@ -31,94 +31,8 @@ class MatchingOfferCardSplit extends Component {
     });
   };
 
-  sendMessage = (Event) => {
-    Event.preventDefault();
-    const offerId1 = null;
-    axios
-      .post(serverUrl + 'sendOffer', null, {
-        params: {
-          senderId: localStorage.getItem('userId'),
-          receiverId: this.props.offer.user.id,
-          mailText: this.state.message,
-        },
-        withCredentials: true,
-      })
-      .then(
-        (response) => {
-          console.log(response.data);
-          this.setState({
-            showMessageArea: false,
-            message: '',
-          });
-          notification['success']({
-            message: 'Success!!',
-            description: 'Message Sent!!',
-            duration: 4,
-          });
-        },
-        (error) => {
-          notification['error']({
-            message: 'ERROR!',
-            description: error.response.data,
-            duration: 4,
-          });
-        }
-      );
-  };
-
-  exactMath = () => {
-    debugger;
-    let index = this.props.ConversionRateStore.conversionRates.findIndex(
-      (x) => x.currencyType === localStorage.getItem('OfferToMatchCurr')
-    );
-    let sourceUSDValue = 0;
-    if (index >= 0) {
-      sourceUSDValue = Math.round(
-        Number(
-          localStorage.getItem('OfferToMatchAmt') *
-            this.props.ConversionRateStore.conversionRates[index].usdConversionRate
-        )
-      );
-    }
-    index = this.props.ConversionRateStore.conversionRates.findIndex(
-      (x) => x.currencyType === this.props.offer.sourceCurrency
-    );
-    let destinationUSDValue = 1;
-    if (index >= 0) {
-      destinationUSDValue = Math.round(
-        Number(
-          this.props.offer.sourceAmount *
-            this.props.ConversionRateStore.conversionRates[index].usdConversionRate
-        )
-      );
-    }
-    return sourceUSDValue === destinationUSDValue;
-    // return true;
-  };
-
   render() {
     const offer = this.props.offer;
-
-    let rating = { backgroundPosition: '0 -320px' };
-    switch (2) {
-      case 1:
-        rating = { backgroundPosition: '0 -360px' };
-        break;
-      case 2:
-        rating = { backgroundPosition: '0 -400px' };
-        break;
-      case 3:
-        rating = { backgroundPosition: '0 -440px' };
-        break;
-      case 4:
-        rating = { backgroundPosition: '0 -480px' };
-        break;
-      case 5:
-        rating = { backgroundPosition: '0 -500px' };
-        break;
-      default:
-        break;
-    }
 
     return (
       <li
@@ -148,31 +62,16 @@ class MatchingOfferCardSplit extends Component {
                   className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU"
                 >
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    <strong> {offer.user.nickname}</strong>{' '}
+                    <strong> {offer.matchingNickName1}</strong>{' '}
                   </span>
-                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    <div
-                      className="lemon--div__373c0__1mboc i-stars__373c0__1T6rz i-stars--regular-5__373c0__N5JxY border-color--default__373c0__3-ifU overflow--hidden__373c0__2y4YK _0Star"
-                      aria-label="5 star rating"
-                      role="img"
-                      style={rating}
-                    >
-                      <img
-                        className="lemon--img__373c0__3GQUb offscreen__373c0__1KofL"
-                        src="https://s3-media0.fl.yelpcdn.com/assets/public/stars_v2.yji-52d3d7a328db670d4402843cbddeed89.png"
-                        width="132"
-                        height="560"
-                        alt=""
-                      />
-                    </div>
-                  </span>
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU"></span>
                 </div>
                 <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
                     <strong> Transaction Amount </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.sourceAmount}
+                    {offer.matchingSourceAmount1}
                   </span>
                 </div>
               </div>
@@ -187,7 +86,7 @@ class MatchingOfferCardSplit extends Component {
                     <strong> Source Country </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.sourceCountry}
+                    {offer.matchingSourceCountry1}
                   </span>
                 </div>
                 <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
@@ -195,7 +94,7 @@ class MatchingOfferCardSplit extends Component {
                     <strong> Source Currency </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.sourceCurrency}
+                    {offer.matchingSourceCurrency1}
                   </span>
                 </div>
               </div>
@@ -210,7 +109,7 @@ class MatchingOfferCardSplit extends Component {
                     <strong> Destination Country </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.destinationCountry}
+                    {offer.matchingDestinationCountry1}
                   </span>
                 </div>
                 <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
@@ -218,7 +117,7 @@ class MatchingOfferCardSplit extends Component {
                     <strong>Destination Currency </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.destinationCurrency}
+                    {offer.matchingDestinationCurrency1}
                   </span>
                 </div>
               </div>
@@ -233,17 +132,10 @@ class MatchingOfferCardSplit extends Component {
                     <strong> Accepting CounterOffers </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.allowCounterOffers === 1 ? 'Accepting' : 'Not Accepting'}
+                    {offer.matchningAllowCounterOffers1 === 1 ? 'Accepting' : 'Not Accepting'}
                   </span>
                 </div>
-                <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
-                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    <strong> Accepting Spilt Offers </strong>:{' '}
-                  </span>
-                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.splitExchange === 1 ? 'Accepting' : 'Not Accepting'}
-                  </span>
-                </div>
+                <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU"></div>
               </div>
             </div>
             <div className="lemon--div__373c0__1mboc margin-t1__373c0__oLmO6 margin-b1__373c0__1khoT border-color--default__373c0__3-ifU">
@@ -256,7 +148,7 @@ class MatchingOfferCardSplit extends Component {
                     <strong> Asked Exchange Rate </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.exchangeRate}
+                    {offer.matchingExchangeRate1}
                   </span>
                 </div>
                 <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
@@ -264,7 +156,7 @@ class MatchingOfferCardSplit extends Component {
                     <strong> Offer Expiring on </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.expirationDate}
+                    {offer.matchingExpirationDate1}
                   </span>
                 </div>
               </div>
@@ -281,13 +173,13 @@ class MatchingOfferCardSplit extends Component {
             </div>
             <div className="lemon--div__373c0__1mboc margin-b2__373c0__abANL border-color--default__373c0__3-ifU">
               <form
-                onSubmit={this.sendCounterOffer}
+                onSubmit={(event) => this.props.createSplitCounterOffer(event)}
                 className="yform signup-form  city-hidden"
                 id="signup-form"
               >
                 <div style={{ flexDirection: 'column' }} className="js-more-fields more-fields">
                   <ul style={{ display: 'flex', paddingLeft: '0px' }}>
-                    {offer.allowCounterOffers !== 0 ? (
+                    {offer.matchningAllowCounterOffers1 !== 0 ? (
                       <li>
                         <p className="lemon--p__373c0__3Qnnj text__373c0__2Kxyz comment__373c0__3EKjH text-color--normal__373c0__3xep9 text-align--left__373c0__2XGa-">
                           <span className="lemon--span__373c0__3997G raw__373c0__3rKqk" lang="en">
@@ -321,13 +213,25 @@ class MatchingOfferCardSplit extends Component {
                     ) : (
                       ''
                     )}
-                    {offer.allowCounterOffers !== 0 ? (
+                    {offer.matchningAllowCounterOffers1 !== 0 ? (
                       <li>
                         <input
                           style={{ marginLeft: '12%', height: '35px', width: '225px' }}
                           id="first_name"
-                          min={0.9 * offer.sourceAmount}
-                          max={1.1 * offer.sourceAmount}
+                          min={
+                            offer.matchingSourceCountry1 === offer.matchingSourceCountry2
+                              ? 0.9 * (offer.matchingSourceAmount1 + offer.matchingSourceAmount2)
+                              : offer.matchingSourceAmount1 > offer.matchingSourceAmount2
+                              ? 0.9 * (offer.matchingSourceAmount1 - offer.matchingSourceAmount2)
+                              : 0.9 * (offer.matchingSourceAmount2 - offer.matchingSourceAmount1)
+                          }
+                          max={
+                            offer.matchingSourceCountry1 === offer.matchingSourceCountry2
+                              ? 1.1 * (offer.matchingSourceAmount1 + offer.matchingSourceAmount2)
+                              : offer.matchingSourceAmount1 > offer.matchingSourceAmount2
+                              ? 1.1 * (offer.matchingSourceAmount1 - offer.matchingSourceAmount2)
+                              : 1.1 * (offer.matchingSourceAmount2 - offer.matchingSourceAmount1)
+                          }
                           name="counterOffer"
                           placeholder="Counter Offer"
                           required="required"
@@ -340,7 +244,7 @@ class MatchingOfferCardSplit extends Component {
                       ''
                     )}
 
-                    {this.exactMath() ? (
+                    {offer.difference === 0 ? (
                       <li>
                         <p className="lemon--p__373c0__3Qnnj text__373c0__2Kxyz comment__373c0__3EKjH text-color--normal__373c0__3xep9 text-align--left__373c0__2XGa-">
                           <span className="lemon--span__373c0__3997G raw__373c0__3rKqk" lang="en">
@@ -359,7 +263,9 @@ class MatchingOfferCardSplit extends Component {
                               aria-controls="header-dropdown-menu"
                               aria-expanded="false"
                               type="button"
-                              onClick={(event) => this.props.AcceptOffer(event, offer.offerId)}
+                              onClick={(event) =>
+                                this.props.AcceptOffer(event, this.state.counterOffer)
+                              }
                             >
                               <div className="lemon--div__06b83__1mboc button-content__06b83__1QNtB border-color--default__06b83mousedown-x__3-ifU">
                                 <span className="lemon--span__06b83__3997G text__06b83__2Kxyz button-content-text__06b83__Z-7FO text-color--blue-dark__06b83__1jX7S text-align--center__06b83__3VrfZ text-size--large__06b83__3t60B text--truncated__06b83__3sLaf">
@@ -400,31 +306,16 @@ class MatchingOfferCardSplit extends Component {
                   className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU"
                 >
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    <strong> {offer.user.nickname}</strong>{' '}
+                    <strong> {offer.matchingOfferNickName2}</strong>{' '}
                   </span>
-                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    <div
-                      className="lemon--div__373c0__1mboc i-stars__373c0__1T6rz i-stars--regular-5__373c0__N5JxY border-color--default__373c0__3-ifU overflow--hidden__373c0__2y4YK _0Star"
-                      aria-label="5 star rating"
-                      role="img"
-                      style={rating}
-                    >
-                      <img
-                        className="lemon--img__373c0__3GQUb offscreen__373c0__1KofL"
-                        src="https://s3-media0.fl.yelpcdn.com/assets/public/stars_v2.yji-52d3d7a328db670d4402843cbddeed89.png"
-                        width="132"
-                        height="560"
-                        alt=""
-                      />
-                    </div>
-                  </span>
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU"></span>
                 </div>
                 <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
                     <strong> Transaction Amount </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.sourceAmount}
+                    {offer.matchingSourceAmount2}
                   </span>
                 </div>
               </div>
@@ -439,7 +330,7 @@ class MatchingOfferCardSplit extends Component {
                     <strong> Source Country </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.sourceCountry}
+                    {offer.matchinSourceCountry2}
                   </span>
                 </div>
                 <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
@@ -447,7 +338,7 @@ class MatchingOfferCardSplit extends Component {
                     <strong> Source Currency </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.sourceCurrency}
+                    {offer.matchingSourceCurrency2}
                   </span>
                 </div>
               </div>
@@ -462,7 +353,7 @@ class MatchingOfferCardSplit extends Component {
                     <strong> Destination Country </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.destinationCountry}
+                    {offer.matchingDestinationCountry2}
                   </span>
                 </div>
                 <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
@@ -470,7 +361,7 @@ class MatchingOfferCardSplit extends Component {
                     <strong>Destination Currency </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.destinationCurrency}
+                    {offer.matchingDestinationCurrency2}
                   </span>
                 </div>
               </div>
@@ -485,17 +376,10 @@ class MatchingOfferCardSplit extends Component {
                     <strong> Accepting CounterOffers </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.allowCounterOffers === 1 ? 'Accepting' : 'Not Accepting'}
+                    {offer.matchningAllowCounterOffers2 === 1 ? 'Accepting' : 'Not Accepting'}
                   </span>
                 </div>
-                <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
-                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    <strong> Accepting Spilt Offers </strong>:{' '}
-                  </span>
-                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.splitExchange === 1 ? 'Accepting' : 'Not Accepting'}
-                  </span>
-                </div>
+                <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU"></div>
               </div>
             </div>
             <div className="lemon--div__373c0__1mboc margin-t1__373c0__oLmO6 margin-b1__373c0__1khoT border-color--default__373c0__3-ifU">
@@ -508,7 +392,7 @@ class MatchingOfferCardSplit extends Component {
                     <strong> Asked Exchange Rate </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.exchangeRate}
+                    {offer.matchingExchangeRate2}
                   </span>
                 </div>
                 <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
@@ -516,7 +400,7 @@ class MatchingOfferCardSplit extends Component {
                     <strong> Offer Expiring on </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.expirationDate}
+                    {offer.matchingExpirationDate2}
                   </span>
                 </div>
               </div>

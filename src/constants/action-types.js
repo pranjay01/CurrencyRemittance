@@ -7,3 +7,4 @@ export const showSignupModal = 'showSignupModal';
 export const hideSignupModal = 'hideSignupModal';
 export const GetAllTransactions = 'Get-all-transactions';
 export const getTransactionList = 'get-transaction-list';
+export const getSplitOfferLists = 'get-split-offer-lists';

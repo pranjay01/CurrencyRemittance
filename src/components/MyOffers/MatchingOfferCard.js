@@ -31,84 +31,10 @@ class MatchingOfferCard extends Component {
     });
   };
 
-  sendMessage = (Event) => {
-    Event.preventDefault();
-    const offerId1 = null;
-    axios
-      .post(serverUrl + 'sendOffer', null, {
-        params: {
-          senderId: localStorage.getItem('userId'),
-          receiverId: this.props.offer.user.id,
-          mailText: this.state.message,
-        },
-        withCredentials: true,
-      })
-      .then(
-        (response) => {
-          console.log(response.data);
-          this.setState({
-            showMessageArea: false,
-            message: '',
-          });
-          notification['success']({
-            message: 'Success!!',
-            description: 'Message Sent!!',
-            duration: 4,
-          });
-        },
-        (error) => {
-          notification['error']({
-            message: 'ERROR!',
-            description: error.response.data,
-            duration: 4,
-          });
-        }
-      );
-  };
-
-  exactMath = () => {
-    const index = this.props.ConversionRateStore.conversionRates.findIndex(
-      (x) => x.currencyType === localStorage.getItem('OfferToMatchCurr')
-    );
-    const sourceUSDValue = Number(
-      localStorage.getItem('OfferToMatchAmt') *
-        this.props.ConversionRateStore.conversionRates[index].usdConversionRate
-    );
-    index = this.props.ConversionRateStore.conversionRates.findIndex(
-      (x) => x.currencyType === this.props.offer.sourceCurrency
-    );
-    const destinationUSDValue = Number(
-      this.props.offer.sourceAmount *
-        this.props.ConversionRateStore.conversionRates[index].usdConversionRate
-    );
-    return sourceUSDValue === destinationUSDValue;
-    return true;
-  };
-
   render() {
     const offer = this.props.offer;
-
-    let rating = { backgroundPosition: '0 -320px' };
-    switch (2) {
-      case 1:
-        rating = { backgroundPosition: '0 -360px' };
-        break;
-      case 2:
-        rating = { backgroundPosition: '0 -400px' };
-        break;
-      case 3:
-        rating = { backgroundPosition: '0 -440px' };
-        break;
-      case 4:
-        rating = { backgroundPosition: '0 -480px' };
-        break;
-      case 5:
-        rating = { backgroundPosition: '0 -500px' };
-        break;
-      default:
-        break;
-    }
-
+    const sourceCountry = this.props.sourceCountry;
+    const destinationCountry = this.props.destinationCountry;
     return (
       <li
         style={{ borderBottom: '10px solid #484848' }}
@@ -123,31 +49,16 @@ class MatchingOfferCard extends Component {
                   className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU"
                 >
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    <strong> {offer.user.nickname}</strong>{' '}
+                    <strong> {offer.nickname}</strong>{' '}
                   </span>
-                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    <div
-                      className="lemon--div__373c0__1mboc i-stars__373c0__1T6rz i-stars--regular-5__373c0__N5JxY border-color--default__373c0__3-ifU overflow--hidden__373c0__2y4YK _0Star"
-                      aria-label="5 star rating"
-                      role="img"
-                      style={rating}
-                    >
-                      <img
-                        className="lemon--img__373c0__3GQUb offscreen__373c0__1KofL"
-                        src="https://s3-media0.fl.yelpcdn.com/assets/public/stars_v2.yji-52d3d7a328db670d4402843cbddeed89.png"
-                        width="132"
-                        height="560"
-                        alt=""
-                      />
-                    </div>
-                  </span>
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU"></span>
                 </div>
                 <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
                     <strong> Transaction Amount </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.sourceAmount}
+                    {offer.matchingSourceAmount}
                   </span>
                 </div>
               </div>
@@ -162,7 +73,7 @@ class MatchingOfferCard extends Component {
                     <strong> Source Country </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.sourceCountry}
+                    {sourceCountry}
                   </span>
                 </div>
                 <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
@@ -185,7 +96,7 @@ class MatchingOfferCard extends Component {
                     <strong> Destination Country </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.destinationCountry}
+                    {destinationCountry}
                   </span>
                 </div>
                 <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
@@ -211,14 +122,7 @@ class MatchingOfferCard extends Component {
                     {offer.allowCounterOffers === 1 ? 'Accepting' : 'Not Accepting'}
                   </span>
                 </div>
-                <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
-                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    <strong> Accepting Spilt Offers </strong>:{' '}
-                  </span>
-                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.splitExchange === 1 ? 'Accepting' : 'Not Accepting'}
-                  </span>
-                </div>
+                <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU"></div>
               </div>
             </div>
             <div className="lemon--div__373c0__1mboc margin-t1__373c0__oLmO6 margin-b1__373c0__1khoT border-color--default__373c0__3-ifU">
@@ -256,7 +160,7 @@ class MatchingOfferCard extends Component {
             </div>
             <div className="lemon--div__373c0__1mboc margin-b2__373c0__abANL border-color--default__373c0__3-ifU">
               <form
-                onSubmit={this.sendCounterOffer}
+                onSubmit={(event) => this.props.CreateCounterOffer(event, this.state.counterOffer)}
                 className="yform signup-form  city-hidden"
                 id="signup-form"
               >
@@ -315,7 +219,7 @@ class MatchingOfferCard extends Component {
                       ''
                     )}
 
-                    {this.exactMath() ? (
+                    {offer.difference === 0 ? (
                       <li>
                         <p className="lemon--p__373c0__3Qnnj text__373c0__2Kxyz comment__373c0__3EKjH text-color--normal__373c0__3xep9 text-align--left__373c0__2XGa-">
                           <span className="lemon--span__373c0__3997G raw__373c0__3rKqk" lang="en">
@@ -334,7 +238,9 @@ class MatchingOfferCard extends Component {
                               aria-controls="header-dropdown-menu"
                               aria-expanded="false"
                               type="button"
-                              onClick={(event) => this.props.AcceptOffer(event, offer.offerId)}
+                              onClick={(event) =>
+                                this.props.AcceptOffer(event, offer.matchingOfferId)
+                              }
                             >
                               <div className="lemon--div__06b83__1mboc button-content__06b83__1QNtB border-color--default__06b83mousedown-x__3-ifU">
                                 <span className="lemon--span__06b83__3997G text__06b83__2Kxyz button-content-text__06b83__Z-7FO text-color--blue-dark__06b83__1jX7S text-align--center__06b83__3VrfZ text-size--large__06b83__3t60B text--truncated__06b83__3sLaf">
