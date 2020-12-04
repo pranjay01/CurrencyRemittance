@@ -57,6 +57,10 @@ public class SplitMatchProc {
                 result.setMatchningAllowCounterOffers1(rs.getInt("MatchningAllowCounterOffers1"));
                 result.setMatchingExchangeRate1(rs.getDouble("MatchingExchangeRate1"));
                 result.setMatchingExpirationDate1(rs.getString("MatchingExpirationDate1"));
+                result.setMatchingSourceCountry1(rs.getString("MatchingSourceCountry1"));
+                result.setMatchingSourceCurrency1(rs.getString("MatchingSourceCurrency1"));
+                result.setMatchingDestinationCountry1(rs.getString("MatchingDestinationCountry1"));
+                result.setMatchingDestinationCurrency1(rs.getString("MatchingDestinationCurrency1"));
                 result.setMatchingDestinationAmount2(rs.getDouble("MatchingDestinationAmount2"));
                 result.setMatchingSourceAmount2(rs.getDouble("MatchingSourceAmount2"));
                 result.setMatchingUserId2(rs.getLong("MatchingUserId2"));
@@ -65,6 +69,11 @@ public class SplitMatchProc {
                 result.setMatchningAllowCounterOffers2(rs.getInt("MatchningAllowCounterOffers2"));
                 result.setMatchingExchangeRate2(rs.getDouble("MatchingExchangeRate2"));
                 result.setMatchingExpirationDate2(rs.getString("MatchingExpirationDate2"));
+                result.setMatchingSourceCountry2(rs.getString("MatchingSourceCountry2"));
+                result.setMatchingSourceCurrency2(rs.getString("MatchingSourceCurrency2"));
+                result.setMatchingDestinationCountry2(rs.getString("MatchingDestinationCountry2"));
+                result.setMatchingDestinationCurrency2(rs.getString("MatchingDestinationCurrency2"));
+
                 result.setDifference(rs.getDouble("Difference"));
                 split.add(result);
                 
