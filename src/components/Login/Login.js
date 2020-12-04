@@ -152,22 +152,22 @@ class Login extends Component {
     });
   };
   componentWillMount() {
-    if (this.props.location.pathname === '/Signup') {
-      console.log('inside Signup');
-      axios.get(serverUrl + 'static/signupMasterDataCustomer').then((response) => {
-        console.log(response.data);
-        let allGenders = response.data[0].map((gender) => {
-          return { key: gender.ID, value: gender.Gender };
-        });
+    // if (this.props.location.pathname === '/Signup') {
+    //   console.log('inside Signup');
+    //   axios.get(serverUrl + 'static/signupMasterDataCustomer').then((response) => {
+    //     console.log(response.data);
+    //     let allGenders = response.data[0].map((gender) => {
+    //       return { key: gender.ID, value: gender.Gender };
+    //     });
 
-        this.setState({
-          genders: this.state.genders.concat(allGenders),
-        });
-      });
-    }
-    this.setState({
-      authFlag: false,
-    });
+    //     this.setState({
+    //       genders: this.state.genders.concat(allGenders),
+    //     });
+    //   });
+    // }
+    // this.setState({
+    //   authFlag: false,
+    // });
   }
 
   /**Signup Block */

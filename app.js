@@ -4,6 +4,8 @@ require("dotenv").config({ silent: true });
 const path = require("path");
 const express = require("express");
 const publicPath = path.join(__dirname, "build");
+//const app = require("https-localhost")()
+// app is an express app, do what you usually do with express
 const app = express();
 const bodyParser = require("body-parser");
 app.use(bodyParser.json({ limit: "10mb", extended: true }));
