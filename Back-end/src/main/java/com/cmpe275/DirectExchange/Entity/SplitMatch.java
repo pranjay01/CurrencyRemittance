@@ -16,7 +16,11 @@ public class SplitMatch {
     private String MatchingNickName1;
     private int MatchningAllowCounterOffers1;
     private Double MatchingExchangeRate1;
-    private String MatchingExpirationDate1;
+	private String MatchingExpirationDate1;
+	private String MatchingSourceCountry1;
+	private String MatchingSourceCurrency1;
+	private String MatchingDestinationCountry1;
+	private String MatchingDestinationCurrency1;
     private Double MatchingDestinationAmount2;
     private Double MatchingSourceAmount2;
     private Long MatchingUserId2;
@@ -24,20 +28,27 @@ public class SplitMatch {
     private String MatchingOfferNickName2;
     private int MatchningAllowCounterOffers2;
     private Double MatchingExchangeRate2;
-    private String MatchingExpirationDate2;
+	private String MatchingExpirationDate2;
+	private String MatchingSourceCountry2;
+	private String MatchingSourceCurrency2;
+	private String MatchingDestinationCountry2;
+	private String MatchingDestinationCurrency2;
 	private Double Difference;
 	
 	public SplitMatch() {
 
 	}
-    
+
 	public SplitMatch(int row_num, Long offerID, Long userID, double sourceAmount, double destinationAmount,
 			String sourceCurrency, String destinationCurrency, Double matchingDestinationAmount1,
 			Double matchingSourceAmount1, Long matchingUserId1, Long matchingOfferId1, String matchingNickName1,
 			int matchningAllowCounterOffers1, Double matchingExchangeRate1, String matchingExpirationDate1,
-			Double matchingDestinationAmount2, Double matchingSourceAmount2, Long matchingUserId2,
-			Long matchingOfferId2, String matchingOfferNickName2, int matchningAllowCounterOffers2,
-			Double matchingExchangeRate2, String matchingExpirationDate2, Double difference) {
+			String matchingSourceCountry1, String matchingSourceCurrency1, String matchingDestinationCountry1,
+			String matchingDestinationCurrency1, Double matchingDestinationAmount2, Double matchingSourceAmount2,
+			Long matchingUserId2, Long matchingOfferId2, String matchingOfferNickName2,
+			int matchningAllowCounterOffers2, Double matchingExchangeRate2, String matchingExpirationDate2,
+			String matchingSourceCountry2, String matchingSourceCurrency2, String matchingDestinationCountry2,
+			String matchingDestinationCurrency2, Double difference) {
 		this.row_num = row_num;
 		OfferID = offerID;
 		UserID = userID;
@@ -53,6 +64,10 @@ public class SplitMatch {
 		MatchningAllowCounterOffers1 = matchningAllowCounterOffers1;
 		MatchingExchangeRate1 = matchingExchangeRate1;
 		MatchingExpirationDate1 = matchingExpirationDate1;
+		MatchingSourceCountry1 = matchingSourceCountry1;
+		MatchingSourceCurrency1 = matchingSourceCurrency1;
+		MatchingDestinationCountry1 = matchingDestinationCountry1;
+		MatchingDestinationCurrency1 = matchingDestinationCurrency1;
 		MatchingDestinationAmount2 = matchingDestinationAmount2;
 		MatchingSourceAmount2 = matchingSourceAmount2;
 		MatchingUserId2 = matchingUserId2;
@@ -61,6 +76,10 @@ public class SplitMatch {
 		MatchningAllowCounterOffers2 = matchningAllowCounterOffers2;
 		MatchingExchangeRate2 = matchingExchangeRate2;
 		MatchingExpirationDate2 = matchingExpirationDate2;
+		MatchingSourceCountry2 = matchingSourceCountry2;
+		MatchingSourceCurrency2 = matchingSourceCurrency2;
+		MatchingDestinationCountry2 = matchingDestinationCountry2;
+		MatchingDestinationCurrency2 = matchingDestinationCurrency2;
 		Difference = difference;
 	}
 
@@ -184,6 +203,38 @@ public class SplitMatch {
 		MatchingExpirationDate1 = matchingExpirationDate1;
 	}
 
+	public String getMatchingSourceCountry1() {
+		return MatchingSourceCountry1;
+	}
+
+	public void setMatchingSourceCountry1(String matchingSourceCountry1) {
+		MatchingSourceCountry1 = matchingSourceCountry1;
+	}
+
+	public String getMatchingSourceCurrency1() {
+		return MatchingSourceCurrency1;
+	}
+
+	public void setMatchingSourceCurrency1(String matchingSourceCurrency1) {
+		MatchingSourceCurrency1 = matchingSourceCurrency1;
+	}
+
+	public String getMatchingDestinationCountry1() {
+		return MatchingDestinationCountry1;
+	}
+
+	public void setMatchingDestinationCountry1(String matchingDestinationCountry1) {
+		MatchingDestinationCountry1 = matchingDestinationCountry1;
+	}
+
+	public String getMatchingDestinationCurrency1() {
+		return MatchingDestinationCurrency1;
+	}
+
+	public void setMatchingDestinationCurrency1(String matchingDestinationCurrency1) {
+		MatchingDestinationCurrency1 = matchingDestinationCurrency1;
+	}
+
 	public Double getMatchingDestinationAmount2() {
 		return MatchingDestinationAmount2;
 	}
@@ -248,6 +299,38 @@ public class SplitMatch {
 		MatchingExpirationDate2 = matchingExpirationDate2;
 	}
 
+	public String getMatchingSourceCountry2() {
+		return MatchingSourceCountry2;
+	}
+
+	public void setMatchingSourceCountry2(String matchingSourceCountry2) {
+		MatchingSourceCountry2 = matchingSourceCountry2;
+	}
+
+	public String getMatchingSourceCurrency2() {
+		return MatchingSourceCurrency2;
+	}
+
+	public void setMatchingSourceCurrency2(String matchingSourceCurrency2) {
+		MatchingSourceCurrency2 = matchingSourceCurrency2;
+	}
+
+	public String getMatchingDestinationCountry2() {
+		return MatchingDestinationCountry2;
+	}
+
+	public void setMatchingDestinationCountry2(String matchingDestinationCountry2) {
+		MatchingDestinationCountry2 = matchingDestinationCountry2;
+	}
+
+	public String getMatchingDestinationCurrency2() {
+		return MatchingDestinationCurrency2;
+	}
+
+	public void setMatchingDestinationCurrency2(String matchingDestinationCurrency2) {
+		MatchingDestinationCurrency2 = matchingDestinationCurrency2;
+	}
+
 	public Double getDifference() {
 		return Difference;
 	}
@@ -255,8 +338,7 @@ public class SplitMatch {
 	public void setDifference(Double difference) {
 		Difference = difference;
 	}
-
-    
-
-
+	
+	
+	
 }
