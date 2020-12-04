@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.cmpe275.DirectExchange.Helper.OfferValidationException;
+
 @RestControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -53,6 +55,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	
 	@ExceptionHandler(AccountNotFoundException.class)
 	public ResponseEntity<ErrorDetails> handleAccountNotFound(AccountNotFoundException ex) {
+		ErrorDetails errorDetails = new ErrorDetails(ex.getMessage());
+		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(OfferValidationException.class)
+	public ResponseEntity<ErrorDetails> handleInvalidOffer(OfferValidationException ex) {
 		ErrorDetails errorDetails = new ErrorDetails(ex.getMessage());
 		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
 	}
