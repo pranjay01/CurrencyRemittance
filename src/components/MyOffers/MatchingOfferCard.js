@@ -81,7 +81,7 @@ class MatchingOfferCard extends Component {
                     <strong> Source Currency </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.sourceCurrency}
+                    {offer.destinationCurrency}
                   </span>
                 </div>
               </div>
@@ -104,7 +104,7 @@ class MatchingOfferCard extends Component {
                     <strong>Destination Currency </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {offer.destinationCurrency}
+                    {offer.sourceCurrency}
                   </span>
                 </div>
               </div>
@@ -205,14 +205,15 @@ class MatchingOfferCard extends Component {
                         <input
                           style={{ marginLeft: '12%', height: '35px', width: '225px' }}
                           id="first_name"
-                          min={0.9 * offer.sourceAmount}
-                          max={1.1 * offer.sourceAmount}
+                          min={0.9 * offer.matchingSourceAmount}
+                          max={1.1 * offer.matchingSourceAmount}
                           name="counterOffer"
                           placeholder="Counter Offer"
                           required="required"
                           type="number"
                           onChange={this.onCOmmonChangeHandler}
                           value={this.state.counterOffer}
+                          step=".01"
                         />
                       </li>
                     ) : (

@@ -1,3 +1,3 @@
-const serverUrl = 'http://ec2-34-222-104-10.us-west-2.compute.amazonaws.com/';
+const serverUrl = 'http://localhost:8080/';
 
 export default serverUrl;
