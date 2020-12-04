@@ -670,7 +670,7 @@ class MatchingOfferList extends Component {
                       pageCount={this.props.SplitOfferListStore.PageCount}
                       marginPagesDisplayed={2}
                       pageRangeDisplayed={2}
-                      onPageChange={this.handlePageClickSingle}
+                      onPageChange={this.handlePageClickSplitOffers}
                       containerClassName={'pagination'}
                       subContainerClassName={'pages pagination'}
                       activeClassName={'active'}
