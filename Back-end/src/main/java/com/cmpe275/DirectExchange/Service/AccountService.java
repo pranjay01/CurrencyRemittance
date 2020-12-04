@@ -1,5 +1,8 @@
 package com.cmpe275.DirectExchange.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,4 +23,13 @@ public class AccountService {
 		Account account = new Account(userId, bankName, country, accountNumber, owner, address, primaryCurrency, accountType);
 		return accountRepository.save(account);
 	}
+
+	public List<Account> searchAllAccounts(Long userId) {
+		List<Account> accounts = new ArrayList<Account>();
+		
+		accounts.addAll(accountRepository.findByuserId(userId));
+		
+		return accounts;
+	}
+
 }

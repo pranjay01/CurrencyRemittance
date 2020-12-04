@@ -1,5 +1,8 @@
 package com.cmpe275.DirectExchange.Controller;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,20 +13,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
-
 import com.cmpe275.DirectExchange.Entity.Account;
 import com.cmpe275.DirectExchange.Entity.CounterOffer;
 import com.cmpe275.DirectExchange.Entity.ExchangeRate;
 import com.cmpe275.DirectExchange.Entity.Offer;
-import com.cmpe275.DirectExchange.Entity.Transaction;
-import com.cmpe275.DirectExchange.Entity.TransactionUserMap;
+import com.cmpe275.DirectExchange.Entity.SingleMatch;
+import com.cmpe275.DirectExchange.Entity.SingleMatchPageCount;
 import com.cmpe275.DirectExchange.Entity.User;
 import com.cmpe275.DirectExchange.Helper.TransactionDTODeep;
 import com.cmpe275.DirectExchange.Service.AccountService;
 import com.cmpe275.DirectExchange.Service.CounterOfferService;
 import com.cmpe275.DirectExchange.Service.ExchangeRateService;
 import com.cmpe275.DirectExchange.Service.OfferService;
+import com.cmpe275.DirectExchange.Service.SingleMatchProc;
 import com.cmpe275.DirectExchange.Service.TransactionService;
 import com.cmpe275.DirectExchange.Service.TransactionUserMapService;
 import com.cmpe275.DirectExchange.Service.UserService;
@@ -153,14 +155,19 @@ public class DirectExchangeController {
 	@PostMapping("/offer/{id}")
 	public Offer updateOfferDetails(@RequestParam(value="sourceAmount", required = false) Double sourceAmount,
 			@RequestParam(value="exchangeRate", required = false) Double exchangeRate,
+			@RequestParam(value="allowCounterOffers", required = false) Integer allowCounterOffers,
+			@RequestParam(value="splitExchange", required = false) Integer splitExchange,
 			@PathVariable("id") Long offerId) {
-		return offerService.updateOfferDetails(offerId, sourceAmount, exchangeRate);
+		return offerService.updateOfferDetails(offerId, sourceAmount, exchangeRate, allowCounterOffers, splitExchange);
 	}
 
 	@PostMapping("/acceptOffer")
 	public String acceptOffer(@RequestParam(value="offerId1") Long offerId1,
+			@RequestParam(value="splitIndicator1", required = false) Integer splitIndicator1,
 			@RequestParam(value="offerId2") Long offerId2,
-			@RequestParam(value="offerId3", required = false) Long offerId3) {
+			@RequestParam(value="splitIndicator2", required = false) Integer splitIndicator2,
+			@RequestParam(value="offerId3", required = false) Long offerId3,
+			@RequestParam(value="splitIndicator3", required = false) Integer splitIndicator3) {
 		return transactionService.acceptOffer(offerId1, offerId2, offerId3);
 	}
 
@@ -195,16 +202,41 @@ public class DirectExchangeController {
 	}
 	
 	@PostMapping("/createCounterOffer")
-	public Long createCounterOffer(@RequestParam(value="offerID1") Long offerID1,
+	public Long createCounterOffer(@RequestParam(value="proposedOnOfferID") Long proposedOnOfferID,
 	@RequestParam(value="counterProposedAmount") double counterProposedAmount,
 	@RequestParam(value="userID") Long userID,
-	@RequestParam(value="offerID2") Long offerID2) {
-		return counterOfferService.createCounterOffer(offerID1, counterProposedAmount, userID, offerID2);
+	@RequestParam(value="counterOfferID") Long counterOfferID,
+	@RequestParam(value="sourceOfferID", required = false) Long sourceOfferID,
+	@RequestParam(value="split1OfferID", required = false) Long split1OfferID,
+	@RequestParam(value="split2OfferID", required = false) Long split2OfferID) {
+		return counterOfferService.createCounterOffer(proposedOnOfferID, counterProposedAmount, userID, 
+				counterOfferID, sourceOfferID, split1OfferID, split2OfferID);
 	}
 
 	@GetMapping("/searchCounterOffers")
 	public List<CounterOffer> searchCounterOffers(@RequestParam(value="OfferID") Long OfferID){
 		return counterOfferService.searchCounterOffers(OfferID);
+	}
+	
+	@PostMapping("/acceptCounterOffer")
+	public String acceptCounterOffer(@RequestParam(value="offerId") Long offerId,
+			@RequestParam(value="id") Long id) {
+		return transactionService.acceptCounterOffer(offerId, id);
+	} 
+
+	@GetMapping("/getAllAccounts")
+	public List<Account> getAllAccounts(@RequestParam(value="userId") Long userId){
+		return accountService.searchAllAccounts(userId);
+	}
+
+	@GetMapping("/getSingleOffers/{UserId}/{startindex}/{rowcount}")
+	public SingleMatchPageCount getSingleOffers(@RequestParam(value="OfferId") Long OfferId,
+	@PathVariable(value="UserId") Long UserId,
+	@PathVariable(value="startindex") int startindex,
+	@PathVariable(value="rowcount") int rowcount) {
+		SingleMatchProc single = new SingleMatchProc();
+		return single.getSingleMatch(OfferId, UserId, startindex, rowcount);
+		
 	}
 	
 }

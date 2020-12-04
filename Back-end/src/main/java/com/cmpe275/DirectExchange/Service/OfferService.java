@@ -43,12 +43,17 @@ public class OfferService {
 	}
 	
 	@Transactional
-	public Offer updateOfferDetails(Long offerId, Double sourceAmount, Double exchangeRate) {
+	public Offer updateOfferDetails(Long offerId, Double sourceAmount, Double exchangeRate, Integer allowCounterOffers, Integer splitExchange) {
 		Offer offer = offerRepository.findById(offerId).orElse(null);
 		if(sourceAmount != null)
 			offer.setSourceAmount(sourceAmount);
 		if(exchangeRate != null)
 			offer.setExchangeRate(exchangeRate);
+		if(allowCounterOffers != null)
+			offer.setAllowCounterOffers(allowCounterOffers);
+		if(splitExchange != null)
+			offer.setSplitExchange(splitExchange);
+		
 		return offerRepository.save(offer);
 	}
 	
