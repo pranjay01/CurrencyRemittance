@@ -1,7 +1,10 @@
 package com.cmpe275.DirectExchange.Controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,7 +20,6 @@ import com.cmpe275.DirectExchange.Entity.Account;
 import com.cmpe275.DirectExchange.Entity.CounterOffer;
 import com.cmpe275.DirectExchange.Entity.ExchangeRate;
 import com.cmpe275.DirectExchange.Entity.Offer;
-import com.cmpe275.DirectExchange.Entity.SingleMatch;
 import com.cmpe275.DirectExchange.Entity.SingleMatchPageCount;
 import com.cmpe275.DirectExchange.Entity.User;
 import com.cmpe275.DirectExchange.Helper.TransactionDTODeep;
@@ -74,7 +76,7 @@ public class DirectExchangeController {
 	@PostMapping("/user")
 	public User signUp(@RequestParam(value="userName") String userName,
 			@RequestParam(value="nickname") String nickname,
-			@RequestParam(value = "password", required = false) String password,
+			@RequestParam(value = "password") String password,
 			@RequestParam(value = "authProvider", required = false) String authProvider) {
 		return userService.addUser(userName, nickname, password, "Pending", authProvider);
 	}
@@ -95,9 +97,10 @@ public class DirectExchangeController {
 	}
 
 	@GetMapping(value="/confirm-account")
-	public String confirmUserAccount(@RequestParam("token")String confirmationToken)
+	public void confirmUserAccount(HttpServletResponse response, @RequestParam("token")String confirmationToken) throws IOException
 	{
-		return userService.verifyUser(confirmationToken);
+		userService.verifyUser(confirmationToken);
+		response.sendRedirect("https://cmpe275-direct-exachange.herokuapp.com/Login");
 	}
 
 	// merged

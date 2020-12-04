@@ -2,11 +2,9 @@ package com.cmpe275.DirectExchange.Repository;
 
 import java.util.List;
 
-import com.cmpe275.DirectExchange.Entity.CounterOffer;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+
+import com.cmpe275.DirectExchange.Entity.CounterOffer;
 
 public interface CounterOfferRepository extends JpaRepository<CounterOffer, Long> {
     
