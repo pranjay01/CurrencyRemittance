@@ -383,6 +383,7 @@ class Login extends Component {
                   onSuccess={this.responseGoogle}
                   onFailure={this.responseGoogleFailure}
                   cookiePolicy={'single_host_origin'}
+                  autoLoad={false}
                 />
               </p>
               <p class="legal-copy">Don't worry, we never post without your permission.</p>
@@ -524,6 +525,7 @@ class Login extends Component {
                   onSuccess={this.responseGoogle}
                   onFailure={this.responseGoogleFailure}
                   cookiePolicy={'single_host_origin'}
+                  autoLoad={false}
                 />
               </li>
             </ul>
