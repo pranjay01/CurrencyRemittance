@@ -12,7 +12,6 @@ import org.springframework.core.annotation.Order;
 
 import com.cmpe275.DirectExchange.Entity.Account;
 import com.cmpe275.DirectExchange.Repository.AccountRepository;
-import com.cmpe275.DirectExchange.Repository.OfferRepository;
 
 @Aspect
 @Order(0)
@@ -20,9 +19,6 @@ public class AccountSetupAspect {
 	
 	@Autowired
 	AccountRepository accountRepository;
-	
-	@Autowired
-	OfferRepository offerRepository;
 	
 	@Before("execution(public * com.cmpe275.DirectExchange.Service.OfferService.createOffer(..))")
 	public void checkAccountSetupCreateOffer(JoinPoint joinPoint) throws Throwable {
