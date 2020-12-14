@@ -24,6 +24,7 @@ import com.cmpe275.DirectExchange.Entity.SingleMatchPageCount;
 import com.cmpe275.DirectExchange.Entity.SplitMatchPageCount;
 import com.cmpe275.DirectExchange.Entity.User;
 import com.cmpe275.DirectExchange.Helper.TransactionDTODeep;
+import com.cmpe275.DirectExchange.Helper.UserDTODeep;
 import com.cmpe275.DirectExchange.Service.AccountService;
 import com.cmpe275.DirectExchange.Service.CounterOfferService;
 import com.cmpe275.DirectExchange.Service.ExchangeRateService;
@@ -66,7 +67,7 @@ public class DirectExchangeController {
 
 	// merged
 	@GetMapping("/user/{id}")
-	public User getUser(@PathVariable("id") Long id) {
+	public UserDTODeep getUser(@PathVariable("id") Long id) {
 		return userService.getUser(id);
 	}
 

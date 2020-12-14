@@ -1,5 +1,8 @@
 package com.cmpe275.DirectExchange.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
@@ -9,9 +12,12 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import com.cmpe275.DirectExchange.Entity.ConfirmationToken;
+import com.cmpe275.DirectExchange.Entity.Transaction;
 import com.cmpe275.DirectExchange.Entity.User;
+import com.cmpe275.DirectExchange.Helper.UserDTODeep;
 import com.cmpe275.DirectExchange.Repository.ConfirmationTokenRepository;
 import com.cmpe275.DirectExchange.Repository.TransactionRepository;
+import com.cmpe275.DirectExchange.Repository.TransactionUserMapRepository;
 import com.cmpe275.DirectExchange.Repository.UserRepository;
 
 @Service
@@ -28,7 +34,7 @@ public class UserService {
 	
 	@Autowired
 	TransactionRepository transactionRepository;
-	
+
 	@Value("${spring.mail.username}")
 	private String email;
 
@@ -36,10 +42,13 @@ public class UserService {
 	private String backendUrl;
 
 	@Transactional
-	public User getUser(Long id) {
+	public UserDTODeep getUser(Long id) {
 		User user = userRepository.findById(id).orElse(null);
 		//add code to handle null
-		return user;
+		// return user;
+		Double rating = calculateRating(user.getId());
+		UserDTODeep userDTODeep = new UserDTODeep(user.getId(), user.getUserName(), user.getNickname(), user.getStatus(), rating.toString());
+		return userDTODeep;
 	}
 
 	@Transactional
@@ -52,15 +61,16 @@ public class UserService {
 	}
 
 	@Transactional
-	public User getLoginUser(String email, String password) {{
+	public User getLoginUser(String email, String password) {
 		User user = getUserWithEmail(email);
 		if(!user.generateEncryptedPassword(password).equals(user.getPassword())){
 			throw new EntityNotFoundException("UserId Or Password Not Matching!");
 		}
+		
 		return user;
 	}
-		
-	}
+	
+	
 
 	@Transactional
 	public User addUser(String userName, String nickname, String password, String status, String authProvider) {
@@ -131,5 +141,18 @@ public class UserService {
 			return "Message sending failed";
 		}
 	}
+
+	public double calculateRating(long userID) {
+		List<Transaction> transaction =  transactionRepository.findByUserID(userID);
+		int faultCount = 0;
+		for(Transaction t: transaction) {
+			if(t.getTransactionStatus().compareTo("at-fault") == 0) {
+				faultCount++;
+			}
+		}
+		double rating =  ((1- (faultCount) / (transaction.size())) * 4) + 1;
+		return rating;
+	}
+
 	
 }
