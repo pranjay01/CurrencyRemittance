@@ -56,7 +56,7 @@ public class TransactionService {
 		offer1.setOfferStatus("inTransaction");
 		offerRepository.save(offer1);
 		
-		Transaction transaction1 = new Transaction(requestID, offer1.getOfferId(), offer1.getUser().getId(), "Pending");
+		Transaction transaction1 = new Transaction(requestID, offer1.getOfferId(), offer1.getUser().getId(), "Pending",offer1.getExchangeRate());
 		transactionRepository.save(transaction1);
 		sendTransactionInitiationEmail(offer1.getUser().getUserName(), offerId1);
 		
@@ -64,7 +64,7 @@ public class TransactionService {
 		offer2.setOfferStatus("inTransaction");
 		offerRepository.save(offer2);
 		
-		Transaction transaction2 = new Transaction(requestID, offer2.getOfferId(), offer2.getUser().getId(), "Pending");
+		Transaction transaction2 = new Transaction(requestID, offer2.getOfferId(), offer2.getUser().getId(), "Pending",offer1.getExchangeRate());
 		transactionRepository.save(transaction2);
 		sendTransactionInitiationEmail(offer2.getUser().getUserName(), offerId2);
 		
@@ -78,7 +78,7 @@ public class TransactionService {
 			offer3.setOfferStatus("inTransaction");
 			offerRepository.save(offer3);
 			
-			transaction3 = new Transaction(requestID, offer3.getOfferId(), offer3.getUser().getId(), "Pending");
+			transaction3 = new Transaction(requestID, offer3.getOfferId(), offer3.getUser().getId(), "Pending",offer1.getExchangeRate());
 			transactionRepository.save(transaction3);
 			sendTransactionInitiationEmail(offer3.getUser().getUserName(), offerId3);
 			

@@ -48,6 +48,9 @@ public class Transaction {
 
 	@Column(name="USDConvertedAmount")
 	Double usdConvertedAmount;
+
+	@Column(name="ExchangeRate")
+	Double exchangeRate;
 	
 	@OneToMany(mappedBy = "transaction")
 	@LazyCollection(LazyCollectionOption.TRUE)
@@ -57,12 +60,13 @@ public class Transaction {
 		super();
 	}
 
-	public Transaction(Long requestID, Long offerID, Long userID, String transactionStatus) {
+	public Transaction(Long requestID, Long offerID, Long userID, String transactionStatus, Double exchangeRate) {
 		super();
 		this.requestID = requestID;
 		this.offerID = offerID;
 		this.userID = userID;
 		this.transactionStatus = transactionStatus;
+		this.exchangeRate = exchangeRate;
 	}
 
 	public Long getId() {
@@ -151,6 +155,14 @@ public class Transaction {
 
 	public void setUsdConvertedAmount(Double usdConvertedAmount) {
 		this.usdConvertedAmount = usdConvertedAmount;
+	}
+
+	public Double getExchangeRate() {
+		return exchangeRate;
+	}
+
+	public void setExchangeRate(Double exchangeRate) {
+		this.exchangeRate = exchangeRate;
 	}
 
 	

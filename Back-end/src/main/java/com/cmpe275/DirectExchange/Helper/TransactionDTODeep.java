@@ -12,6 +12,7 @@ public class TransactionDTODeep {
 	Double transferredAmount;
 	String sourceCurrency;
 	String destinationCurrency;
+	Double exchangeRate;
 	List<TransactionUserMapDTOShallow> receivingParties;
 	public Long getId() {
 		return id;
@@ -66,6 +67,12 @@ public class TransactionDTODeep {
 	}
 	public void setReceivingParties(List<TransactionUserMapDTOShallow> receivingParties) {
 		this.receivingParties = receivingParties;
+	}
+	public Double getExchangeRate() {
+		return exchangeRate;
+	}
+	public void setExchangeRate(Double exchangeRate) {
+		this.exchangeRate = exchangeRate;
 	}
 	
 }
