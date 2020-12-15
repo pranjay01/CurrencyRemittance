@@ -1,15 +1,24 @@
 package com.cmpe275.DirectExchange.Service;
 
+import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
+import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.cmpe275.DirectExchange.Entity.ConfirmationToken;
 import com.cmpe275.DirectExchange.Entity.Transaction;
@@ -31,9 +40,15 @@ public class UserService {
 
 	@Autowired
 	EmailVerificationService emailVerificationService;
-	
+
 	@Autowired
 	TransactionRepository transactionRepository;
+
+	@Autowired
+	JavaMailSenderImpl sender;
+
+	@Autowired
+	private VelocityEngine engine;
 
 	@Value("${spring.mail.username}")
 	private String email;
@@ -66,11 +81,11 @@ public class UserService {
 		if(!user.generateEncryptedPassword(password).equals(user.getPassword())){
 			throw new EntityNotFoundException("UserId Or Password Not Matching!");
 		}
-		
+
 		return user;
 	}
-	
-	
+
+
 
 	@Transactional
 	public User addUser(String userName, String nickname, String password, String status, String authProvider) {
@@ -79,18 +94,40 @@ public class UserService {
 
 		ConfirmationToken confirmationToken = new ConfirmationToken(user);
 		confirmationTokenRepository.save(confirmationToken);
-		SimpleMailMessage mailMessage = new SimpleMailMessage();
-		mailMessage.setTo(user.getUserName());
-		mailMessage.setSubject("Complete Registration!");
-		mailMessage.setFrom(email);
-		mailMessage.setText("To confirm your account, please click here : "
-				+backendUrl+"/confirm-account?token="+confirmationToken.getConfirmationToken());
-
+		String confirmationLink = backendUrl+"/confirm-account?token="+confirmationToken.getConfirmationToken();
 		try {
-			emailVerificationService.sendEmail(mailMessage);
-		} catch (Exception exception) {
+			MimeMessage message = sender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message, true);
+			helper.setTo(user.getUserName());
+			helper.setSubject("Complete Registration!");
+			helper.setFrom(email);
 			
+			Map model = new HashMap();
+			model.put("emailId", user.getNickname());
+			model.put("logo", "https://github.com/shweta-mane/275/blob/main/logo.PNG");
+			model.put("validationLink", confirmationLink);
+			String text = VelocityEngineUtils.mergeTemplateIntoString(engine, "/templates/EmailTemplate.html", model);
+
+			helper.setText(text, true);
+			sender.send(helper.getMimeMessage());
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+
+
+		//		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		//		mailMessage.setTo(user.getUserName());
+		//		mailMessage.setSubject("Complete Registration!");
+		//		mailMessage.setFrom(email);
+		//		mailMessage.setText("To confirm your account, please click here : "
+		//				+backendUrl+"/confirm-account?token="+confirmationToken.getConfirmationToken());
+		//
+		//		try {
+		//			emailVerificationService.sendEmail(mailMessage);
+		//		} catch (Exception exception) {
+		//			
+		//		}
 
 		return user;
 
@@ -116,7 +153,7 @@ public class UserService {
 			User user = userRepository.findByUserNameIgnoreCase(token.getUser().getUserName());
 			user.setStatus("Verified");
 			userRepository.save(user);
-			
+
 		}
 
 		return "User verified";
@@ -127,7 +164,7 @@ public class UserService {
 	public String sendEmail(Long senderId, Long receiverId, String mailText) {
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
 		User sender = userRepository.findById(senderId).orElse(null);
-        User receiver = userRepository.findById(receiverId).orElse(null);
+		User receiver = userRepository.findById(receiverId).orElse(null);
 		mailMessage.setTo(receiver.getUserName());
 		mailMessage.setSubject("Hello !!!");
 		// mailMessage.setFrom(sender.getUserName());
@@ -157,5 +194,5 @@ public class UserService {
 		return rating;
 	}
 
-	
+
 }
