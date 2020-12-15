@@ -256,4 +256,10 @@ public class DirectExchangeController {
 		return split.getSplitMatch(OfferId, UserId, startindex, rowcount);
 		
 	}
+
+	@GetMapping("/systemReport/{month}/{year}")
+	public Map<String,String> getSystemReport(@PathVariable(value="month") String month,
+	@PathVariable(value="year") String year) {
+		return transactionService.systemReport(month, year);
+	}
 }

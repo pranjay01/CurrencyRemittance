@@ -1,7 +1,9 @@
 package com.cmpe275.DirectExchange.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -252,6 +254,47 @@ public class TransactionService {
     	this.modelMapper.typeMap(Transaction.class, TransactionDTODeep.class).addMapping(Transaction::getReceivingParties, TransactionDTODeep::setReceivingParties);
     	TransactionDTODeep transactionDTODeep = modelMapper.map(transaction, TransactionDTODeep.class);
     	return transactionDTODeep;
-    }
+	}
+	
+	public Map<String, String> systemReport(String month, String year) {
+		List<Transaction> allTransactionDetails = transactionRepository.findAll();
+		Integer completedTransactions = 0;
+		Integer incompleteTransactions = 0;
+		Double totalRemittance = 0.0;
+		Double serviceFee = 0.0;
+		Long requestID = 0L;
+		for(int i = 0; i < allTransactionDetails.size(); i++) {
+			String date = allTransactionDetails.get(i).getCreatedDate().toString();
+			String tMonth = date.substring(5, 7);
+			String tYear = date.substring(0, 4);
+			if(month.equals(tMonth) && year.equals(tYear)) {
+				if(allTransactionDetails.get(i).getTransactionStatus().equals("Completed") ) {
+					serviceFee += (allTransactionDetails.get(i).getUsdConvertedAmount() * 0.05) /100;
+					Double currentAmount = allTransactionDetails.get(i).getUsdConvertedAmount();
+					if(allTransactionDetails.get(i).getRequestID() == requestID) {
+						Double prevAmount = allTransactionDetails.get(i-1).getUsdConvertedAmount();
+						completedTransactions--;
+						totalRemittance -= prevAmount;
+						if(currentAmount <= prevAmount) {
+							currentAmount = prevAmount;
+						}
+					}
+					totalRemittance += currentAmount;
+					completedTransactions++;
+					requestID = allTransactionDetails.get(i).getRequestID();
+				}
+				else if (!allTransactionDetails.get(i).getTransactionStatus().equals("Completed") ) {
+					incompleteTransactions++;	
+				}
+			}
+		}
+		Map<String, String> result = new HashMap<>();
+		result.put("completedTransactions", completedTransactions.toString());
+		result.put("incompleteTransactions", incompleteTransactions.toString());
+		result.put("totalRemittance", totalRemittance.toString());
+		result.put("serviceFee", serviceFee.toString());
+
+		return result;
+	}
 
 }
