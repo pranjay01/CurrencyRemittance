@@ -159,7 +159,6 @@ class Login extends Component {
     //     let allGenders = response.data[0].map((gender) => {
     //       return { key: gender.ID, value: gender.Gender };
     //     });
-
     //     this.setState({
     //       genders: this.state.genders.concat(allGenders),
     //     });
@@ -422,7 +421,7 @@ class Login extends Component {
                       placeholder="Email"
                       required="required"
                       type="email"
-                      onChange={this.onChangeHandlerEmail}
+                      onChange={this.onChangeHandlerUsername}
                       value={this.state.username}
                     />
                   </li>
