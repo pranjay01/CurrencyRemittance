@@ -79,7 +79,7 @@ class MatchingOfferList extends Component {
           const payload = {
             offerLists,
             TotalCount: offerLists.length,
-            PageCount: offerLists.length / 1,
+            PageCount: offerLists.length / 10,
             PageNo,
           };
           this.props.getOfferLists(payload);
@@ -127,7 +127,7 @@ class MatchingOfferList extends Component {
           const payload = {
             offerLists,
             TotalCount: offerLists.length,
-            PageCount: offerLists.length / 1,
+            PageCount: offerLists.length / 10,
             PageNo,
           };
           this.props.getSplitOfferLists(payload);
@@ -358,7 +358,7 @@ class MatchingOfferList extends Component {
   };
 
   render() {
-    const size = 1;
+    const size = 10;
     let MatchingOfferCards = this.props.OfferListStore.offerLists
       .slice(
         this.props.OfferListStore.PageNo * size,

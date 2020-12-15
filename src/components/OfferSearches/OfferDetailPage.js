@@ -107,7 +107,7 @@ class OfferDetailPage extends Component {
       );
     }
     let rating = { backgroundPosition: '0 -320px' };
-    switch (2) {
+    switch (this.props.location.state.rating) {
       case 1:
         rating = { backgroundPosition: '0 -360px' };
         break;

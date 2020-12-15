@@ -30,7 +30,7 @@ class MyAccounts extends Component {
         this.setState({
           accounts: response.data,
           TotalCount: response.data.length,
-          PageCount: response.data.length / 1,
+          PageCount: response.data.length / 10,
         });
         if (response.data.length > 0) {
         } else {
@@ -53,7 +53,7 @@ class MyAccounts extends Component {
   };
 
   render() {
-    const size = 1;
+    const size = 10;
 
     let accounts = this.state.accounts
       .slice(this.state.PageNo * size, this.state.PageNo * size + size)

@@ -20,7 +20,7 @@ class OfferList extends Component {
       destinationAmount: '',
       openDetailPage: false,
       offerId: '',
-      userId: '',
+      rating: 0,
     };
   }
 
@@ -52,7 +52,7 @@ class OfferList extends Component {
         const payload = {
           offerLists,
           TotalCount: offerLists.length,
-          PageCount: offerLists.length / 1,
+          PageCount: offerLists.length / 10,
         };
         this.props.getOfferLists(payload);
         if (offerLists.length > 0) {
@@ -115,7 +115,7 @@ class OfferList extends Component {
       });*/
   };
 
-  openDetailsPage = (event, offerId, userId) => {
+  openDetailsPage = (event, offerId, rating) => {
     event.preventDefault();
     // localStorage.setItem('OpenOffer', offerId);
     // const payload = {
@@ -125,7 +125,7 @@ class OfferList extends Component {
     this.setState({
       openDetailPage: true,
       offerId,
-      userId,
+      rating,
     });
   };
 
@@ -137,7 +137,7 @@ class OfferList extends Component {
   };
 
   render() {
-    const size = 1;
+    const size = 10;
     let offerCards = this.props.OfferListStore.offerLists
       .slice(
         this.props.OfferListStore.PageNo * size,
@@ -147,7 +147,9 @@ class OfferList extends Component {
         return (
           <OfferCard
             key={offer._id}
-            openDetailsPage={(event) => this.openDetailsPage(event, offer.offerId, offer.user.id)}
+            openDetailsPage={(event) =>
+              this.openDetailsPage(event, offer.offerId, Number(offer.user.rating))
+            }
             offer={offer}
 
             //   }
@@ -176,7 +178,7 @@ class OfferList extends Component {
             state: {
               openDetailPage: this.state.openDetailPage,
               offerId: this.state.offerId,
-              userId: this.state.userId,
+              rating: this.state.rating,
             },
           }}
         />

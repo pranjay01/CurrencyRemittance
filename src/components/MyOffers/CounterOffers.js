@@ -33,7 +33,7 @@ class CounterOffers extends Component {
           this.setState({
             counterOffers,
             TotalCount: response.data.length,
-            PageCount: response.data.length / 1,
+            PageCount: response.data.length / 10,
           });
           if (response.data.length > 0) {
           } else {
@@ -103,7 +103,7 @@ class CounterOffers extends Component {
   };
 
   render() {
-    const size = 1;
+    const size = 10;
 
     let counteroffers = this.state.counterOffers
       .slice(this.state.PageNo * size, this.state.PageNo * size + size)

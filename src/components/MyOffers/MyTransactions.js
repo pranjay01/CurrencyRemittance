@@ -8,11 +8,29 @@ import 'antd/dist/antd.css';
 import { getTransactionList } from '../../constants/action-types';
 import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
+import moment from 'moment';
 
 class MyTransactions extends Component {
   constructor(props) {
     super(props);
-    this.state = { buttonSelected: 'old' };
+    this.state = {
+      buttonSelected: 'old',
+      monthSelected: '12',
+      months: [
+        { key: '1', value: 'January' },
+        { key: '2', value: 'February' },
+        { key: '3', value: 'March' },
+        { key: '4', value: 'April' },
+        { key: '5', value: 'May' },
+        { key: '6', value: 'June' },
+        { key: '7', value: 'July' },
+        { key: '8', value: 'August' },
+        { key: '9', value: 'September' },
+        { key: '10', value: 'October' },
+        { key: '11', value: 'November' },
+        { key: '12', value: 'December' },
+      ],
+    };
   }
 
   componentDidMount() {
@@ -32,13 +50,19 @@ class MyTransactions extends Component {
             oldTransactions.push(transaction);
           }
         }
-        const TransactionList = oldTransactions;
+        const TransactionList = [];
+        for (const transaction of oldTransactions) {
+          console.log('month:', moment(transaction.createdDate).month());
+          if (Number(this.state.monthSelected) === moment(transaction.createdDate).month() + 1) {
+            TransactionList.push(transaction);
+          }
+        }
         const payload = {
           oldTransactions,
           currentTransactions,
           TransactionList,
           TotalCount: TransactionList.length,
-          PageCount: TransactionList.length / 1,
+          PageCount: TransactionList.length / 10,
         };
         this.props.getTransactionList(payload);
         if (response.data.length > 0) {
@@ -59,24 +83,36 @@ class MyTransactions extends Component {
     this.props.getTransactionList(payload);
   };
 
-  switchTab = (event, tab) => {
+  switchTab = (event, tab, monthSelected = '12') => {
     event.preventDefault();
     this.setState({
       buttonSelected: tab,
+      monthSelected,
     });
     let TransactionList = [];
     if (tab === 'current') {
       TransactionList = this.props.TransactionListStore.currentTransactions;
     } else {
-      TransactionList = this.props.TransactionListStore.oldTransactions;
+      for (const transaction of this.props.TransactionListStore.oldTransactions) {
+        console.log('month:', moment(transaction.createdDate).month());
+        if (Number(monthSelected) === moment(transaction.createdDate).month() + 1) {
+          TransactionList.push(transaction);
+        }
+      }
+      // TransactionList = this.props.TransactionListStore.oldTransactions;
     }
     const payload = {
       TransactionList,
       TotalCount: TransactionList.length,
-      PageCount: TransactionList.length / 1,
+      PageCount: TransactionList.length / 10,
       PageNo: 0,
     };
     this.props.getTransactionList(payload);
+  };
+
+  switchMonth = (event) => {
+    // event.preventDefault();
+    this.switchTab(event, this.state.buttonSelected, event.target.value);
   };
 
   render() {
@@ -96,7 +132,7 @@ class MyTransactions extends Component {
       backgroundColor: 'white',
     };
 
-    const size = 1;
+    const size = 10;
     let transactions = this.props.TransactionListStore.TransactionList.slice(
       this.props.TransactionListStore.PageNo * size,
       this.props.TransactionListStore.PageNo * size + size
@@ -220,6 +256,80 @@ class MyTransactions extends Component {
             </div>
           </div>
         </div>
+
+        {this.state.buttonSelected === 'old' ? (
+          <div
+            style={{ marginBottom: '40px' }}
+            className="lemon--div__06b83__1mboc component__06b83__mFK-M border-color--default__06b83__3-ifU"
+          >
+            <div className="lemon--div__06b83__1mboc header-container__06b83__bjkGB border-color--default__06b83__3-ifU">
+              <div className="lemon--div__06b83__1mboc header-nav-container__06b83__euina border-color--default__06b83__3-ifU">
+                <div className="lemon--div__06b83__1mboc fs-block border-color--default__06b83__3-ifU">
+                  <div className="lemon--div__06b83__1mboc border-color--default__06b83__3-ifU">
+                    <div className="lemon--div__06b83__1mboc tooltipContainer__06b83__2PjJt auth-tooltip-container__06b83__e-34S display--inline-block__06b83__1ZKqC border-color--default__06b83__3-ifU">
+                      <div className="lemon--div__06b83__1mboc notification-wrapper__06b83__RCXT7 display--inline-block__06b83__1ZKqC border-color--default__06b83__3-ifU">
+                        <div className="lemon--div__06b83__1mboc inline__06b83__2fx1q">
+                          <div
+                            className="lemon--div__06b83__1mboc dropdown__06b83__2flBr"
+                            role="presentation"
+                          >
+                            <form
+                              style={{
+                                display: 'flex',
+
+                                flexDirection: 'row',
+
+                                justifyContent: 'center',
+                              }}
+                              onSubmit={this.getOffers}
+                              className="yform signup-form  city-hidden"
+                              id="signup-form"
+                            >
+                              {' '}
+                              <div
+                                style={{ flexDirection: 'column', minWidth: '700px' }}
+                                className="js-password-meter-container"
+                              >
+                                <ul style={{ display: 'flex' }}>
+                                  <li style={{ width: '100%', flex: 'auto' }}>
+                                    <label className="placeholder-sub">
+                                      Select month to see report
+                                    </label>
+                                    <select
+                                      placeholder="Gender"
+                                      className="form-control"
+                                      name="sourceCurrency"
+                                      onChange={this.switchMonth}
+                                      value={this.state.monthSelected}
+                                    >
+                                      {this.state.months.map((month) => (
+                                        <option
+                                          className="Dropdown-menu"
+                                          key={month.key}
+                                          value={month.key}
+                                        >
+                                          {month.value}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </li>
+                                </ul>
+                              </div>
+                            </form>
+
+                            {/*menu*/}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          ''
+        )}
 
         <div className="lemon--div__06b83__1mboc biz-container__06b83__3snKt border-color--default__06b83__3-ifU">
           {/*<LeftPannel profileInfo={this.state} onTabChangeHandler={this.onTabChangeHandler} />*/}

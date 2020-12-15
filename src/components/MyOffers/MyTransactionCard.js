@@ -3,6 +3,7 @@ import axios from 'axios';
 import serverUrl from '../../config';
 import { notification } from 'antd';
 import 'antd/dist/antd.css';
+import moment from 'moment';
 
 class MyTransactionCard extends Component {
   constructor(props) {
@@ -124,6 +125,31 @@ class MyTransactionCard extends Component {
                 )}
               </div>
             </div>
+
+            <div className="lemon--div__373c0__1mboc margin-t1__373c0__oLmO6 margin-b1__373c0__1khoT border-color--default__373c0__3-ifU">
+              <div className="lemon--div__373c0__1mboc arrange__373c0__2C9bH gutter-1__373c0__2l5bx vertical-align-middle__373c0__1SDTo border-color--default__373c0__3-ifU">
+                <div
+                  style={{ width: '50%' }}
+                  className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU"
+                >
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    <strong> Transaction Time :</strong>{' '}
+                  </span>
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    {moment(transaction.createdDate).format('lll')}
+                  </span>
+                </div>
+                <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    <strong> Exchange Rate </strong>:{' '}
+                  </span>
+                  <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
+                    {transaction.exchangeRate}
+                  </span>
+                </div>
+              </div>
+            </div>
+
             {transaction.transactionStatus === 'Completed' ? (
               <div className="lemon--div__373c0__1mboc margin-t1__373c0__oLmO6 margin-b1__373c0__1khoT border-color--default__373c0__3-ifU">
                 <div className="lemon--div__373c0__1mboc arrange__373c0__2C9bH gutter-1__373c0__2l5bx vertical-align-middle__373c0__1SDTo border-color--default__373c0__3-ifU">
@@ -143,7 +169,8 @@ class MyTransactionCard extends Component {
                       <strong> Aomount Recieved </strong>:{' '}
                     </span>
                     <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                      {transaction.transferredAmount} {transaction.destinationCurrency}
+                      {transaction.receivedAmount * transaction.exchangeRate}{' '}
+                      {transaction.destinationCurrency}
                     </span>
                   </div>
                 </div>
