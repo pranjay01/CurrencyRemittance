@@ -23,6 +23,7 @@ import com.cmpe275.DirectExchange.Entity.Offer;
 import com.cmpe275.DirectExchange.Entity.SingleMatchPageCount;
 import com.cmpe275.DirectExchange.Entity.SplitMatchPageCount;
 import com.cmpe275.DirectExchange.Entity.User;
+import com.cmpe275.DirectExchange.Helper.OfferDTODeep;
 import com.cmpe275.DirectExchange.Helper.TransactionDTODeep;
 import com.cmpe275.DirectExchange.Helper.UserDTODeep;
 import com.cmpe275.DirectExchange.Service.AccountService;
@@ -35,7 +36,7 @@ import com.cmpe275.DirectExchange.Service.TransactionService;
 import com.cmpe275.DirectExchange.Service.TransactionUserMapService;
 import com.cmpe275.DirectExchange.Service.UserService;
 
-@CrossOrigin(allowCredentials = "true",origins = "https://cmpe275-direct-exachange.herokuapp.com/",allowedHeaders = "*",  methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT}) 
+@CrossOrigin(allowCredentials = "true",origins = "https://cmpe275-direct-exachange.herokuapp.com/",allowedHeaders = "*",  methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT})
 @RestController
 public class DirectExchangeController {
 
@@ -146,7 +147,7 @@ public class DirectExchangeController {
 
 	// merged
 	@GetMapping("/searchOffers")
-	public List<Offer> searchOffers(@RequestParam(value="sourceCurrency", required = false) String sourceCurrency,
+	public List<OfferDTODeep> searchOffers(@RequestParam(value="sourceCurrency", required = false) String sourceCurrency,
 			@RequestParam(value="sourceAmount", required = false) Double sourceAmount,
 			@RequestParam(value="destinationCurrency", required = false) String destinationCurrency,
 			@RequestParam(value="destinationAmount", required = false) Double destinationAmount){
