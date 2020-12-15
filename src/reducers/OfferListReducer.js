@@ -10,13 +10,13 @@ const defaultState = {
     offerLists: [],
     PageNo: 0,
     TotalCount: 0,
-    PageCount: 1,
+    PageCount: 0,
   },
   SplitOfferListStore: {
     offerLists: [],
     PageNo: 0,
     TotalCount: 0,
-    PageCount: 1,
+    PageCount: 0,
   },
   onFocusOfferStore: {
     Offer: { user: {} },

@@ -14,7 +14,7 @@ import CounterOfferCard from './CounterOfferCard';
 class CounterOffers extends Component {
   constructor(props) {
     super(props);
-    this.state = { counterOffers: [] };
+    this.state = { counterOffers: [], PageNo: 0, TotalCount: 0, PageCount: 0 };
   }
 
   commonFetch = (PageNo = 0) => {
@@ -32,6 +32,8 @@ class CounterOffers extends Component {
           console.log('Cuter offers:', response.data);
           this.setState({
             counterOffers,
+            TotalCount: response.data.length,
+            PageCount: response.data.length / 1,
           });
           if (response.data.length > 0) {
           } else {
@@ -58,6 +60,12 @@ class CounterOffers extends Component {
       this.commonFetch();
     }
   }
+
+  handlePageClick = (e) => {
+    this.setState({
+      PageNo: e.selected,
+    });
+  };
 
   AcceptOffer = (Event, id) => {
     Event.preventDefault();
@@ -95,6 +103,22 @@ class CounterOffers extends Component {
   };
 
   render() {
+    const size = 1;
+
+    let counteroffers = this.state.counterOffers
+      .slice(this.state.PageNo * size, this.state.PageNo * size + size)
+      .map((counteroffer) => {
+        return (
+          <CounterOfferCard
+            key={counteroffer._id}
+            offer={counteroffer}
+            AcceptOffer={(event) => this.AcceptOffer(event, counteroffer.id)}
+
+            //   }
+          />
+        );
+      });
+
     if (!localStorage.getItem('token')) {
       return (
         <Redirect
@@ -129,7 +153,8 @@ class CounterOffers extends Component {
               >
                 <div>
                   <ul className="lemon--ul__373c0__1_cxs undefined list__373c0__2G8oH">
-                    {this.state.counterOffers.map((counteroffer) => (
+                    {counteroffers}
+                    {/*this.state.counterOffers.map((counteroffer) => (
                       <CounterOfferCard
                         key={counteroffer._id}
                         offer={counteroffer}
@@ -137,7 +162,7 @@ class CounterOffers extends Component {
 
                         //   }
                       />
-                    ))}
+                    ))*/}
                   </ul>
                 </div>
                 <div style={{ left: '50%', bottom: '3%', right: '0' }}>
@@ -146,13 +171,14 @@ class CounterOffers extends Component {
                     nextLabel={'next'}
                     breakLabel={'...'}
                     breakClassName={'break-me'}
-                    pageCount={5}
+                    pageCount={this.state.PageCount}
                     marginPagesDisplayed={2}
                     pageRangeDisplayed={2}
                     onPageChange={this.handlePageClick}
                     containerClassName={'pagination'}
                     subContainerClassName={'pages pagination'}
                     activeClassName={'active'}
+                    forcePage={this.state.PageNo}
                   />
                 </div>
               </div>

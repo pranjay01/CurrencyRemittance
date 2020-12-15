@@ -27,6 +27,8 @@ class TransactionHistory extends Component {
           const TransactionList = response.data;
           const payload = {
             TransactionList,
+            TotalCount: response.data.length,
+            PageCount: response.data.length / 1,
           };
           this.props.getTransactionList(payload);
           if (response.data.length > 0) {
@@ -41,7 +43,32 @@ class TransactionHistory extends Component {
     }
   }
 
+  handlePageClick = (e) => {
+    const payload = {
+      PageNo: e.selected,
+    };
+    this.props.getTransactionList(payload);
+  };
+
   render() {
+    const size = 1;
+    let transactions = this.props.TransactionListStore.TransactionList.slice(
+      this.props.TransactionListStore.PageNo * size,
+      this.props.TransactionListStore.PageNo * size + size
+    ).map((transaction) => {
+      return (
+        <TransactionCard
+          key={transaction._id}
+          // openStaticProfile={(event) =>
+          //   this.openStaticProfile(event, review.CustomerID)
+          // }
+          transaction={transaction}
+
+          //   }
+        />
+      );
+    });
+
     if (!localStorage.getItem('token')) {
       return (
         <Redirect
@@ -74,7 +101,8 @@ class TransactionHistory extends Component {
               >
                 <div>
                   <ul className="lemon--ul__373c0__1_cxs undefined list__373c0__2G8oH">
-                    {this.props.TransactionListStore.TransactionList.map((transaction) => (
+                    {transactions}
+                    {/*this.props.TransactionListStore.TransactionList.map((transaction) => (
                       <TransactionCard
                         key={transaction._id}
                         // openStaticProfile={(event) =>
@@ -84,7 +112,7 @@ class TransactionHistory extends Component {
 
                         //   }
                       />
-                    ))}
+                    ))*/}
                   </ul>
                 </div>
                 <div style={{ left: '50%', bottom: '3%', right: '0' }}>
@@ -93,13 +121,14 @@ class TransactionHistory extends Component {
                     nextLabel={'next'}
                     breakLabel={'...'}
                     breakClassName={'break-me'}
-                    pageCount={5}
+                    pageCount={this.props.TransactionListStore.PageCount}
                     marginPagesDisplayed={2}
                     pageRangeDisplayed={2}
                     onPageChange={this.handlePageClick}
                     containerClassName={'pagination'}
                     subContainerClassName={'pages pagination'}
                     activeClassName={'active'}
+                    forcePage={this.props.TransactionListStore.PageNo}
                   />
                 </div>
               </div>

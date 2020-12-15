@@ -123,8 +123,16 @@ class Navbar extends Component {
           <li class={this.props.location.pathname === '/MyTransactions' && 'active'}>
             <Link to="/MyTransactions">My Transactions</Link>
           </li>
-          <li class={this.props.location.pathname === '/' && 'active'}>
-            <Link to="/">Reviews</Link>
+          <li class={this.props.location.pathname === '/SystemReports' && 'active'}>
+            <Link to="/SystemReports">System Reports</Link>
+          </li>
+        </ul>
+      );
+    } else {
+      options = (
+        <ul class="nav navbar-nav">
+          <li class={this.props.location.pathname === '/SystemReports' && 'active'}>
+            <Link to="/SystemReports">System Reports</Link>
           </li>
         </ul>
       );

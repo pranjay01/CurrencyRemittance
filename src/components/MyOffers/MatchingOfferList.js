@@ -40,12 +40,21 @@ class MatchingOfferList extends Component {
   };
 
   handlePageClickSingle = (e) => {
-    this.commonFetchSingleOffers(e.selected);
+    // this.commonFetchSingleOffers(e.selected);
+    const payload = {
+      PageNo: e.selected,
+    };
+    this.props.getOfferLists(payload);
   };
 
   handlePageClickSplitOffers = (e) => {
-    this.commonFetchSplitOffers(e.selected);
+    // this.commonFetchSplitOffers(e.selected);
+    const payload = {
+      PageNo: e.selected,
+    };
+    this.props.getSplitOfferLists(payload);
   };
+
   commonFetchSingleOffers = (PageNo = 0) => {
     axios
       .get(
@@ -69,8 +78,9 @@ class MatchingOfferList extends Component {
           const offerLists = response.data.list;
           const payload = {
             offerLists,
+            TotalCount: offerLists.length,
+            PageCount: offerLists.length / 1,
             PageNo,
-            PageCount: response.data.pagecount,
           };
           this.props.getOfferLists(payload);
           if (response.data.list.length > 0) {
@@ -116,8 +126,9 @@ class MatchingOfferList extends Component {
           const offerLists = response.data.list;
           const payload = {
             offerLists,
+            TotalCount: offerLists.length,
+            PageCount: offerLists.length / 1,
             PageNo,
-            PageCount: response.data.pagecount,
           };
           this.props.getSplitOfferLists(payload);
           if (response.data.list.length > 0) {
@@ -347,6 +358,69 @@ class MatchingOfferList extends Component {
   };
 
   render() {
+    const size = 1;
+    let MatchingOfferCards = this.props.OfferListStore.offerLists
+      .slice(
+        this.props.OfferListStore.PageNo * size,
+        this.props.OfferListStore.PageNo * size + size
+      )
+      .map((offer) => {
+        return (
+          <MatchingOfferCard
+            key={offer.row_num}
+            offer={offer}
+            sourceCountry={this.props.location.state.userDestinationCountry}
+            destinationCountry={this.props.location.state.userSourceCountry}
+            AcceptOffer={(event, offerId2) => this.AcceptOffer(event, offerId2)}
+            CreateCounterOffer={(event, counterProposedAmount) =>
+              this.CreateCounterOffer(event, offer.matchingOfferId, counterProposedAmount)
+            }
+
+            //   conditional cards will come here, remove down card while integration
+          />
+        );
+      });
+
+    let SplitMatchingOfferCards = this.props.SplitOfferListStore.offerLists
+      .slice(
+        this.props.SplitOfferListStore.PageNo * size,
+        this.props.SplitOfferListStore.PageNo * size + size
+      )
+      .map((offer) => {
+        return (
+          <MatchingOfferCardSplit
+            key={offer.row_num}
+            offer={offer}
+            sourceCountry={this.props.location.state.userDestinationCountry}
+            destinationCountry={this.props.location.state.userSourceCountry}
+            AcceptOffer={(event) =>
+              this.AcceptSplitOffer(
+                event,
+                offer.matchingSourceCountry1,
+                offer.matchingSourceAmount1,
+                offer.matchingOfferId1,
+                offer.matchingSourceCountry2,
+                offer.matchingSourceAmount2,
+                offer.matchingOfferId2
+              )
+            }
+            createSplitCounterOffer={(event, counterProposedAmount) =>
+              this.createSplitCounterOffer(
+                event,
+                counterProposedAmount,
+                offer.matchingSourceCountry1,
+                offer.matchingSourceAmount1,
+                offer.matchingOfferId1,
+                offer.matchingSourceCountry2,
+                offer.matchingSourceAmount2,
+                offer.matchingOfferId2
+              )
+            }
+            //   conditional cards will come here, remove down card while integration
+          />
+        );
+      });
+
     if (!localStorage.getItem('token')) {
       return (
         <Redirect
@@ -511,7 +585,8 @@ class MatchingOfferList extends Component {
                     ))}
                     </ul>*/}
                   <ul className="lemon--ul__373c0__1_cxs undefined list__373c0__2G8oH">
-                    {this.props.OfferListStore.offerLists.map((offer) => (
+                    {MatchingOfferCards}
+                    {/*this.props.OfferListStore.offerLists.map((offer) => (
                       <MatchingOfferCard
                         key={offer.row_num}
                         offer={offer}
@@ -528,7 +603,7 @@ class MatchingOfferList extends Component {
 
                         //   conditional cards will come here, remove down card while integration
                       />
-                    ))}
+                      ))*/}
                   </ul>
                 </div>
                 <div style={{ left: '50%', bottom: '3%', right: '0' }}>
@@ -627,7 +702,8 @@ class MatchingOfferList extends Component {
                     ))}
                     </ul>*/}
                     <ul className="lemon--ul__373c0__1_cxs undefined list__373c0__2G8oH">
-                      {this.props.SplitOfferListStore.offerLists.map((offer) => (
+                      {SplitMatchingOfferCards}
+                      {/*this.props.SplitOfferListStore.offerLists.map((offer) => (
                         <MatchingOfferCardSplit
                           key={offer.row_num}
                           offer={offer}
@@ -658,7 +734,7 @@ class MatchingOfferList extends Component {
                           }
                           //   conditional cards will come here, remove down card while integration
                         />
-                      ))}
+                        ))*/}
                     </ul>
                   </div>
                   <div style={{ left: '50%', bottom: '3%', right: '0' }}>
