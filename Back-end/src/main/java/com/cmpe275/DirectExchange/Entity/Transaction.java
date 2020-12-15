@@ -1,5 +1,6 @@
 package com.cmpe275.DirectExchange.Entity;
 
+import java.sql.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -51,6 +52,9 @@ public class Transaction {
 
 	@Column(name="ExchangeRate")
 	Double exchangeRate;
+
+	@Column(name="Created_Date")
+	Date createdDate;
 	
 	@OneToMany(mappedBy = "transaction")
 	@LazyCollection(LazyCollectionOption.TRUE)
@@ -165,6 +169,7 @@ public class Transaction {
 		this.exchangeRate = exchangeRate;
 	}
 
-	
-	
+	public Date getCreatedDate() {
+		return createdDate;
+	}
 }

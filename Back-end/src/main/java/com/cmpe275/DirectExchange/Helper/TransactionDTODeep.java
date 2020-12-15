@@ -1,5 +1,6 @@
 package com.cmpe275.DirectExchange.Helper;
 
+import java.sql.Date;
 import java.util.List;
 
 public class TransactionDTODeep {
@@ -13,6 +14,7 @@ public class TransactionDTODeep {
 	String sourceCurrency;
 	String destinationCurrency;
 	Double exchangeRate;
+	Date createdDate;
 	List<TransactionUserMapDTOShallow> receivingParties;
 	public Long getId() {
 		return id;
@@ -74,5 +76,8 @@ public class TransactionDTODeep {
 	public void setExchangeRate(Double exchangeRate) {
 		this.exchangeRate = exchangeRate;
 	}
+	public Date getCreatedDate() {
+		return createdDate;
+	}	
 	
 }
