@@ -9,11 +9,17 @@ import { getTransactionList } from '../../constants/action-types';
 import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import moment from 'moment';
+import { Bar, Pie } from 'react-chartjs-2';
 
 class MyTransactions extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      count: {
+        completed: 0,
+        expired: 0,
+      },
+      finalData: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       buttonSelected: 'old',
       monthSelected: '12',
       months: [
@@ -51,12 +57,29 @@ class MyTransactions extends Component {
           }
         }
         const TransactionList = [];
+        let finalData = this.state.finalData;
+        let completed = 0;
+        let expired = 0;
         for (const transaction of oldTransactions) {
           console.log('month:', moment(transaction.createdDate).month());
+          finalData[moment(transaction.createdDate).month()] =
+            finalData[moment(transaction.createdDate).month()] + 1;
           if (Number(this.state.monthSelected) === moment(transaction.createdDate).month() + 1) {
             TransactionList.push(transaction);
           }
+
+          if (moment(transaction.createdDate).month() === 11) {
+            if (transaction.transactionStatus === 'Completed') {
+              completed += 1;
+            } else {
+              expired += 1;
+            }
+          }
         }
+        const count = {
+          completed,
+          expired,
+        };
         const payload = {
           oldTransactions,
           currentTransactions,
@@ -65,6 +88,7 @@ class MyTransactions extends Component {
           PageCount: TransactionList.length / 10,
         };
         this.props.getTransactionList(payload);
+        this.setState({ finalData, count });
         if (response.data.length > 0) {
         } else {
           notification.open({
@@ -85,10 +109,9 @@ class MyTransactions extends Component {
 
   switchTab = (event, tab, monthSelected = '12') => {
     event.preventDefault();
-    this.setState({
-      buttonSelected: tab,
-      monthSelected,
-    });
+
+    let completed = 0;
+    let expired = 0;
     let TransactionList = [];
     if (tab === 'current') {
       TransactionList = this.props.TransactionListStore.currentTransactions;
@@ -97,10 +120,20 @@ class MyTransactions extends Component {
         console.log('month:', moment(transaction.createdDate).month());
         if (Number(monthSelected) === moment(transaction.createdDate).month() + 1) {
           TransactionList.push(transaction);
+           if (transaction.transactionStatus === 'Completed') {
+             completed += 1;
+           } else {
+             expired += 1;
+           }
         }
+      
       }
       // TransactionList = this.props.TransactionListStore.oldTransactions;
     }
+    const count = {
+      completed,
+      expired,
+    };
     const payload = {
       TransactionList,
       TotalCount: TransactionList.length,
@@ -108,6 +141,11 @@ class MyTransactions extends Component {
       PageNo: 0,
     };
     this.props.getTransactionList(payload);
+    this.setState({
+      buttonSelected: tab,
+      monthSelected,
+      count,
+    });
   };
 
   switchMonth = (event) => {
@@ -116,6 +154,70 @@ class MyTransactions extends Component {
   };
 
   render() {
+    let bar = null;
+    if (this.state.finalData && this.state.finalData.length > 0) {
+      let data = {};
+
+      let count = this.state.finalData.map((Count) => {
+        return Count;
+      });
+      data.labels = this.state.months.map((month) => {
+        return month.value;
+      });
+
+      data.datasets = [
+        {
+          label: 'Count v/s Month',
+          backgroundColor: 'rgba(255,99,132,0.2)',
+          borderColor: 'rgba(255,99,132,1)',
+          borderWidth: 1,
+          hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+          hoverBorderColor: 'rgba(255,99,132,1)',
+          data: count,
+        },
+      ];
+      bar = (
+        <Bar
+          data={data}
+          width={100}
+          height={50}
+          options={{
+            maintainAspectRatio: false,
+            scales: {
+              yAxes: [
+                {
+                  ticks: {
+                    beginAtZero: true,
+                  },
+                },
+              ],
+            },
+          }}
+        />
+      );
+    }
+
+    const piedata = {
+      labels: ['Completed', 'Expired'],
+      datasets: [
+        {
+          data: [this.state.count.completed, this.state.count.expired],
+          backgroundColor: ['#FF6384', '#36A2EB'],
+          hoverBackgroundColor: ['#FF6384', '#36A2EB'],
+        },
+      ],
+    };
+
+    let pie = null;
+    pie = (
+      <Pie
+        data={piedata}
+        options={{
+          maintainAspectRatio: false,
+        }}
+      />
+    );
+
     const styleactive = {
       color: 'white',
       width: '180px',
@@ -287,6 +389,59 @@ class MyTransactions extends Component {
                             >
                               {' '}
                               <div
+                                style={{
+                                  flexDirection: 'column',
+                                  minWidth: '1200px',
+                                  minHeight: '200px',
+                                }}
+                                className="js-password-meter-container"
+                              >
+                                {bar}
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          ''
+        )}
+
+        {this.state.buttonSelected === 'old' ? (
+          <div
+            style={{ marginBottom: '40px' }}
+            className="lemon--div__06b83__1mboc component__06b83__mFK-M border-color--default__06b83__3-ifU"
+          >
+            <div className="lemon--div__06b83__1mboc header-container__06b83__bjkGB border-color--default__06b83__3-ifU">
+              <div className="lemon--div__06b83__1mboc header-nav-container__06b83__euina border-color--default__06b83__3-ifU">
+                <div className="lemon--div__06b83__1mboc fs-block border-color--default__06b83__3-ifU">
+                  <div className="lemon--div__06b83__1mboc border-color--default__06b83__3-ifU">
+                    <div className="lemon--div__06b83__1mboc tooltipContainer__06b83__2PjJt auth-tooltip-container__06b83__e-34S display--inline-block__06b83__1ZKqC border-color--default__06b83__3-ifU">
+                      <div className="lemon--div__06b83__1mboc notification-wrapper__06b83__RCXT7 display--inline-block__06b83__1ZKqC border-color--default__06b83__3-ifU">
+                        <div className="lemon--div__06b83__1mboc inline__06b83__2fx1q">
+                          <div
+                            className="lemon--div__06b83__1mboc dropdown__06b83__2flBr"
+                            role="presentation"
+                          >
+                            <form
+                              style={{
+                                display: 'flex',
+
+                                flexDirection: 'row',
+
+                                justifyContent: 'center',
+                              }}
+                              onSubmit={this.getOffers}
+                              className="yform signup-form  city-hidden"
+                              id="signup-form"
+                            >
+                              {' '}
+                              <div
                                 style={{ flexDirection: 'column', minWidth: '700px' }}
                                 className="js-password-meter-container"
                               >
@@ -318,6 +473,59 @@ class MyTransactions extends Component {
                             </form>
 
                             {/*menu*/}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          ''
+        )}
+
+        {this.state.buttonSelected === 'old' ? (
+          <div
+            style={{ marginBottom: '40px' }}
+            className="lemon--div__06b83__1mboc component__06b83__mFK-M border-color--default__06b83__3-ifU"
+          >
+            <div className="lemon--div__06b83__1mboc header-container__06b83__bjkGB border-color--default__06b83__3-ifU">
+              <div className="lemon--div__06b83__1mboc header-nav-container__06b83__euina border-color--default__06b83__3-ifU">
+                <div className="lemon--div__06b83__1mboc fs-block border-color--default__06b83__3-ifU">
+                  <div className="lemon--div__06b83__1mboc border-color--default__06b83__3-ifU">
+                    <div className="lemon--div__06b83__1mboc tooltipContainer__06b83__2PjJt auth-tooltip-container__06b83__e-34S display--inline-block__06b83__1ZKqC border-color--default__06b83__3-ifU">
+                      <div className="lemon--div__06b83__1mboc notification-wrapper__06b83__RCXT7 display--inline-block__06b83__1ZKqC border-color--default__06b83__3-ifU">
+                        <div className="lemon--div__06b83__1mboc inline__06b83__2fx1q">
+                          <div
+                            className="lemon--div__06b83__1mboc dropdown__06b83__2flBr"
+                            role="presentation"
+                          >
+                            <form
+                              style={{
+                                display: 'flex',
+
+                                flexDirection: 'row',
+
+                                justifyContent: 'center',
+                              }}
+                              onSubmit={this.getOffers}
+                              className="yform signup-form  city-hidden"
+                              id="signup-form"
+                            >
+                              {' '}
+                              <div
+                                style={{
+                                  flexDirection: 'column',
+                                  minWidth: '1200px',
+                                  minHeight: '200px',
+                                }}
+                                className="js-password-meter-container"
+                              >
+                                {pie}
+                              </div>
+                            </form>
                           </div>
                         </div>
                       </div>
