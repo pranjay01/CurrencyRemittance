@@ -12,8 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cmpe275.DirectExchange.Entity.Offer;
+import com.cmpe275.DirectExchange.Entity.Transaction;
 import com.cmpe275.DirectExchange.Entity.User;
+import com.cmpe275.DirectExchange.Helper.OfferDTODeep;
+import com.cmpe275.DirectExchange.Helper.UserDTODeep;
 import com.cmpe275.DirectExchange.Repository.OfferRepository;
+import com.cmpe275.DirectExchange.Repository.TransactionRepository;
 import com.cmpe275.DirectExchange.Repository.UserRepository;
 
 @Service
@@ -24,6 +28,9 @@ public class OfferService {
 	
 	@Autowired
 	UserRepository userRepository;
+
+	@Autowired
+	TransactionRepository transactionRepository;
 	
 	private final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -75,13 +82,37 @@ public class OfferService {
 		return myOffers;
 	}
 	
-	public List<Offer> searchOffers(String sourceCurrency, Double sourceAmount, String destinationCurrency, Double destinationAmount) {
+	public List<OfferDTODeep> searchOffers(String sourceCurrency, Double sourceAmount, String destinationCurrency, Double destinationAmount) {
 		List<Offer> offers = new ArrayList<Offer>();
 		
 		offers.addAll(offerRepository.findBySourceCurrencyAndSourceAmountAndDestinationCurrencyAndDestinationAmountAndOfferStatus(
 				sourceCurrency, sourceAmount, destinationCurrency, destinationAmount, "open"));
-		
-		return offers;
+		List<OfferDTODeep> offerDTO = new ArrayList<OfferDTODeep>();
+		for(int i = 0 ; i < offers.size(); i++) {
+			Offer offer = offers.get(i);
+			Long userID = offer.getUser().getId();
+			User user = userRepository.getOne(userID);
+			Double rating = calculateRating(user.getId());
+			UserDTODeep userDTODeep = new UserDTODeep(user.getId(), user.getUserName(), user.getNickname(), user.getStatus(), rating.toString());
+			OfferDTODeep o = new OfferDTODeep(offer.getOfferId(), userDTODeep, offer.getSourceCountry() , offer.getSourceCurrency() , offer.getSourceAmount(), offer.getDestinationCountry(), offer.getDestinationCurrency(), offer.getDestinationAmount(), offer.getExchangeRate() , offer.getExpirationDate(), offer.getAllowCounterOffers(), offer.getSplitExchange() , offer.getOfferStatus(), offer.getServiceFee(), offer.getMinAmount(), offer.getMaxAmount());
+			offerDTO.add(o);
+		}
+		return offerDTO;
+	}
+
+	public double calculateRating(long userID) {
+		List<Transaction> transaction =  transactionRepository.findByUserID(userID);
+		int faultCount = 0;
+		double rating = 0;
+		if(transaction.size() != 0) {
+			for(Transaction t: transaction) {
+				if(t.getTransactionStatus().compareTo("at-fault") == 0) {
+					faultCount++;
+				}
+			}
+			rating =  ((1- (faultCount) / (transaction.size())) * 4) + 1;
+		}
+		return rating;
 	}
 
 }
