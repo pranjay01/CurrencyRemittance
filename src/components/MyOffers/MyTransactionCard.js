@@ -116,7 +116,7 @@ class MyTransactionCard extends Component {
                       <strong> Service Fee Charged </strong>:{' '}
                     </span>
                     <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                      {transaction.receivedAmount * 0.005} {transaction.sourceCurrency}
+                      {transaction.receivedAmount * 0.0005} {transaction.sourceCurrency}
                     </span>
                   </div>
                 ) : (

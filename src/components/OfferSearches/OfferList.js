@@ -7,6 +7,8 @@ import { connect } from 'react-redux';
 import { getOfferLists, updateFocusOffer, UpdateUserProfile } from '../../constants/action-types';
 import axios from 'axios';
 import serverUrl from '../../config';
+import { notification } from 'antd';
+import 'antd/dist/antd.css';
 
 class OfferList extends Component {
   constructor(props) {
@@ -18,10 +20,11 @@ class OfferList extends Component {
       destinationAmount: '',
       openDetailPage: false,
       offerId: '',
+      userId: '',
     };
   }
 
-  componentDidMount() {
+  commonFetch = () => {
     axios
       .get(serverUrl + 'searchOffers', {
         params: {
@@ -38,12 +41,36 @@ class OfferList extends Component {
       })
       .then((response) => {
         console.log(response.data);
-        const offerLists = response.data;
+        const offerLists = [];
+        for (const offer of response.data) {
+          debugger;
+          if (offer.user.id !== Number(localStorage.getItem('userId'))) {
+            offerLists.push(offer);
+          }
+        }
+        // const offerLists = response.data;
         const payload = {
           offerLists,
+          TotalCount: offerLists.length,
+          PageCount: offerLists.length / 1,
         };
         this.props.getOfferLists(payload);
+        if (offerLists.length > 0) {
+        } else {
+          this.setState({
+            accounts: [],
+          });
+          notification.open({
+            message: 'Opp!.',
+            description: 'No Offers found for the set search criteria',
+            duration: 6,
+          });
+        }
       });
+  };
+
+  componentDidMount() {
+    this.commonFetch();
 
     axios.get(serverUrl + 'user/' + localStorage.getItem('userId')).then((response) => {
       console.log(response.data);
@@ -63,7 +90,8 @@ class OfferList extends Component {
 
   getOffers = (event) => {
     event.preventDefault();
-    axios
+    this.commonFetch();
+    /*  axios
       .get(serverUrl + 'searchOffers', {
         params: {
           sourceCurrency: this.state.sourceCurrency ? this.state.sourceCurrency : null,
@@ -84,10 +112,10 @@ class OfferList extends Component {
           offerLists,
         };
         this.props.getOfferLists(payload);
-      });
+      });*/
   };
 
-  openDetailsPage = (event, offerId) => {
+  openDetailsPage = (event, offerId, userId) => {
     event.preventDefault();
     // localStorage.setItem('OpenOffer', offerId);
     // const payload = {
@@ -97,10 +125,36 @@ class OfferList extends Component {
     this.setState({
       openDetailPage: true,
       offerId,
+      userId,
     });
   };
 
+  handlePageClick = (e) => {
+    const payload = {
+      PageNo: e.selected,
+    };
+    this.props.getOfferLists(payload);
+  };
+
   render() {
+    const size = 1;
+    let offerCards = this.props.OfferListStore.offerLists
+      .slice(
+        this.props.OfferListStore.PageNo * size,
+        this.props.OfferListStore.PageNo * size + size
+      )
+      .map((offer) => {
+        return (
+          <OfferCard
+            key={offer._id}
+            openDetailsPage={(event) => this.openDetailsPage(event, offer.offerId, offer.user.id)}
+            offer={offer}
+
+            //   }
+          />
+        );
+      });
+
     if (!localStorage.getItem('token')) {
       return (
         <Redirect
@@ -119,7 +173,11 @@ class OfferList extends Component {
         <Redirect
           to={{
             pathname: '/OfferDetailPage',
-            state: { openDetailPage: this.state.openDetailPage, offerId: this.state.offerId },
+            state: {
+              openDetailPage: this.state.openDetailPage,
+              offerId: this.state.offerId,
+              userId: this.state.userId,
+            },
           }}
         />
       );
@@ -289,7 +347,8 @@ class OfferList extends Component {
               >
                 <div>
                   <ul className="lemon--ul__373c0__1_cxs undefined list__373c0__2G8oH">
-                    {this.props.OfferListStore.offerLists.map((offer) => (
+                    {offerCards}
+                    {/*this.props.OfferListStore.offerLists.map((offer) => (
                       <OfferCard
                         key={offer._id}
                         openDetailsPage={(event) => this.openDetailsPage(event, offer.offerId)}
@@ -297,7 +356,7 @@ class OfferList extends Component {
 
                         //   }
                       />
-                    ))}
+                    ))*/}
                   </ul>
                 </div>
                 <div style={{ left: '50%', bottom: '3%', right: '0' }}>
@@ -306,13 +365,14 @@ class OfferList extends Component {
                     nextLabel={'next'}
                     breakLabel={'...'}
                     breakClassName={'break-me'}
-                    pageCount={5}
+                    pageCount={this.props.OfferListStore.PageCount}
                     marginPagesDisplayed={2}
                     pageRangeDisplayed={2}
                     onPageChange={this.handlePageClick}
                     containerClassName={'pagination'}
                     subContainerClassName={'pages pagination'}
                     activeClassName={'active'}
+                    forcePage={this.props.OfferListStore.PageNo}
                   />
                 </div>
               </div>

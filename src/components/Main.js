@@ -19,6 +19,7 @@ import CounterOffers from './MyOffers/CounterOffers';
 import VerificationPage from './Login/VerificationPage';
 import MyTransactions from './MyOffers/MyTransactions';
 import MyAccounts from './Accounts/MyAccounts';
+import Report from './Report/Report';
 
 {
   /*import axios from 'axios';
@@ -144,27 +145,7 @@ class Main extends Component {
         <Route path="/CounterOffers" component={CounterOffers} />
         <Route path="/MyTransactions" component={MyTransactions} />
         <Route path="/MyAccounts" component={MyAccounts} />
-        {/*
-          <Route path="/customerLogin" component={CustomerLogin} />
-          <Route path="/customerSignup" component={CustomerLogin} />
-          <Route path="/restaurantSignup" component={RestaurantLogin} />
-          <Route path="/restaurantLogin" component={RestaurantLogin} />
-          <Route path="/home" component={Home} />
-          <Route path="/restaurantHome" component={RestaurantHome} />
-          <Route path="/cus" component={CustomerNavBar} />
-          <Route path="/AboutMe" component={AboutMe} />
-          <Route path="/Following" component={Following} />
-          <Route path="/UpdateProfile" component={UpdateProfile} />
-          <Route path="/UpdateContactInformation" component={UpdateContactInformation} />
-          <Route path="/RestaurantList" component={RestaurantList} />
-          <Route path="/RestaurantPage" component={RestaurantPage} />
-          <Route path="/FoodOrderCart" component={FoodOrderCart} />
-          <Route path="/Events" component={Events} />
-          <Route path="/OrdersList" component={OrdersList} />
-          <Route path="/Messages" component={MessageList} />
-          <Route path="/CustomerStaticProfile" component={CustomerStaticProfile} />
-  */}
-        {/*</Switch>*/}
+        <Route path="/SystemReports" component={Report} />
       </div>
     );
   }

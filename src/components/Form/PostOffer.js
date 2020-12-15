@@ -239,9 +239,12 @@ class PostOffer extends Component {
           });
         },
         (error) => {
+          console.log('error', error.response.data.message);
           notification['error']({
             message: 'ERROR!',
-            description: error.response.data,
+            description: error.response.data.message
+              ? error.response.data.message
+              : 'Post Offer failed, Please retry!',
             duration: 4,
           });
         }

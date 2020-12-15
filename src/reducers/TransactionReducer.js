@@ -2,9 +2,12 @@ import { getTransactionList, logOut } from '../constants/action-types';
 
 const defaultState = {
   TransactionListStore: {
+    oldTransactions: [],
+    currentTransactions: [],
     TransactionList: [],
     PageNo: 0,
     TotalCount: 0,
+    PageCount: 0,
   },
 };
 

@@ -28,14 +28,7 @@ class MyOffers extends Component {
   commonFetch = (PageNo = 0) => {
     axios
       .get(serverUrl + 'user/' + localStorage.getItem('userId') + '/offers', {
-        params: {
-          sourceCurrency: this.state.sourceCurrency,
-          sourceAmount: this.state.sourceAmount ? parseFloat(this.state.sourceAmount) : '',
-          destinationCurrency: this.state.destinationCurrency,
-          destinationAmount: this.state.destinationAmount
-            ? parseFloat(this.state.destinationAmount)
-            : '',
-        },
+        params: {},
         withCredentials: true,
       })
       .then((response) => {
@@ -44,11 +37,13 @@ class MyOffers extends Component {
           const offerLists = response.data;
           const payload = {
             offerLists,
+            TotalCount: response.data.length,
+            PageCount: response.data.length / 1,
           };
           this.props.getOfferLists(payload);
         } else {
           notification.open({
-            message: 'Opp!.',
+            message: 'Oops!.',
             description: 'You haven"t posted any offer yet!',
             duration: 6,
           });
@@ -93,7 +88,43 @@ class MyOffers extends Component {
     });
   };
 
+  handlePageClick = (e) => {
+    const payload = {
+      PageNo: e.selected,
+    };
+    this.props.getOfferLists(payload);
+  };
+
   render() {
+    const size = 1;
+    let myOfferCards = this.props.OfferListStore.offerLists
+      .slice(
+        this.props.OfferListStore.PageNo * size,
+        this.props.OfferListStore.PageNo * size + size
+      )
+      .map((offer) => {
+        return (
+          <MyOfferCard
+            key={offer.offerId}
+            editOffer={() => this.editOffer(offer.offerId)}
+            offer={offer}
+            openCounterOffer={(event) => this.openCounterOffer(event, offer.offerId)}
+            showMatchingOffers={(event) =>
+              this.showMatchingOffers(
+                event,
+                offer.offerId,
+                offer.sourceCountry,
+                offer.destinationCountry,
+                offer.sourceAmount,
+                offer.exchangeRate
+              )
+            }
+
+            //   }
+          />
+        );
+      });
+
     if (!localStorage.getItem('token')) {
       return (
         <Redirect
@@ -103,6 +134,7 @@ class MyOffers extends Component {
         />
       );
     }
+
     if (
       this.state.openMatchingOffersPage &&
       this.state.offerId &&
@@ -163,7 +195,8 @@ class MyOffers extends Component {
               >
                 <div>
                   <ul className="lemon--ul__373c0__1_cxs undefined list__373c0__2G8oH">
-                    {this.props.OfferListStore.offerLists.map((offer) => (
+                    {myOfferCards}
+                    {/*this.props.OfferListStore.offerLists.map((offer) => (
                       <MyOfferCard
                         key={offer.offerId}
                         editOffer={() => this.editOffer(offer.offerId)}
@@ -182,7 +215,7 @@ class MyOffers extends Component {
 
                         //   }
                       />
-                    ))}
+                      ))*/}
                   </ul>
                 </div>
                 <div style={{ left: '50%', bottom: '3%', right: '0' }}>
@@ -191,13 +224,14 @@ class MyOffers extends Component {
                     nextLabel={'next'}
                     breakLabel={'...'}
                     breakClassName={'break-me'}
-                    pageCount={5}
+                    pageCount={this.props.OfferListStore.PageCount}
                     marginPagesDisplayed={2}
                     pageRangeDisplayed={2}
                     onPageChange={this.handlePageClick}
                     containerClassName={'pagination'}
                     subContainerClassName={'pages pagination'}
                     activeClassName={'active'}
+                    forcePage={this.props.OfferListStore.PageNo}
                   />
                 </div>
               </div>

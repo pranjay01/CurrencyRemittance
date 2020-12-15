@@ -40,6 +40,23 @@ class OfferDetailPage extends Component {
             });
           }
         });
+
+      axios.get(serverUrl + 'user/' + this.props.location.state.userId).then((response) => {
+        console.log(response.data);
+        if (response.data) {
+          console.log('user', response.data);
+          // const payload = {
+          //   Offer: { ...response.data },
+          // };
+          // this.props.updateFocusOffer(payload);
+        } else {
+          notification.error({
+            message: 'ERROR!.',
+            description: 'Wrong Offer',
+            duration: 6,
+          });
+        }
+      });
     }
   }
 
@@ -57,15 +74,15 @@ class OfferDetailPage extends Component {
   };
 
   render() {
-     if (!localStorage.getItem('token')) {
-       return (
-         <Redirect
-           to={{
-             pathname: '/Login',
-           }}
-         />
-       );
-     }
+    if (!localStorage.getItem('token')) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/Login',
+          }}
+        />
+      );
+    }
     if (!this.props.location.state || this.props.location.state.openDetailPage === false) {
       return (
         <Redirect
