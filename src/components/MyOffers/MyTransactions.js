@@ -92,7 +92,7 @@ class MyTransactions extends Component {
         if (response.data.length > 0) {
         } else {
           notification.open({
-            message: 'Opp!.',
+            message: 'Sorry!.',
             description: 'You haven"t done any transactions yet!',
             duration: 4,
           });
@@ -120,13 +120,12 @@ class MyTransactions extends Component {
         console.log('month:', moment(transaction.createdDate).month());
         if (Number(monthSelected) === moment(transaction.createdDate).month() + 1) {
           TransactionList.push(transaction);
-           if (transaction.transactionStatus === 'Completed') {
-             completed += 1;
-           } else {
-             expired += 1;
-           }
+          if (transaction.transactionStatus === 'Completed') {
+            completed += 1;
+          } else {
+            expired += 1;
+          }
         }
-      
       }
       // TransactionList = this.props.TransactionListStore.oldTransactions;
     }

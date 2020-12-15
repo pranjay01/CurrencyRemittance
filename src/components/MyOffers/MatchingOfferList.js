@@ -86,7 +86,7 @@ class MatchingOfferList extends Component {
           if (response.data.list.length > 0) {
           } else {
             notification.open({
-              message: 'Opp! No single matching offers found',
+              message: 'Sorry! No single matching offers found',
               description: 'Seems there are no matching offers',
               duration: 4,
             });

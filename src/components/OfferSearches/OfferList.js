@@ -61,7 +61,7 @@ class OfferList extends Component {
             accounts: [],
           });
           notification.open({
-            message: 'Opp!.',
+            message: 'Sorry!.',
             description: 'No Offers found for the set search criteria',
             duration: 6,
           });

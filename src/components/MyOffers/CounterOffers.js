@@ -38,7 +38,7 @@ class CounterOffers extends Component {
           if (response.data.length > 0) {
           } else {
             notification.open({
-              message: 'Opp! No matching offers found',
+              message: 'Sorry! No matching offers found',
               description: 'Seems there are no matching offers',
               duration: 4,
             });

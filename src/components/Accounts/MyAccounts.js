@@ -38,7 +38,7 @@ class MyAccounts extends Component {
             accounts: [],
           });
           notification.open({
-            message: 'Opp!.',
+            message: 'Sorry!.',
             description: 'You haven"t created any account yet!',
             duration: 6,
           });

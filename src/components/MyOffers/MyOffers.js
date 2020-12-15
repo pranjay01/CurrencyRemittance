@@ -43,7 +43,7 @@ class MyOffers extends Component {
           this.props.getOfferLists(payload);
         } else {
           notification.open({
-            message: 'Oops!.',
+            message: 'Sorry!.',
             description: 'You haven"t posted any offer yet!',
             duration: 6,
           });

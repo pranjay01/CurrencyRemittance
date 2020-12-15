@@ -34,7 +34,7 @@ class TransactionHistory extends Component {
           if (response.data.length > 0) {
           } else {
             notification.open({
-              message: 'Opp!.',
+              message: 'Sorry!.',
               description: 'User hasn"t done any transactions yet!',
               duration: 4,
             });
