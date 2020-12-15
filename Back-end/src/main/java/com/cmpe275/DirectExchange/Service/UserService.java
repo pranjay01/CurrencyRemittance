@@ -145,12 +145,15 @@ public class UserService {
 	public double calculateRating(long userID) {
 		List<Transaction> transaction =  transactionRepository.findByUserID(userID);
 		int faultCount = 0;
-		for(Transaction t: transaction) {
-			if(t.getTransactionStatus().compareTo("at-fault") == 0) {
-				faultCount++;
+		double rating = 0;
+		if(transaction.size() != 0) {
+			for(Transaction t: transaction) {
+				if(t.getTransactionStatus().compareTo("at-fault") == 0) {
+					faultCount++;
+				}
 			}
+			rating =  ((1- (faultCount) / (transaction.size())) * 4) + 1;
 		}
-		double rating =  ((1- (faultCount) / (transaction.size())) * 4) + 1;
 		return rating;
 	}
 
