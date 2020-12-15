@@ -1,6 +1,6 @@
 package com.cmpe275.DirectExchange.Entity;
 
-public class SplitMatch {
+public class SplitMatch implements Comparable<SplitMatch> {
 
     private int row_num;
     private Long OfferID;
@@ -339,6 +339,14 @@ public class SplitMatch {
 		Difference = difference;
 	}
 	
-	
+	@Override
+	public int compareTo(SplitMatch arg0) {
+		if(this.MatchingUserId1 == arg0.getMatchingUserId2() &&
+			this.MatchingUserId2 == arg0.getMatchingUserId1()){
+				return 0;
+			}
+		else 
+			return 1;
+	}
 	
 }

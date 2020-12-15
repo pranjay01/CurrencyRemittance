@@ -75,8 +75,12 @@ public class SplitMatchProc {
                 result.setMatchingDestinationCurrency2(rs.getString("MatchingDestinationCurrency2"));
 
                 result.setDifference(rs.getDouble("Difference"));
-                split.add(result);
                 
+                for(SplitMatch s : split){
+                    if(s.compareTo(result) != 0){
+                        split.add(result);
+                    }
+                }
             }
 
             statement.getMoreResults();

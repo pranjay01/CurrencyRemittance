@@ -58,8 +58,7 @@ WHERE o.UserID = UserId
     ) ) temp
 ) temp2 Order by row_num ASC;
 
-SELECT * from searchdata where row_num >= startindex
-limit rowcount;
+SELECT * from searchdata;
 
 select ceil(count(1)/rowcount) as pagecount from searchdata;
 

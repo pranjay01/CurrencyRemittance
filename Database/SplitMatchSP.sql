@@ -26,6 +26,10 @@ create temporary table searchdata (
 	MatchningAllowCounterOffers1 tinyint,
 	MatchingExchangeRate1 decimal(10,3),
 	MatchingExpirationDate1 date,
+    MatchingSourceCountry1 varchar(30),
+	MatchingSourceCurrency1 varchar(10),
+	MatchingDestinationCountry1 varchar(30),
+	MatchingDestinationCurrency1 varchar(10),
 	MatchingDestinationAmount2 decimal(10,2),
 	MatchingSourceAmount2 decimal(10,2),
 	MatchingUserId2 bigint,
@@ -34,6 +38,10 @@ create temporary table searchdata (
 	MatchningAllowCounterOffers2 tinyint,
 	MatchingExchangeRate2 decimal(10,3),
 	MatchingExpirationDate2 date,
+    MatchingSourceCountry2 varchar(30),
+	MatchingSourceCurrency2 varchar(10),
+	MatchingDestinationCountry2 varchar(30),
+	MatchingDestinationCurrency2 varchar(10),
 	Difference decimal(10,2)
 );
 
@@ -53,6 +61,10 @@ SELECT
  o2.AllowCounterOffers as 'MatchningAllowCounterOffers1',
  o2.ExchangeRate as 'MatchingExchangeRate1',
  o2.ExpirationDate as 'MatchingExpirationDate1',
+ o2.SourceCountry as 'MatchingSourceCountry1',
+ o2.SourceCurrency as 'MatchingSourceCurrency1',
+ o2.DestinationCountry as 'MatchingDestinationCountry1',
+ o2.DestinationCurrency as 'MatchingDestinationCurrency1',
  o3.DestinationAmount as 'MatchingDestinationAmount2',
  o3.SourceAmount as 'MatchingSourceAmount2',
  o3.UserID as 'MatchingUserId2',
@@ -61,6 +73,10 @@ SELECT
  o3.AllowCounterOffers as 'MatchningAllowCounterOffers2',
  o3.ExchangeRate as 'MatchingExchangeRate2',
  o3.ExpirationDate as 'MatchingExpirationDate2',
+ o3.SourceCountry as 'MatchingSourceCountry2',
+ o3.SourceCurrency as 'MatchingSourceCurrency2',
+ o3.DestinationCountry as 'MatchingDestinationCountry2',
+ o3.DestinationCurrency as 'MatchingDestinationCurrency2',
  abs(o.SourceAmount - (o2.DestinationAmount + o3.DestinationAmount)) AS 'Difference'
 FROM OFFER o 
 INNER JOIN OFFER o2 ON o.DestinationCurrency = o2.SourceCurrency 
@@ -96,6 +112,10 @@ SELECT
  o2.AllowCounterOffers as 'MatchningAllowCounterOffers1',
  o2.ExchangeRate as 'MatchingExchangeRate1',
  o2.ExpirationDate as 'MatchingExpirationDate1',
+ o2.SourceCountry as 'MatchingSourceCountry1',
+ o2.SourceCurrency as 'MatchingSourceCurrency1',
+ o2.DestinationCountry as 'MatchingDestinationCountry1',
+ o2.DestinationCurrency as 'MatchingDestinationCurrency1',
  o3.DestinationAmount as 'MatchingDestinationAmount2',
  o3.SourceAmount as 'MatchingSourceAmount2',
  o3.UserID as 'MatchingUserId2',
@@ -104,6 +124,10 @@ SELECT
  o3.AllowCounterOffers as 'MatchningAllowCounterOffers2',
  o3.ExchangeRate as 'MatchingExchangeRate2',
  o3.ExpirationDate as 'MatchingExpirationDate2',
+ o3.SourceCountry as 'MatchingSourceCountry2',
+ o3.SourceCurrency as 'MatchingSourceCurrency2',
+ o3.DestinationCountry as 'MatchingDestinationCountry2',
+ o3.DestinationCurrency as 'MatchingDestinationCurrency2',
  abs((o3.DestinationAmount - o2.SourceAmount)- o.SourceAmount) AS 'Difference'
 FROM OFFER o 
 INNER JOIN OFFER o2 ON o.DestinationCurrency = o2.DestinationCurrency 
@@ -145,6 +169,10 @@ SELECT * from
 	,MatchningAllowCounterOffers1 
 	,MatchingExchangeRate1 
 	,MatchingExpirationDate1
+    ,MatchingSourceCountry1 
+	,MatchingSourceCurrency1
+	,MatchingDestinationCountry1
+	,MatchingDestinationCurrency1 
 	,MatchingDestinationAmount2 
 	,MatchingSourceAmount2 
 	,MatchingUserId2 
@@ -153,10 +181,12 @@ SELECT * from
 	,MatchningAllowCounterOffers2 
 	,MatchingExchangeRate2 
 	,MatchingExpirationDate2
+    ,MatchingSourceCountry2 
+	,MatchingSourceCurrency2
+	,MatchingDestinationCountry2
+	,MatchingDestinationCurrency2 
 	,Difference 
-	from searchdata temp) temp2
-where row_num >= startindex
-limit rowcount;
+	from searchdata temp) temp2;
 
 select ceil(count(1)/rowcount) as pagecount from searchdata;
 

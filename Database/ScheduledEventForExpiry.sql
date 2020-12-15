@@ -1,0 +1,7 @@
+DROP EVENT CheckAndUpdateExpiry;
+
+CREATE EVENT CheckAndUpdateExpiry
+ON SCHEDULE EVERY 15 second
+ON COMPLETION PRESERVE
+DO
+	CALL ExpiryEventProc();
