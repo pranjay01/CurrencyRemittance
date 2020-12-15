@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,6 +62,9 @@ public class DirectExchangeController {
 
 	@Autowired
 	CounterOfferService counterOfferService;
+	
+	@Value("${spring.mail.frontendurl}")
+	private String frontEndUrl;
 
 	@GetMapping("/")
 	public String sayHello() {
@@ -105,7 +109,7 @@ public class DirectExchangeController {
 	public void confirmUserAccount(HttpServletResponse response, @RequestParam("token")String confirmationToken) throws IOException
 	{
 		userService.verifyUser(confirmationToken);
-		response.sendRedirect("https://cmpe275-direct-exachange.herokuapp.com/Login");
+		response.sendRedirect(frontEndUrl);
 	}
 
 	// merged
