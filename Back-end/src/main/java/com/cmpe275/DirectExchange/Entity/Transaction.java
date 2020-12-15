@@ -45,6 +45,9 @@ public class Transaction {
 	
 	@Column(name="DestinationCurrency")
 	String destinationCurrency;
+
+	@Column(name="USDConvertedAmount")
+	Double usdConvertedAmount;
 	
 	@OneToMany(mappedBy = "transaction")
 	@LazyCollection(LazyCollectionOption.TRUE)
@@ -141,5 +144,15 @@ public class Transaction {
 	public void setReceivingParties(List<TransactionUserMap> receivingParties) {
 		this.receivingParties = receivingParties;
 	}
+
+	public Double getUsdConvertedAmount() {
+		return usdConvertedAmount;
+	}
+
+	public void setUsdConvertedAmount(Double usdConvertedAmount) {
+		this.usdConvertedAmount = usdConvertedAmount;
+	}
+
+	
 	
 }

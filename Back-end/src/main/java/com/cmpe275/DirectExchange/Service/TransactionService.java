@@ -138,8 +138,30 @@ public class TransactionService {
 			for(Transaction t : transactions) {
 				Offer o = offerRepository.findById(t.getOfferID()).orElse(null);
 				
-				t.setTransferredAmount(calculateTransferredAmount(o));
-				t.setDestinationCurrency(o.getDestinationCurrency());
+				Double tAmount = calculateTransferredAmount(o);
+				String dCurrency =  o.getDestinationCurrency();
+				Double USDConvertedAmount = (double) 0;
+				if(dCurrency.equals("INR")) {
+					USDConvertedAmount = tAmount * 0.014;
+				}
+				else if(dCurrency.equals("EUR")) {
+					USDConvertedAmount = tAmount * 1.210;
+				}
+				else if(dCurrency.equals("GBP")) {
+					USDConvertedAmount = tAmount * 1.350;
+				}
+				else if(dCurrency.equals("RMB")) {
+					USDConvertedAmount = tAmount * 0.150;
+				}
+				else {
+					USDConvertedAmount = tAmount;
+				}
+
+				t.setTransferredAmount(tAmount);
+				t.setUsdConvertedAmount(USDConvertedAmount);
+				// t.setTransferredAmount(calculateTransferredAmount(o));
+				t.setDestinationCurrency(dCurrency);
+				// t.setDestinationCurrency(o.getDestinationCurrency());
 				t.setTransactionStatus("Completed");
 				transactionRepository.save(t);
 				sendTransactionCompletionEmail(o.getUser().getUserName(), t);
