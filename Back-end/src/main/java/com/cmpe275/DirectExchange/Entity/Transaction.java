@@ -1,6 +1,7 @@
 package com.cmpe275.DirectExchange.Entity;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -54,7 +55,7 @@ public class Transaction {
 	Double exchangeRate;
 
 	@Column(name="Created_Date")
-	Date createdDate;
+	Timestamp createdDate;
 	
 	@OneToMany(mappedBy = "transaction")
 	@LazyCollection(LazyCollectionOption.TRUE)
@@ -169,7 +170,11 @@ public class Transaction {
 		this.exchangeRate = exchangeRate;
 	}
 
-	public Date getCreatedDate() {
+	public Timestamp getCreatedDate() {
 		return createdDate;
+	}
+
+	public void setCreatedDate(Timestamp createdDate) {
+		this.createdDate = createdDate;
 	}
 }
