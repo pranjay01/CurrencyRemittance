@@ -150,7 +150,7 @@ class MyTransactions extends Component {
     } else {
       notification.open({
         message: 'Sorry!.',
-        description: `{You haven't done any transactions yet!}`,
+        description: `{No Transactions found, try changing dropdown or switching tab!}`,
         duration: 4,
       });
     }

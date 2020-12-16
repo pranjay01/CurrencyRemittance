@@ -164,7 +164,6 @@ class MyOfferCard extends Component {
             </div>
             {offer.offerStatus === 'fulfilled' ||
             offer.offerStatus === 'expired' ||
-            offer.offerStatus === 'inTransaction' ||
             offer.offerStatus === 'counterMade' ? (
               ''
             ) : (
