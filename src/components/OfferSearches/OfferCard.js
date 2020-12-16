@@ -9,8 +9,10 @@ class OfferCard extends Component {
   render() {
     const offer = this.props.offer;
 
+    const rat = Number(offer.user.rating);
+    console.log('rat', rat);
     let rating = { backgroundPosition: '0 -320px' };
-    switch (2) {
+    switch (rat) {
       case 1:
         rating = { backgroundPosition: '0 -360px' };
         break;

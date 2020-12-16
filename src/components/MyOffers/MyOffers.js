@@ -38,12 +38,12 @@ class MyOffers extends Component {
           const payload = {
             offerLists,
             TotalCount: response.data.length,
-            PageCount: response.data.length / 1,
+            PageCount: response.data.length / 10,
           };
           this.props.getOfferLists(payload);
         } else {
           notification.open({
-            message: 'Oops!.',
+            message: 'Sorry!.',
             description: 'You haven"t posted any offer yet!',
             duration: 6,
           });
@@ -96,7 +96,7 @@ class MyOffers extends Component {
   };
 
   render() {
-    const size = 1;
+    const size = 10;
     let myOfferCards = this.props.OfferListStore.offerLists
       .slice(
         this.props.OfferListStore.PageNo * size,

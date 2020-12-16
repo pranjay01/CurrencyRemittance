@@ -28,13 +28,13 @@ class TransactionHistory extends Component {
           const payload = {
             TransactionList,
             TotalCount: response.data.length,
-            PageCount: response.data.length / 1,
+            PageCount: response.data.length / 10,
           };
           this.props.getTransactionList(payload);
           if (response.data.length > 0) {
           } else {
             notification.open({
-              message: 'Opp!.',
+              message: 'Sorry!.',
               description: 'User hasn"t done any transactions yet!',
               duration: 4,
             });
@@ -51,7 +51,7 @@ class TransactionHistory extends Component {
   };
 
   render() {
-    const size = 1;
+    const size = 10;
     let transactions = this.props.TransactionListStore.TransactionList.slice(
       this.props.TransactionListStore.PageNo * size,
       this.props.TransactionListStore.PageNo * size + size

@@ -14,64 +14,41 @@ class Report extends Component {
     super(props);
     this.state = {
       report: {},
-      monthSelected: 'December',
+      monthSelected: '12',
       months: [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December',
+        { key: '1', value: 'January' },
+        { key: '2', value: 'February' },
+        { key: '3', value: 'March' },
+        { key: '4', value: 'April' },
+        { key: '5', value: 'May' },
+        { key: '6', value: 'June' },
+        { key: '7', value: 'July' },
+        { key: '8', value: 'August' },
+        { key: '9', value: 'September' },
+        { key: '10', value: 'October' },
+        { key: '11', value: 'November' },
+        { key: '12', value: 'December' },
       ],
     };
   }
 
-  commonFetch = (monthSelected) => {};
-
-  componentDidMount() {
-    this.commonFetch(this.state.monthSelected);
-    /*
+  commonFetch = (monthSelected) => {
     axios
-      .get(serverUrl + 'user/' + localStorage.getItem('userId') + '/transactionHistory', {
+      .get(serverUrl + 'systemReport/' + monthSelected + '/2020', {
         params: {},
         withCredentials: true,
       })
       .then((response) => {
-        console.log('Transactions ', response.data);
-        const oldTransactions = [];
-        const currentTransactions = [];
-        for (const transaction of response.data) {
-          if (transaction.transactionStatus === 'Pending') {
-            currentTransactions.push(transaction);
-          } else {
-            oldTransactions.push(transaction);
-          }
-        }
-        const TransactionList = oldTransactions;
-        const payload = {
-          oldTransactions,
-          currentTransactions,
-          TransactionList,
-          TotalCount: TransactionList.length,
-          PageCount: TransactionList.length / 1,
-        };
-        this.props.getTransactionList(payload);
-        if (response.data.length > 0) {
-        } else {
-          notification.open({
-            message: 'Opp!.',
-            description: 'You haven"t done any transactions yet!',
-            duration: 4,
-          });
-        }
+        console.log('Report ', response.data);
+        this.setState({
+          monthSelected,
+          report: response.data,
+        });
       });
-    */
+  };
+
+  componentDidMount() {
+    this.commonFetch(this.state.monthSelected);
   }
 
   // handlePageClick = (e) => {
@@ -81,9 +58,9 @@ class Report extends Component {
   //   this.props.getTransactionList(payload);
   // };
 
-  switchTab = (event, monthSelected) => {
+  switchTab = (event) => {
     event.preventDefault();
-    this.commonFetch(monthSelected);
+    this.commonFetch(event.target.value);
   };
 
   render() {
@@ -151,8 +128,12 @@ class Report extends Component {
                                     value={this.state.monthSelected}
                                   >
                                     {this.state.months.map((month) => (
-                                      <option className="Dropdown-menu" key={month} value={month}>
-                                        {month}
+                                      <option
+                                        className="Dropdown-menu"
+                                        key={month.key}
+                                        value={month.key}
+                                      >
+                                        {month.value}
                                       </option>
                                     ))}
                                   </select>

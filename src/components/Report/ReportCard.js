@@ -35,7 +35,7 @@ class ReportCard extends Component {
                     <strong> Total Completed Transactions :</strong>{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {report.transactionStatus}
+                    {report.completedTransactions}
                   </span>
                 </div>
 
@@ -44,7 +44,7 @@ class ReportCard extends Component {
                     <strong> Total Uncompleted Transactions </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {report.sourceCurrency}
+                    {report.incompleteTransactions}
                   </span>
                 </div>
               </div>
@@ -60,7 +60,7 @@ class ReportCard extends Component {
                     <strong>Total Amount Remitted :</strong>{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {report.receivedAmount} USD
+                    {Number(report.totalRemittance).toFixed(3)} USD
                   </span>
                 </div>
                 <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
@@ -68,7 +68,7 @@ class ReportCard extends Component {
                     <strong> Total Service Fee Charged </strong>:{' '}
                   </span>
                   <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                    {report.receivedAmount * 0.0005} USD
+                    {Number(report.serviceFee).toFixed(3)} USD
                   </span>
                 </div>
               </div>
