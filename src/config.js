@@ -1,3 +1,3 @@
-const serverUrl = 'https://wazdgdd4oi.execute-api.us-west-2.amazonaws.com/prod/';
+const serverUrl = 'https://kubrnpyghj.execute-api.us-east-1.amazonaws.com/prod/';
 
 export default serverUrl;
