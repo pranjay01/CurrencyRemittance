@@ -173,7 +173,9 @@ class MatchingOfferCardSplit extends Component {
             </div>
             <div className="lemon--div__373c0__1mboc margin-b2__373c0__abANL border-color--default__373c0__3-ifU">
               <form
-                onSubmit={(event) => this.props.createSplitCounterOffer(event)}
+                onSubmit={(event) =>
+                  this.props.createSplitCounterOffer(event, this.state.counterOffer)
+                }
                 className="yform signup-form  city-hidden"
                 id="signup-form"
               >
@@ -216,6 +218,7 @@ class MatchingOfferCardSplit extends Component {
                     {offer.matchningAllowCounterOffers1 !== 0 ? (
                       <li>
                         <input
+                          step=".01"
                           style={{ marginLeft: '12%', height: '35px', width: '225px' }}
                           id="first_name"
                           min={

@@ -55,7 +55,7 @@ class Login extends Component {
   checkUserExistsOrNot = (email, callback) => {
     axios.defaults.withCredentials = true;
     //make a post request with the user data
-    axios.get(serverUrl + 'userEmail/' + email).then(   
+    axios.get(serverUrl + 'userEmail/' + email).then(
       (res) => {
         console.log('Status Code : ', res.status);
         if (res.status === 200) {
@@ -109,6 +109,39 @@ class Login extends Component {
     });
   };
 
+  responseFacebookLogin = (response) => {
+    this.checkUserExistsOrNot(response.email, (error, isExists, data) => {
+      if (error) {
+        notification['error']({
+          message: 'ERROR!',
+          description: 'Account not found, Please signup first from sigup page with facebook!',
+          duration: 3,
+        });
+
+        // this.setState({
+        //   errorBlock: error.response.data,
+        //   sigupSuccessful: false,
+        // });
+      } else if (isExists) {
+        localStorage.setItem('token', data.password);
+        localStorage.setItem('userId', data.id);
+        localStorage.setItem('status', data.status);
+        cookie.save('token', data.password);
+        cookie.save('userId', data.id);
+        cookie.save('status', data.status);
+        this.setState({
+          authFlag: true,
+        });
+      } else {
+        notification['error']({
+          message: 'ERROR!',
+          description: 'Account not found, Please signup first from sigup page with facebook!',
+          duration: 3,
+        });
+      }
+    });
+  };
+
   responseGoogleFailure = (response) => {
     notification['error']({
       message: 'Error!!',
@@ -151,6 +184,39 @@ class Login extends Component {
       }
     });
   };
+
+  responseGoogleLogin = (response) => {
+    console.log(response);
+    this.checkUserExistsOrNot(response.wt.cu, (error, isExists, data) => {
+      if (error) {
+        debugger;
+        notification['error']({
+          message: 'ERROR!',
+          description: 'Account not found, Please signup first from sigup page with Google!',
+          duration: 3,
+        });
+      } else if (isExists) {
+        // Add data from user to localstorage
+        localStorage.setItem('token', data.password);
+        localStorage.setItem('userId', data.id);
+        localStorage.setItem('status', data.status);
+        cookie.save('token', data.password);
+        cookie.save('userId', data.id);
+        cookie.save('status', data.status);
+        this.setState({
+          authFlag: true,
+        });
+      } else {
+        debugger;
+        notification['error']({
+          message: 'ERROR!',
+          description: 'Account not found, Please signup first from sigup page with Google!',
+          duration: 3,
+        });
+      }
+    });
+  };
+
   componentWillMount() {
     // if (this.props.location.pathname === '/Signup') {
     //   console.log('inside Signup');
@@ -512,7 +578,7 @@ class Login extends Component {
                   autoLoad={false}
                   fields="name,email,picture"
                   onClick={this.componentClicked}
-                  callback={this.responseFacebook}
+                  callback={this.responseFacebookLogin}
                 />
               </li>
 
@@ -521,7 +587,7 @@ class Login extends Component {
                   className="google-class "
                   clientId="193224160021-l84huj79hc912hrn1a2itds827iemm57.apps.googleusercontent.com"
                   buttonText="Login"
-                  onSuccess={this.responseGoogle}
+                  onSuccess={this.responseGoogleLogin}
                   onFailure={this.responseGoogleFailure}
                   cookiePolicy={'single_host_origin'}
                   autoLoad={false}
