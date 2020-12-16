@@ -198,7 +198,7 @@ class MatchingOfferList extends Component {
     axios
       .post(serverUrl + 'acceptOffer', null, {
         params: {
-          offerId1: parseInt(localStorage.getItem('offerId')),
+          offerId1,
           offerId2,
           offerId3,
         },
@@ -233,7 +233,7 @@ class MatchingOfferList extends Component {
     axios
       .post(serverUrl + 'acceptOffer', null, {
         params: {
-          offerId1: parseInt(localStorage.getItem('offerId')),
+          offerId1: this.props.location.state.offerId,
           offerId2,
           offerId3,
         },
