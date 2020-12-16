@@ -72,6 +72,7 @@ public class Transaction {
 		this.userID = userID;
 		this.transactionStatus = transactionStatus;
 		this.exchangeRate = exchangeRate;
+		this.createdDate = new Timestamp(System.currentTimeMillis());
 	}
 
 	public Long getId() {
