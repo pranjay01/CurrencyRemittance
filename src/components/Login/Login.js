@@ -55,7 +55,7 @@ class Login extends Component {
   checkUserExistsOrNot = (email, callback) => {
     axios.defaults.withCredentials = true;
     //make a post request with the user data
-    axios.get(serverUrl + 'userEmail/' + email).then(  
+    axios.get(serverUrl + 'userEmail/' + email).then(   
       (res) => {
         console.log('Status Code : ', res.status);
         if (res.status === 200) {
