@@ -341,7 +341,7 @@ class Login extends Component {
     });
   };
   //submit Login handler to send a request to the node backend
-  submitLogin = (e) => {
+  submitLogin = (e) => { 
     console.log('login clicked');
     e.preventDefault();
 
