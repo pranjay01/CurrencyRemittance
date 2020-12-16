@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { notification } from 'antd';
 import 'antd/dist/antd.css';
 import { Link, Redirect } from 'react-router-dom';
+import moment from 'moment';
 
 class PostOffer extends Component {
   constructor(props) {
@@ -160,8 +161,8 @@ class PostOffer extends Component {
 
   onChangeDate = (e) => {
     // let errors = {};
-    const today = new Date();
-    const inputDate = new Date(e.target.value);
+    const today = moment();
+    const inputDate = moment(e.target.value);
     if (today <= inputDate) {
       this.setState({
         NewOffer: { ...this.state.NewOffer, expirationDate: e.target.value },
@@ -170,10 +171,6 @@ class PostOffer extends Component {
       });
     } else {
       //   errors['dateError'] = 'Select future Date!';
-      this.setState({
-        submitErrorBlock: 'Select future Date!',
-        submitError: true,
-      });
     }
   };
 
@@ -244,7 +241,7 @@ class PostOffer extends Component {
             message: 'ERROR!',
             description: error.response.data.message
               ? error.response.data.message
-              : 'Post Offer failed, Please retry!',
+              : 'Network Error!',
             duration: 4,
           });
         }
@@ -339,16 +336,17 @@ class PostOffer extends Component {
             <div style={{ flexDirection: 'column' }} className="js-more-fields more-fields">
               <ul style={{ display: 'flex' }}>
                 <li style={{ flex: 'auto' }}>
-                  <label className="placeholder-sub">Ammount to transfer : </label>
+                  <label className="placeholder-sub">Amount to transfer : </label>
                   <input
                     style={{ marginLeft: '27%', height: '35px', width: '225px' }}
                     id="first_name"
                     name="sourceAmount"
-                    placeholder="Ammount to transfer in source currency"
+                    placeholder="In source currency"
                     required="required"
                     type="number"
                     onChange={this.onCOmmonChangeHandler}
                     value={this.state.NewOffer.sourceAmount}
+                    min="0"
                   />
                 </li>
               </ul>
@@ -470,6 +468,7 @@ class PostOffer extends Component {
                     type="number"
                     onChange={this.onCOmmonChangeHandler}
                     value={this.state.NewOffer.customExchangeRate}
+                    min="0"
                   />
                 </li>
               </ul>

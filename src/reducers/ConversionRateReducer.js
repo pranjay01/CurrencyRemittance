@@ -15,13 +15,6 @@ const ConversionRateReducer = (state = defaultState, action) => {
         //   return Object.assign(state, action.payload);
       };
     }
-    case logOut: {
-      return {
-        ...state,
-        ConversionRateStore: { conversionRates: [] },
-        //   return Object.assign(state, action.payload);
-      };
-    }
 
     default: {
       return { ...state };
