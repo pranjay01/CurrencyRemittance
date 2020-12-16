@@ -266,9 +266,7 @@ class MatchingOfferCardSplit extends Component {
                               aria-controls="header-dropdown-menu"
                               aria-expanded="false"
                               type="button"
-                              onClick={(event) =>
-                                this.props.AcceptOffer(event, this.state.counterOffer)
-                              }
+                              onClick={(event) => this.props.AcceptOffer(event)}
                             >
                               <div className="lemon--div__06b83__1mboc button-content__06b83__1QNtB border-color--default__06b83mousedown-x__3-ifU">
                                 <span className="lemon--span__06b83__3997G text__06b83__2Kxyz button-content-text__06b83__Z-7FO text-color--blue-dark__06b83__1jX7S text-align--center__06b83__3VrfZ text-size--large__06b83__3t60B text--truncated__06b83__3sLaf">

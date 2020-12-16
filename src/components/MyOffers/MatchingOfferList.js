@@ -176,23 +176,25 @@ class MatchingOfferList extends Component {
     offerC_sourceCountry,
     offerC_offerID
   ) => {
+    debugger;
     event.preventDefault();
     let offerId1;
     let offerId2;
     let offerId3;
     if (offerB_sourceCountry === offerC_sourceCountry) {
-      offerId1 = parseInt(localStorage.getItem('offerId'));
+      offerId1 = this.props.location.state.offerId;
       offerId2 = offerB_offerID;
       offerId3 = offerC_offerID;
     } else if (offerB_sourceCountry === this.props.location.state.userSourceCountry) {
-      offerId2 = parseInt(localStorage.getItem('offerId'));
+      offerId2 = this.props.location.state.offerId;
       offerId3 = offerB_offerID;
       offerId1 = offerC_offerID;
     } else {
-      offerId2 = parseInt(localStorage.getItem('offerId'));
+      offerId2 = this.props.location.state.offerId;
       offerId3 = offerC_offerID;
       offerId1 = offerB_offerID;
     }
+    debugger;
     axios
       .post(serverUrl + 'acceptOffer', null, {
         params: {
@@ -398,10 +400,8 @@ class MatchingOfferList extends Component {
             AcceptOffer={(event) =>
               this.AcceptSplitOffer(
                 event,
-                offer.matchingSourceCountry1,
                 offer.matchingSourceAmount1,
                 offer.matchingOfferId1,
-                offer.matchingSourceCountry2,
                 offer.matchingSourceAmount2,
                 offer.matchingOfferId2
               )
