@@ -383,7 +383,7 @@ class Login extends Component {
         });
         notification['error']({
           message: 'Error!!',
-          description: 'Login Failed!! Try Again.',
+          description: 'Incorrect Credentials.',
           duration: 2,
         });
       }

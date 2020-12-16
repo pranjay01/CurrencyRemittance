@@ -162,7 +162,10 @@ class MyOfferCard extends Component {
                 </span>
               </p>
             </div>
-            {offer.offerStatus === 'fulfilled' || offer.offerStatus === 'expired' ? (
+            {offer.offerStatus === 'fulfilled' ||
+            offer.offerStatus === 'expired' ||
+            offer.offerStatus === 'inTransaction' ||
+            offer.offerStatus === 'counterMade' ? (
               ''
             ) : (
               <div className="lemon--div__373c0__1mboc margin-b2__373c0__abANL border-color--default__373c0__3-ifU">
