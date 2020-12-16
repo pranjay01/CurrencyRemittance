@@ -62,6 +62,7 @@ class MyTransactions extends Component {
         let expired = 0;
         for (const transaction of oldTransactions) {
           console.log('month:', moment(transaction.createdDate).month());
+          console.log('transaction.createdDate:', transaction.createdDate);
           finalData[moment(transaction.createdDate).month()] =
             finalData[moment(transaction.createdDate).month()] + 1;
           if (Number(this.state.monthSelected) === moment(transaction.createdDate).month() + 1) {
@@ -89,11 +90,11 @@ class MyTransactions extends Component {
         };
         this.props.getTransactionList(payload);
         this.setState({ finalData, count });
-        if (response.data.length > 0) {
+        if (TransactionList.length > 0) {
         } else {
           notification.open({
             message: 'Sorry!.',
-            description: 'You haven"t done any transactions yet!',
+            description: `{You haven't done any transactions yet!}`,
             duration: 4,
           });
         }
@@ -145,6 +146,14 @@ class MyTransactions extends Component {
       monthSelected,
       count,
     });
+    if (TransactionList.length > 0) {
+    } else {
+      notification.open({
+        message: 'Sorry!.',
+        description: `{You haven't done any transactions yet!}`,
+        duration: 4,
+      });
+    }
   };
 
   switchMonth = (event) => {

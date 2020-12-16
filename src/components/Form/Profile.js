@@ -86,11 +86,22 @@ class Profile extends Component {
           });
         },
         (error) => {
-          notification['error']({
-            message: 'ERROR!',
-            description: error.response.data,
-            duration: 4,
-          });
+          console.log('error.response', error.response);
+          if (error.response.status === 400) {
+            notification['error']({
+              message: 'ERROR!',
+              description: 'NickName already exists, Try another',
+              duration: 4,
+            });
+          } else {
+            notification['error']({
+              message: 'ERROR!',
+              description: error.response.data.message
+                ? error.response.data.message
+                : 'Network Error!',
+              duration: 4,
+            });
+          }
         }
       );
   };
@@ -163,13 +174,12 @@ class Profile extends Component {
               </ul>
               <ul style={{ display: 'flex' }}>
                 <li style={{ width: '40%', flex: 'auto' }}>
-                  <label className="placeholder-sub">NickName: </label>
+                  <label className="placeholder-sub">Update NickName: </label>
                   <input
                     style={{ height: '35px' }}
                     id="first_name"
                     name="Nickname"
                     placeholder="Name"
-                    required="required"
                     type="text"
                     onChange={this.onChangeHandlerName}
                     value={this.props.UserInfoStore.UserProfile.nickname}
@@ -178,13 +188,12 @@ class Profile extends Component {
               </ul>
               <ul style={{ display: 'flex' }}>
                 <li style={{ width: '40%', flex: 'auto' }}>
-                  <label className="placeholder-sub">Password: </label>
+                  <label className="placeholder-sub">Update Password: </label>
                   <input
                     style={{ height: '35px' }}
                     id="first_name"
                     name="password"
                     placeholder="Password"
-                    required="required"
                     type="password"
                     onChange={this.onChangePasswordHandler}
                     value={this.state.password}

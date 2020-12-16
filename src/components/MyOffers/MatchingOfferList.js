@@ -134,7 +134,7 @@ class MatchingOfferList extends Component {
           if (response.data.list.length > 0) {
           } else {
             notification.open({
-              message: 'Opp! No split matching offers found',
+              message: 'Sorry! No split matching offers found',
               description: 'Seems there are no matching offers',
               duration: 4,
             });
@@ -144,7 +144,9 @@ class MatchingOfferList extends Component {
           console.log('error', error);
           notification['error']({
             message: 'ERROR!',
-            description: error.response.data,
+            description: error.response.data.message
+              ? error.response.data.message
+              : 'Network Error!',
             duration: 4,
           });
         }
