@@ -158,7 +158,7 @@ class MyTransactionCard extends Component {
                     className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU"
                   >
                     <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                      <strong> Aomount Sent :</strong>{' '}
+                      <strong> Amount Sent :</strong>{' '}
                     </span>
                     <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
                       {transaction.receivedAmount} {transaction.sourceCurrency}
@@ -166,7 +166,7 @@ class MyTransactionCard extends Component {
                   </div>
                   <div className="lemon--div__373c0__1mboc arrange-unit__373c0__o3tjT border-color--default__373c0__3-ifU">
                     <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
-                      <strong> Aomount Recieved </strong>:{' '}
+                      <strong> Amount Received </strong>:{' '}
                     </span>
                     <span className="lemon--span__373c0__3997G display--inline__373c0__3JqBP border-color--default__373c0__3-ifU">
                       {transaction.receivedAmount * transaction.exchangeRate}{' '}
@@ -175,6 +175,8 @@ class MyTransactionCard extends Component {
                   </div>
                 </div>
               </div>
+            ) : transaction.transactionStatus === 'Expired' ? (
+              ''
             ) : (
               <div className="lemon--div__373c0__1mboc margin-t1__373c0__oLmO6 margin-b1__373c0__1khoT border-color--default__373c0__3-ifU">
                 <div className="lemon--div__373c0__1mboc arrange__373c0__2C9bH gutter-1__373c0__2l5bx vertical-align-middle__373c0__1SDTo border-color--default__373c0__3-ifU">
