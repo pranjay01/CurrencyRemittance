@@ -94,7 +94,7 @@ class MyTransactions extends Component {
         } else {
           notification.open({
             message: 'Sorry!.',
-            description: `{You haven't done any transactions yet!}`,
+            description: `You haven't done any transactions yet!`,
             duration: 4,
           });
         }
