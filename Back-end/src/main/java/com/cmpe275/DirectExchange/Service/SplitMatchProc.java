@@ -97,7 +97,7 @@ public class SplitMatchProc {
 
             statement.close();
             
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
             
