@@ -76,15 +76,14 @@ public class SplitMatchProc {
 
                 result.setDifference(rs.getDouble("Difference"));
                 
-                boolean flag = false;
+                boolean flag = true;
                 if(split.size() > 0){
                     for(SplitMatch s : split){
-                        if(s.compareTo(result) != 0){
-                            flag = true;
+                        if(s.compareTo(result) == 0){
+                            flag = false;
+                            break;
                         }
                     }
-                } else {
-                    split.add(result);
                 }
                 if(flag){
                     split.add(result);

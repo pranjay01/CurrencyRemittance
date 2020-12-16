@@ -341,8 +341,8 @@ public class SplitMatch implements Comparable<SplitMatch> {
 	
 	@Override
 	public int compareTo(SplitMatch arg0) {
-		if(this.MatchingUserId1 == arg0.getMatchingUserId2() &&
-			this.MatchingUserId2 == arg0.getMatchingUserId1()){
+		if((long)this.MatchingUserId1 == (long)arg0.getMatchingUserId2() &&
+			(long)this.MatchingUserId2 == (long)arg0.getMatchingUserId1()){
 				return 0;
 			}
 		else 
