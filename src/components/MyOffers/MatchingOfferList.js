@@ -33,7 +33,7 @@ class MatchingOfferList extends Component {
     });
     if (e.target.value === 'yes') {
       this.commonFetchSingleOffers();
-      // this.commonFetchSplitOffers();
+      this.commonFetchSplitOffers();
     } else {
       this.commonFetchSingleOffers();
     }

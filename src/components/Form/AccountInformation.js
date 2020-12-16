@@ -123,11 +123,19 @@ class AccountInformation extends Component {
           });
         },
         (error) => {
-          notification['error']({
-            message: 'ERROR!',
-            description: 'Account Save Failed!',
-            duration: 3,
-          });
+          if (error.response.status === 400) {
+            notification['error']({
+              message: 'ERROR!',
+              description: 'Save Failed, Account No. already exists!',
+              duration: 4,
+            });
+          } else {
+            notification['error']({
+              message: 'ERROR!',
+              description: 'Account Save Failed!',
+              duration: 3,
+            });
+          }
         }
       );
   };
